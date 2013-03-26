@@ -52,6 +52,14 @@ public class LocationResult {
 	public String getName() {
 		return name;
 	}
+
+	public String getX() {
+		return lat;
+	}
+	
+	public String getY() {
+		return lon;
+	}
 	
 	
 
