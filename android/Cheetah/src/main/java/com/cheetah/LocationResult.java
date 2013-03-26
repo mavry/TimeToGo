@@ -34,7 +34,7 @@ public class LocationResult {
 		if (lat == null) {
 			if (other.lat != null)
 				return false;
-		} else if (!lat.equals(other.lat))
+		} else if (!lat.equals(other.lat)) 
 			return false;
 		if (lon == null) {
 			if (other.lon != null)
@@ -47,6 +47,10 @@ public class LocationResult {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+	public String getName() {
+		return name;
 	}
 	
 	

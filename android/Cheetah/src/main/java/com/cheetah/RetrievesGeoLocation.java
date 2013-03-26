@@ -2,7 +2,6 @@ package com.cheetah;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.net.URLEncoder;
 
 import org.apache.http.client.ClientProtocolException;
@@ -10,9 +9,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
-//import org.json.JSONArray;
-//import org.json.JSONException;
-//import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

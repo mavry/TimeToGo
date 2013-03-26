@@ -31,7 +31,8 @@
         android:layout_alignLeft="@+id/from"
         android:layout_below="@+id/from"
         android:layout_marginTop="18dp"
-        android:ems="10" >
+        android:ems="10"
+        android:text="Haifa" >
 
         <requestFocus />
     </EditText>
@@ -44,7 +45,8 @@
         android:layout_alignLeft="@+id/to"
         android:layout_below="@+id/to"
         android:layout_marginTop="18dp"
-        android:ems="10" />
+        android:ems="10" 
+        android:text="Tel Aviv"/>
 
     <Button
         android:id="@+id/go"
@@ -53,6 +55,15 @@
         android:layout_alignLeft="@+id/inputTo"
         android:layout_below="@+id/inputTo"
         android:layout_marginTop="15dp"
-        android:text="@string/go" />
+        android:text="@string/go" 
+        android:onClick="onBtnClicked"       
+        />
 
+        <TextView
+        android:textIsSelectable="true"
+        android:id="@+id/debug"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+         />
+    
 </RelativeLayout>
