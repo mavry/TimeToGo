@@ -1,2 +1,11 @@
 android/Cheetah/bin/
 android/Cheetah/*.log
+android/Cheetah/target/
+android/Cheetah-it/target/
+android/Cheetah-it/bin
+android/Cheetah-old/bin/ 
+android/Cheetah-old/target
+.classpath
+.settings
+.project
+
