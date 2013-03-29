@@ -14,21 +14,25 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import de.akquinet.android.androlog.Log;
 
 public class LocationActivity extends Activity {
 
   private RetrievesGeoLocation retrievesGeoLocation;
+  private DefaultHttpClient client;
+  private RetreivesRouteResult retreivesRouteResult;
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
-    retrievesGeoLocation = new RetrievesGeoLocation(new DefaultHttpClient());
+    client = new DefaultHttpClient();
+    retrievesGeoLocation = new RetrievesGeoLocation(client);
+    retreivesRouteResult = new RetreivesRouteResult(client);
   }
 
   @Override
   public boolean onCreateOptionsMenu(final Menu menu) {
-    // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.location, menu);
     return true;
   }
@@ -51,24 +55,28 @@ public class LocationActivity extends Activity {
     }
   }
 
-  private class RetrievesGeoLocationTask extends AsyncTask<String, String, String> {
+  private class RetrievesGeoLocationTask extends AsyncTask<String, String, RouteResult> {
 
     @Override
-    protected String doInBackground(final String... params) {
-      LocationResult fromLocation;
+    protected RouteResult doInBackground(final String... params) {
       try {
-        fromLocation = retrievesGeoLocation.retreive(params[0])[0];
+        final LocationResult fromLocation = retrievesGeoLocation.retreive(params[0])[0];
         final LocationResult toLocation = retrievesGeoLocation.retreive(params[1])[0];
-        return "from: " + fromLocation.getName() + " to: " + toLocation.getName();
+        final RouteResult[] routeResults = retreivesRouteResult.retreive(fromLocation, toLocation);
+        return routeResults[0];
       } catch (final Exception e) {
-        return "got exception " + e.getMessage();
+        Log.e(e.getMessage());
+        return null;
       }
     }
 
     @Override
-    protected void onPostExecute(final String result) {
+    protected void onPostExecute(final RouteResult result) {
+
       final TextView debugView = (TextView) (findViewById(R.id.debug));
-      debugView.append(result);
+      final TextView eta = (TextView) (findViewById(R.id.eta));
+      debugView.setText(String.format("%d min via %s", result.getSeconds() / 60, result.getRouteName()));
+      eta.setText(String.valueOf(result.getSeconds() / 60));
     }
   }
 }

@@ -22,6 +22,15 @@
         android:layout_height="wrap_content"
         android:text="@string/from" />
 
+    <EditText
+        android:id="@+id/inputFrom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Haifa" />
+
     <TextView
         android:id="@+id/to"
         android:layout_width="wrap_content"
@@ -30,20 +39,6 @@
         android:layout_below="@+id/from"
         android:layout_marginTop="56dp"
         android:text="@string/to" />
-
-    <EditText
-        android:inputType="text"
-        android:id="@+id/inputFrom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/from"
-        android:layout_below="@+id/from"
-        android:layout_marginTop="18dp"
-        android:ems="10"
-        android:text="Haifa" >
-
-        <requestFocus />
-    </EditText>
 
     <EditText
         android:inputType="text"
@@ -67,15 +62,24 @@
         android:onClick="onBtnClicked"       
         />
 
-        <TextView
-        android:textIsSelectable="true"
-        android:id="@+id/debug"
+     <TextView
+        android:id="@+id/eta"
+        android:layout_marginTop="15dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-         />
-    
-<!-- 
- </RelativeLayout>
- -->
+        android:text="ETA:"
+        android:textIsSelectable="true" 
+        android:layout_below="@+id/go"
+       />
+     
+    <TextView
+        android:id="@+id/debug"
+        android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="debug:"
+        android:textIsSelectable="true" 
+        android:layout_below="@+id/eta"
+       />
  </LinearLayout>
  

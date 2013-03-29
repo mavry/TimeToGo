@@ -10,6 +10,14 @@ public class RouteResult {
     this.seconds = seconds;
   }
 
+  public String getRouteName() {
+    return routeName;
+  }
+
+  public int getSeconds() {
+    return seconds;
+  }
+
   @Override
   public int hashCode() {
     final int prime = 31;
