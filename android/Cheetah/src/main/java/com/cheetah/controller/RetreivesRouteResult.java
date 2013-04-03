@@ -1,4 +1,4 @@
-package com.cheetah;
+package com.cheetah.controller;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -12,6 +12,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.cheetah.model.LocationResult;
+import com.cheetah.model.RouteResult;
+import com.google.inject.Inject;
+
 public class RetreivesRouteResult {
 
   //	private static final String WAZE_ROUTES_BY_LOCATION = "http://www.waze.co.il/RoutingManager/routingRequest?to=x%3A%s+y%3A%s+bd%3Atrue&from=x%3A%s+y%3A%s+bd%3Atrue&returnJSON=true";
@@ -19,6 +23,7 @@ public class RetreivesRouteResult {
   private static final String WAZE_ROUTES_BY_LOCATION = "http://www.waze.co.il/RoutingManager/routingRequest?to=%s&from=%s&returnJSON=true";
   private final HttpClient client;
 
+  @Inject
   public RetreivesRouteResult(final HttpClient client) {
     this.client = client;
   }

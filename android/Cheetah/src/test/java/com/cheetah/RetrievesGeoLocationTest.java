@@ -10,6 +10,9 @@ import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.cheetah.controller.RetrievesGeoLocation;
+import com.cheetah.model.LocationResult;
+
 public class RetrievesGeoLocationTest {
   private final HttpClient httpClient = new DefaultHttpClient();
 

@@ -13,6 +13,10 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
+import com.cheetah.controller.RetreivesRouteResult;
+import com.cheetah.model.LocationResult;
+import com.cheetah.model.RouteResult;
+
 public class RetreivesRouteResultTest {
 
   private static final String JSON = "{     'response': {         'routeName': 'Kerem Maharal',         'results': [             {                 'length': 66,                 'crossTime': 99,                 'crossTimeWithoutRealTime': 0,                              },             {                 'length': 66,                 'crossTime': 99,                 'crossTimeWithoutRealTime': 0,                              }          ],              } }";
@@ -26,9 +30,6 @@ public class RetreivesRouteResultTest {
     Mockito.when(httpClient.execute(Matchers.any(HttpUriRequest.class), Matchers.any(ResponseHandler.class))).thenReturn(JSON);
     subject = new RetreivesRouteResult(httpClient);
   }
-
-  // -routeName
-  // -results [-crossTime]
 
   @Test
   public void testReturnsRoute() throws ClientProtocolException, IOException, JSONException {

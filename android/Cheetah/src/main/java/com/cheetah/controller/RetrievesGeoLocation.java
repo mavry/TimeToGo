@@ -1,4 +1,4 @@
-package com.cheetah;
+package com.cheetah.controller;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -13,11 +13,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.cheetah.LocationNotFoundException;
+import com.cheetah.model.LocationResult;
+import com.google.inject.Inject;
+
 public class RetrievesGeoLocation {
 
   private final static String WAZE_LOCATION_BY_ADDRESS_URL = "http://www.waze.co.il/WAS/mozi?q=%s";
   private final HttpClient client;
 
+  @Inject
   public RetrievesGeoLocation(final HttpClient client) {
     this.client = client;
   }

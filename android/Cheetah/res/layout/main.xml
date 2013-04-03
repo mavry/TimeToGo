@@ -26,7 +26,7 @@
         android:id="@+id/inputFrom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="15dp"
         android:ems="10"
         android:inputType="text"
         android:text="Haifa" />
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/from"
         android:layout_below="@+id/from"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="15dp"
         android:text="@string/to" />
 
     <EditText
@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/to"
         android:layout_below="@+id/to"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="15dp"
         android:ems="10" 
         android:text="Tel Aviv"/>
 
@@ -59,9 +59,9 @@
         android:layout_below="@+id/inputTo"
         android:layout_marginTop="15dp"
         android:text="@string/go" 
-        android:onClick="onBtnClicked"       
+        android:onClick="onGoBtnClicked"       
         />
-
+         
      <TextView
         android:id="@+id/eta"
         android:layout_marginTop="15dp"
@@ -71,7 +71,40 @@
         android:textIsSelectable="true" 
         android:layout_below="@+id/go"
        />
+
+       <TextView 
+        android:id="@+id/maxDrivingTime"
+        android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Max Driving Time: (min)"
+        android:textIsSelectable="true" 
+        android:layout_below="@+id/eta"        
+         />
+       
+     <EditText
+        android:inputType="number"
+        android:id="@+id/inputMaxDrivingTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/to"
+        android:layout_below="@+id/maxDrivingTime"
+        android:layout_marginTop="15dp"
+        android:ems="10" 
+        android:text=""/>
      
+ 	<Button
+        android:id="@+id/notifyMe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/inputTo"
+        android:layout_below="@+id/inputMaxDrivingTime"
+        android:layout_marginTop="15dp"
+        android:text="@string/notifyMe" 
+        android:onClick="onNotifyMeBtnClicked"       
+        />
+      
+ 
     <TextView
         android:id="@+id/debug"
         android:layout_marginTop="15dp"

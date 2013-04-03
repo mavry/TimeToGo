@@ -12,15 +12,16 @@
   <artifactId>Cheetah</artifactId>
   <packaging>apk</packaging>
   <name>Cheetah - Application</name>
-
   <dependencies>
     <dependency>
       <groupId>com.google.android</groupId>
       <artifactId>android</artifactId>
+
     </dependency>
     <dependency>
       <groupId>de.akquinet.android.androlog</groupId>
       <artifactId>androlog</artifactId>
+
     </dependency>
      <dependency>
        <groupId>commons-logging</groupId>
@@ -31,6 +32,8 @@
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
       <version>4.1.2</version>
+
+
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
@@ -45,12 +48,24 @@
    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.10</version>
-      <scope>test</scope>
+    <scope>provided</scope>
     </dependency>
+
+
+     <dependency>
+      <groupId>org.roboguice</groupId>
+      <artifactId>roboguice</artifactId>
+      <version>2.0</version>
+    
+
+    </dependency>
+ 
   </dependencies>
 
   <build>
+<outputDirectory>bin/classes</outputDirectory>
+    <testOutputDirectory>bin/test-classes</testOutputDirectory>
+
     <plugins>
       <plugin>
         <groupId>com.jayway.maven.plugins.android.generation2</groupId>

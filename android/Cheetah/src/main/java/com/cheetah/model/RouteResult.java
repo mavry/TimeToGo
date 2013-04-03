@@ -1,4 +1,4 @@
-package com.cheetah;
+package com.cheetah.model;
 
 public class RouteResult {
 
