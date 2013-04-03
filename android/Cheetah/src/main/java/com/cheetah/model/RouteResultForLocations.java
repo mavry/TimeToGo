@@ -1,6 +1,5 @@
 package com.cheetah.model;
 
-
 public class RouteResultForLocations {
   private final LocationResult from;
   private final LocationResult to;

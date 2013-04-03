@@ -1,9 +1,7 @@
-package com.cheetah;
+package com.cheetah.activity;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
@@ -12,23 +10,21 @@ import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.cheetah.R;
 import com.cheetah.controller.ILocationController;
 import com.cheetah.model.RouteResult;
 import com.cheetah.model.RouteResultForLocations;
 import com.cheetah.view.ILocationView;
 import com.google.inject.Inject;
 
+import de.akquinet.android.androlog.Log;
+
 @ContentView(R.layout.main)
 public class LocationActivity extends RoboActivity implements ILocationView {
-
-  private Handler handler;
-  private static final SimpleDateFormat DATE_FROMATTER = new SimpleDateFormat("hh:mm:ss", Locale.getDefault());
-  private RouteResultForLocations routeResultForLocations;
 
   @InjectView(R.id.debug)
   TextView debugView;
@@ -55,9 +51,8 @@ public class LocationActivity extends RoboActivity implements ILocationView {
   protected void onCreate(final Bundle savedInstanceState) {
     //    setContentView(R.layout.main);
     super.onCreate(savedInstanceState);
-    System.out.println("@ in LocationActivity.onCreate() fromText=" + fromText + " debugView=" + debugView);
+    Log.i("@ in LocationActivity.onCreate() fromText=" + fromText + " debugView=" + debugView);
     locationController.setView(this);
-    handler = new Handler();
   }
 
   //  @Override
@@ -66,14 +61,15 @@ public class LocationActivity extends RoboActivity implements ILocationView {
   //    return true;
   //  }
 
-  //  public void onNotifyMeBtnClicked(final View v) throws ClientProtocolException, IOException, JSONException, URISyntaxException {
-  //    if (v.getId() == R.id.notifyMe) {
-  //      final long maxDrivingTimeInMin = Integer.parseInt(maxDrivingTimeView.getText().toString());
-  //      final TimerTask myTimer = new MyTimer();
-  //
-  //      handler.postDelayed(myTimer, 10000);
-  //    }
-  //  }
+  public void onNotifyMeBtnClicked(final View v) throws ClientProtocolException, IOException, JSONException, URISyntaxException {
+    if (v.getId() == R.id.notifyMe) {
+      final long maxDrivingTimeInMin = Integer.parseInt(maxDrivingTimeView.getText().toString());
+      Log.i("@ NotifyME button was clicked  with maxDrivingTimeInMin=" + maxDrivingTimeInMin);
+      //      final TimerTask myTimer = new MyTimer();
+      //
+      //      handler.postDelayed(myTimer, 10000);
+    }
+  }
 
   public void onGoBtnClicked(final View v) throws ClientProtocolException, IOException, JSONException, URISyntaxException {
     if (v.getId() == R.id.go) {
@@ -85,9 +81,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
 
   public void onGeoLocations(final RouteResultForLocations routeResultForLocations) {
     final RouteResult routeResult = routeResultForLocations.getRouteResult();
-    System.out.println("routeResult=" + routeResult);
-    System.out.println("debugView=" + debugView);
-    System.out.println("@ in LocationActivity.onGeoLocations() fromText=" + fromText + " debugView=" + debugView);
+    Log.i("@ in LocationActivity.onGeoLocations() fromText=" + fromText + " debugView=" + debugView);
 
     debugView.setText(String.format("%d min via %s", routeResult.getSeconds() / 60, routeResult.getRouteName()));
     etaView.setText(String.valueOf(routeResult.getSeconds() / 60));

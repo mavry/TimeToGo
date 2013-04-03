@@ -2,7 +2,7 @@ package com.cheetah.controller;
 
 import android.os.AsyncTask;
 
-import com.cheetah.LocationActivity;
+import com.cheetah.activity.LocationActivity;
 import com.cheetah.model.LocationResult;
 import com.cheetah.model.RouteResult;
 import com.cheetah.model.RouteResultForLocations;
@@ -50,6 +50,9 @@ public class LocationController implements ILocationController {
     protected void onPostExecute(final RouteResultForLocations routeResultForLocations) {
       locationView.onGeoLocations(routeResultForLocations);
     }
+  }
+
+  public void onNotifyMe(final long maxDrivingTimeInMin) {
   }
 
   public void setView(final LocationActivity locationActivity) {

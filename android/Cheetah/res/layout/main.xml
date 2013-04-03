@@ -29,7 +29,7 @@
         android:layout_marginTop="15dp"
         android:ems="10"
         android:inputType="text"
-        android:text="Haifa" />
+        android:text="כרם מהרל" />
 
     <TextView
         android:id="@+id/to"
@@ -49,7 +49,7 @@
         android:layout_below="@+id/to"
         android:layout_marginTop="15dp"
         android:ems="10" 
-        android:text="Tel Aviv"/>
+        android:text="אריה רגב 6, נתניה"/>
 
     <Button
         android:id="@+id/go"

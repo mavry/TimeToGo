@@ -3,6 +3,7 @@ package com.cheetah;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import com.cheetah.activity.LocationActivity;
 import com.cheetah.controller.ILocationController;
 import com.cheetah.controller.LocationController;
 import com.cheetah.view.ILocationView;

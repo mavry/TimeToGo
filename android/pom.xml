@@ -16,10 +16,8 @@
     </modules>
 
     <properties>
-        <platform.version> 4.0.1.2           </platform.version>
+      <platform.version>4.0.1.2</platform.version>
       <platform.version>1.6_r2</platform.version>
-      <android.sdk.path>/home/yonatan/opt/adt/sdk</android.sdk.path>
-
     </properties>
 
     <dependencyManagement>
