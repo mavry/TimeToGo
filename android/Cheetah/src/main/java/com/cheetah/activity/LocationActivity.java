@@ -9,12 +9,16 @@ import org.json.JSONException;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.cheetah.R;
+import com.cheetah.controller.ETAService;
 import com.cheetah.controller.ILocationController;
 import com.cheetah.model.RouteResult;
 import com.cheetah.model.RouteResultForLocations;
@@ -44,6 +48,13 @@ public class LocationActivity extends RoboActivity implements ILocationView {
   @Inject
   ILocationController locationController;
 
+  @Inject
+  AlarmManager alarmManager;
+
+  Intent intent;
+
+  private PendingIntent pintent;
+
   public LocationActivity() {
   }
 
@@ -51,8 +62,12 @@ public class LocationActivity extends RoboActivity implements ILocationView {
   protected void onCreate(final Bundle savedInstanceState) {
     //    setContentView(R.layout.main);
     super.onCreate(savedInstanceState);
-    Log.i("@ in LocationActivity.onCreate() fromText=" + fromText + " debugView=" + debugView);
+
     locationController.setView(this);
+    intent = new Intent(this, ETAService.class);
+    pintent = PendingIntent.getService(this, 0, intent, 0);
+    Log.i("@ in LocationActivity.onCreate() intent=" + intent);// " fromText=" + fromText + " debugView=" + debugView);
+
   }
 
   //  @Override
@@ -63,12 +78,19 @@ public class LocationActivity extends RoboActivity implements ILocationView {
 
   public void onNotifyMeBtnClicked(final View v) throws ClientProtocolException, IOException, JSONException, URISyntaxException {
     if (v.getId() == R.id.notifyMe) {
-      final long maxDrivingTimeInMin = Integer.parseInt(maxDrivingTimeView.getText().toString());
-      Log.i("@ NotifyME button was clicked  with maxDrivingTimeInMin=" + maxDrivingTimeInMin);
-      //      final TimerTask myTimer = new MyTimer();
-      //
-      //      handler.postDelayed(myTimer, 10000);
+      //      final long maxDrivingTimeInMin = Integer.parseInt(maxDrivingTimeView.getText().toString());
+      notifyMe(0);
+
     }
+  }
+
+  public void notifyMe(final long maxDrivingTimeInMin) {
+
+    Log.i("@ NotifyME button was clicked  with maxDrivingTimeInMin=" + maxDrivingTimeInMin + " ThreadID = " + Thread.currentThread());
+
+    alarmManager.cancel(pintent);
+    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 10 * 1000, pintent);
+
   }
 
   public void onGoBtnClicked(final View v) throws ClientProtocolException, IOException, JSONException, URISyntaxException {

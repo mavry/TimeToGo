@@ -3,8 +3,10 @@ android/Cheetah/*.log
 android/Cheetah/target
 android/Cheetah-it/target
 android/Cheetah-it/bin
+android/Cheetah-it/gen
 android/Cheetah-old/bin 
 android/Cheetah-old/target
+lint.xml
 .classpath
 .settings
 .project

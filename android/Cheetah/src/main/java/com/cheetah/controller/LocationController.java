@@ -53,6 +53,7 @@ public class LocationController implements ILocationController {
   }
 
   public void onNotifyMe(final long maxDrivingTimeInMin) {
+
   }
 
   public void setView(final LocationActivity locationActivity) {
