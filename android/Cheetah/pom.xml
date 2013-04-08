@@ -50,8 +50,6 @@
       <artifactId>junit</artifactId>
     <scope>provided</scope>
     </dependency>
-
-
     <dependency>
       <groupId>org.roboguice</groupId>
       <artifactId>roboguice</artifactId>

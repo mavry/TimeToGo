@@ -45,7 +45,7 @@ public class ETAService extends RoboIntentService {
 
     final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
     tg.startTone(ToneGenerator.TONE_PROP_BEEP);
-    retreivesRouteResult.
+    //    retreivesRouteResult.
   }
 
   @Override
