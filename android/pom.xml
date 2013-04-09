@@ -3,16 +3,16 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.cheetah</groupId>
-    <artifactId>Cheetah-parent</artifactId>
+    <groupId>com.timetogo</groupId>
+    <artifactId>TimeToGo-parent</artifactId>
     <version>trunk</version>
     <packaging>pom</packaging>
-    <name>Cheetah - Parent</name>
+    <name>TimeToGO - Parent</name>
 
 
     <modules>
-        <module>Cheetah</module>
-        <module>Cheetah-it</module>
+        <module>TimeToGo</module>
+        <module>TimeToGo-it</module>
     </modules>
 
     <properties>
