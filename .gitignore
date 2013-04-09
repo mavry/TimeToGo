@@ -1,11 +1,9 @@
-android/Cheetah/bin
-android/Cheetah/*.log
-android/Cheetah/target
-android/Cheetah-it/target
-android/Cheetah-it/bin
-android/Cheetah-it/gen
-android/Cheetah-old/bin 
-android/Cheetah-old/target
+android/TimeToGo/bin
+android/TimeToGo/*.log
+android/TimeToGo/target
+android/TimeToGo-it/target
+android/TimeToGo-it/bin
+android/TimeToGo-it/gen
 lint.xml
 .classpath
 .settings
