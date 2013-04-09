@@ -16,7 +16,6 @@ import com.google.inject.Inject;
 import com.timetogo.model.LocationResult;
 import com.timetogo.model.RouteResult;
 
-import de.akquinet.android.androlog.Log;
 
 public class RetreivesRouteResult {
 
@@ -31,7 +30,6 @@ public class RetreivesRouteResult {
   }
 
   public RouteResult[] retreive(final LocationResult from, final LocationResult to) throws ClientProtocolException, IOException, JSONException {
-    Log.i("@@ checking RouteResult");
     final String url = String.format(WAZE_ROUTES_BY_LOCATION, URLEncoder.encode(String.format(PARAMS, to.getX(), to.getY()), "UTF-8"),
         URLEncoder.encode(String.format(PARAMS, from.getX(), from.getY()), "UTF-8"));
     System.out.println(url);
