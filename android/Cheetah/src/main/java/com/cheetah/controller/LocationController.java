@@ -1,10 +1,6 @@
 package com.cheetah.controller;
 
-import android.os.AsyncTask;
-
 import com.cheetah.activity.LocationActivity;
-import com.cheetah.model.LocationResult;
-import com.cheetah.model.RouteResult;
 import com.cheetah.model.RouteResultForLocations;
 import com.cheetah.view.ILocationView;
 import com.google.inject.Inject;
@@ -17,7 +13,6 @@ public class LocationController implements ILocationController {
   private RetrievesGeoLocation retrievesGeoLocation;
   @Inject
   private RetreivesRouteResult retreivesRouteResult;
-
   @Inject
   private ILocationView locationView;
 
@@ -26,38 +21,36 @@ public class LocationController implements ILocationController {
   }
 
   public void retrievesGeoLocations(final String from, final String to) {
-    new RetrievesGeoLocationTask().execute(from, to);
-  }
+    new RetrievesGeoLocationTask(retrievesGeoLocation, retreivesRouteResult, new IRouteResultForLocationsHandler() {
 
-  private class RetrievesGeoLocationTask extends AsyncTask<String, String, RouteResultForLocations> {
-
-    @Override
-    protected RouteResultForLocations doInBackground(final String... params) {
-      try {
-        final String fromText = params[0];
-        final String toText = params[1];
-        final LocationResult fromLocation = retrievesGeoLocation.retreive(fromText)[0];
-        final LocationResult toLocation = retrievesGeoLocation.retreive(toText)[0];
-        final RouteResult[] routeResults = retreivesRouteResult.retreive(fromLocation, toLocation);
-        return new RouteResultForLocations(fromLocation, toLocation, routeResults[0]);
-      } catch (final Exception e) {
-        Log.e(e.getMessage());
-        return null;
+      public void onRoutesResultForLocations(final RouteResultForLocations routeResultForLocations) {
+        locationView.onGeoLocations(routeResultForLocations);
       }
-    }
-
-    @Override
-    protected void onPostExecute(final RouteResultForLocations routeResultForLocations) {
-      locationView.onGeoLocations(routeResultForLocations);
-    }
+    }).execute(from, to);
   }
 
-  public void onNotifyMe(final long maxDrivingTimeInMin) {
+  public void onNotifyMe(final String from, final String to, final long maxDrivingTimeInMin) {
+    new RetrievesGeoLocationTask(retrievesGeoLocation, retreivesRouteResult, new IRouteResultForLocationsHandler() {
 
+      public void onRoutesResultForLocations(final RouteResultForLocations routeResultForLocations) {
+        if (isItTimeToGo(maxDrivingTimeInMin, routeResultForLocations)) {
+          locationView.onTimeToGo();
+        } else {
+          Log.i("@@ driving is too long. will keep check");
+        }
+      }
+
+    }).execute(from, to);
   }
 
   public void setView(final LocationActivity locationActivity) {
     locationView = locationActivity;
+  }
+
+  private boolean isItTimeToGo(final long maxDrivingTimeInMin, final RouteResultForLocations routeResultForLocations) {
+    final int routeInSeconds = routeResultForLocations.getRouteResult().getSeconds();
+    Log.i("@@ comparing travel time " + routeInSeconds + " vs " + 60 * maxDrivingTimeInMin);
+    return routeInSeconds <= 60 * maxDrivingTimeInMin;
   }
 
 }

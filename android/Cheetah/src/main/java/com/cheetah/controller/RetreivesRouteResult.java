@@ -16,6 +16,8 @@ import com.cheetah.model.LocationResult;
 import com.cheetah.model.RouteResult;
 import com.google.inject.Inject;
 
+import de.akquinet.android.androlog.Log;
+
 public class RetreivesRouteResult {
 
   //	private static final String WAZE_ROUTES_BY_LOCATION = "http://www.waze.co.il/RoutingManager/routingRequest?to=x%3A%s+y%3A%s+bd%3Atrue&from=x%3A%s+y%3A%s+bd%3Atrue&returnJSON=true";
@@ -29,6 +31,7 @@ public class RetreivesRouteResult {
   }
 
   public RouteResult[] retreive(final LocationResult from, final LocationResult to) throws ClientProtocolException, IOException, JSONException {
+    Log.i("@@ checking RouteResult");
     final String url = String.format(WAZE_ROUTES_BY_LOCATION, URLEncoder.encode(String.format(PARAMS, to.getX(), to.getY()), "UTF-8"),
         URLEncoder.encode(String.format(PARAMS, from.getX(), from.getY()), "UTF-8"));
     System.out.println(url);

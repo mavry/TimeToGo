@@ -17,6 +17,8 @@ import com.cheetah.LocationNotFoundException;
 import com.cheetah.model.LocationResult;
 import com.google.inject.Inject;
 
+import de.akquinet.android.androlog.Log;
+
 public class RetrievesGeoLocation {
 
   private final static String WAZE_LOCATION_BY_ADDRESS_URL = "http://www.waze.co.il/WAS/mozi?q=%s";
@@ -28,7 +30,7 @@ public class RetrievesGeoLocation {
   }
 
   public LocationResult[] retreive(final String query) throws ClientProtocolException, IOException, JSONException, URISyntaxException {
-
+    Log.i("@@ checking for Geo Location for " + query);
     final String url = String.format(WAZE_LOCATION_BY_ADDRESS_URL, URLEncoder.encode(query, "UTF-8"));
     final HttpGet getMethod = new HttpGet(url);
     final ResponseHandler<String> responseHandler = new BasicResponseHandler();

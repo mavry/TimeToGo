@@ -2,6 +2,7 @@ package com.cheetah.activity;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
@@ -9,16 +10,15 @@ import org.json.JSONException;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Intent;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.cheetah.R;
-import com.cheetah.controller.ETAService;
 import com.cheetah.controller.ILocationController;
 import com.cheetah.model.RouteResult;
 import com.cheetah.model.RouteResultForLocations;
@@ -48,12 +48,15 @@ public class LocationActivity extends RoboActivity implements ILocationView {
   @Inject
   ILocationController locationController;
 
-  @Inject
-  AlarmManager alarmManager;
+  Handler h = new Handler();
 
-  Intent intent;
-
-  private PendingIntent pintent;
+  //
+  //  @Inject
+  //  AlarmManager alarmManager;
+  //
+  //  Intent intent;
+  //
+  //  private PendingIntent pintent;
 
   public LocationActivity() {
   }
@@ -64,32 +67,34 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     super.onCreate(savedInstanceState);
 
     locationController.setView(this);
-    intent = new Intent(this, ETAService.class);
-    pintent = PendingIntent.getService(this, 0, intent, 0);
-    Log.i("@ in LocationActivity.onCreate() intent=" + intent);// " fromText=" + fromText + " debugView=" + debugView);
+    //    intent = new Intent(this, ETAService.class);
+    //    pintent = PendingIntent.getService(this, 0, intent, 0);
+    //    Log.i("@ in LocationActivity.onCreate() intent=" + intent);
 
   }
 
-  //  @Override
-  //  public boolean onCreateOptionsMenu(final Menu menu) {
-  //    getMenuInflater().inflate(R.menu.location, menu);
-  //    return true;
-  //  }
-
   public void onNotifyMeBtnClicked(final View v) throws ClientProtocolException, IOException, JSONException, URISyntaxException {
     if (v.getId() == R.id.notifyMe) {
-      //      final long maxDrivingTimeInMin = Integer.parseInt(maxDrivingTimeView.getText().toString());
       notifyMe(0);
-
     }
   }
 
   public void notifyMe(final long maxDrivingTimeInMin) {
 
-    Log.i("@ NotifyME button was clicked  with maxDrivingTimeInMin=" + maxDrivingTimeInMin + " ThreadID = " + Thread.currentThread());
+    Log.i("@@ NotifyME button was clicked  with maxDrivingTimeInMin=" + maxDrivingTimeInMin + " ThreadID = " + Thread.currentThread());
+    //
+    //    alarmManager.cancel(pintent);
+    //    intent.putExtra("kuku", "riku");
+    //    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 10 * 1000, pintent);
+    h.postDelayed(new Runnable() {
 
-    alarmManager.cancel(pintent);
-    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 10 * 1000, pintent);
+      public void run() {
+        Log.i("@@ in thread " + Thread.currentThread());
+        locationController.onNotifyMe(fromText.getText().toString(), toText.getText().toString(),
+            Integer.parseInt(maxDrivingTimeView.getText().toString()));
+        h.postDelayed(this, TimeUnit.SECONDS.toMillis(10));
+      }
+    }, TimeUnit.SECONDS.toMillis(10));
 
   }
 
@@ -103,42 +108,17 @@ public class LocationActivity extends RoboActivity implements ILocationView {
 
   public void onGeoLocations(final RouteResultForLocations routeResultForLocations) {
     final RouteResult routeResult = routeResultForLocations.getRouteResult();
-    Log.i("@ in LocationActivity.onGeoLocations() fromText=" + fromText + " debugView=" + debugView);
+    Log.i("@@ in LocationActivity.onGeoLocations() fromText=" + fromText + " debugView=" + debugView);
 
     debugView.setText(String.format("%d min via %s", routeResult.getSeconds() / 60, routeResult.getRouteName()));
     etaView.setText(String.valueOf(routeResult.getSeconds() / 60));
   }
 
-  /*
-    private class MyTimer extends TimerTask {
+  public void onTimeToGo() {
+    debugView.setText("@@ TIME TO GO");
+    final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
+    tg.startTone(ToneGenerator.TONE_PROP_BEEP);
 
-      @Override
-      public void run() {
-        new AsyncTask<RouteResultForLocations, String, RouteResult>() {
-          @Override
-          protected RouteResult doInBackground(final RouteResultForLocations... params) {
-            RouteResult[] roteResults;
-            try {
-              roteResults = retreivesRouteResult.retreive(routeResultForLocations.getFrom(), routeResultForLocations.getTo());
-              return roteResults[0];
-            } catch (final Exception ex) {
-              Log.e(ex.getMessage());
-              return null;
-            }
-          }
+  }
 
-          @Override
-          protected void onPostExecute(final RouteResult routeResult) {
-            final String now = DATE_FROMATTER.format(new Date());
-            debugView.setText(String.format("(%s) %d min via %s", now, routeResult.getSeconds() / 60, routeResult.getRouteName()));
-            if (routeResult.getSeconds() < maxDrivingTimeInMin * 60) {
-              debugView.setText(String.format("(%s) TIME TO GO: %d min via %s", now, routeResult.getSeconds() / 60, routeResult.getRouteName()));
-            } else {
-              handler.postDelayed(null, 10000);
-            }
-          }
-        }.execute(routeResultForLocations);
-      }
-    }
-  */
 }

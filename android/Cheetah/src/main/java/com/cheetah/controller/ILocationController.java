@@ -8,6 +8,6 @@ public interface ILocationController {
 
   public void setView(LocationActivity locationActivity);
 
-  public void onNotifyMe(long maxDrivingTimeInMin);
+  void onNotifyMe(String from, String to, long maxDrivingTimeInMin);
 
 }

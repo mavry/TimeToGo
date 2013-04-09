@@ -6,4 +6,6 @@ public interface ILocationView {
 
   void onGeoLocations(RouteResultForLocations routeResultForLocations);
 
+  void onTimeToGo();
+
 }
