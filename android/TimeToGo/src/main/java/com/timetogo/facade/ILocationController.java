@@ -1,4 +1,4 @@
-package com.timetogo.controller;
+package com.timetogo.facade;
 
 import com.timetogo.activity.LocationActivity;
 

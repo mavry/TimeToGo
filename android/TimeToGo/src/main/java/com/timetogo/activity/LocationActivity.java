@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import com.google.inject.Inject;
 import com.timetogo.R;
-import com.timetogo.controller.ILocationController;
+import com.timetogo.facade.ILocationController;
 import com.timetogo.model.RouteResult;
 import com.timetogo.model.RouteResultForLocations;
 import com.timetogo.view.ILocationView;

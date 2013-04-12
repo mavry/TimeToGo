@@ -1,20 +1,22 @@
-package com.timetogo.controller;
+package com.timetogo.facade;
 
 import android.os.AsyncTask;
 
 import com.timetogo.model.LocationResult;
 import com.timetogo.model.RouteResult;
 import com.timetogo.model.RouteResultForLocations;
+import com.timetogo.waze.RetreivesWazeRouteResult;
+import com.timetogo.waze.RetrievesWazeGeoLocation;
 
 import de.akquinet.android.androlog.Log;
 
 class RetrievesGeoLocationTask extends AsyncTask<String, String, RouteResultForLocations> {
 
-  private final RetrievesGeoLocation retrievesGeoLocation;
-  private final RetreivesRouteResult retreivesRouteResult;
+  private final RetrievesWazeGeoLocation retrievesGeoLocation;
+  private final RetreivesWazeRouteResult retreivesRouteResult;
   private final IRouteResultForLocationsHandler routeResultForLocationsHandler;
 
-  public RetrievesGeoLocationTask(final RetrievesGeoLocation retrievesGeoLocation, final RetreivesRouteResult retreivesRouteResult,
+  public RetrievesGeoLocationTask(final RetrievesWazeGeoLocation retrievesGeoLocation, final RetreivesWazeRouteResult retreivesRouteResult,
       final IRouteResultForLocationsHandler routeResultForLocationsHandler) {
     super();
     this.retrievesGeoLocation = retrievesGeoLocation;

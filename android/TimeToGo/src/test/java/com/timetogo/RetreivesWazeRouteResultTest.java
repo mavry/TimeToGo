@@ -13,22 +13,22 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
-import com.timetogo.controller.RetreivesRouteResult;
 import com.timetogo.model.LocationResult;
 import com.timetogo.model.RouteResult;
+import com.timetogo.waze.RetreivesWazeRouteResult;
 
-public class RetreivesRouteResultTest {
+public class RetreivesWazeRouteResultTest {
 
   private static final String JSON = "{     'response': {         'routeName': 'Kerem Maharal',         'results': [             {                 'length': 66,                 'crossTime': 99,                 'crossTimeWithoutRealTime': 0,                              },             {                 'length': 66,                 'crossTime': 99,                 'crossTimeWithoutRealTime': 0,                              }          ],              } }";
   private HttpClient httpClient;
-  private RetreivesRouteResult subject;
+  private RetreivesWazeRouteResult subject;
 
   @SuppressWarnings("unchecked")
   @Before
   public void setup() throws ClientProtocolException, IOException {
     httpClient = Mockito.mock(HttpClient.class);
     Mockito.when(httpClient.execute(Matchers.any(HttpUriRequest.class), Matchers.any(ResponseHandler.class))).thenReturn(JSON);
-    subject = new RetreivesRouteResult(httpClient);
+    subject = new RetreivesWazeRouteResult(httpClient);
   }
 
   @Test

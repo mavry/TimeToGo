@@ -1,4 +1,4 @@
-package com.timetogo.controller;
+package com.timetogo.waze;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -17,7 +17,7 @@ import com.timetogo.model.LocationResult;
 import com.timetogo.model.RouteResult;
 
 
-public class RetreivesRouteResult {
+public class RetreivesWazeRouteResult {
 
   //	private static final String WAZE_ROUTES_BY_LOCATION = "http://www.waze.co.il/RoutingManager/routingRequest?to=x%3A%s+y%3A%s+bd%3Atrue&from=x%3A%s+y%3A%s+bd%3Atrue&returnJSON=true";
   private static final String PARAMS = "x:%s y:%s bd:true";
@@ -25,7 +25,7 @@ public class RetreivesRouteResult {
   private final HttpClient client;
 
   @Inject
-  public RetreivesRouteResult(final HttpClient client) {
+  public RetreivesWazeRouteResult(final HttpClient client) {
     this.client = client;
   }
 

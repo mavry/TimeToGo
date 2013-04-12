@@ -1,18 +1,20 @@
-package com.timetogo.controller;
+package com.timetogo.facade;
 
 import com.google.inject.Inject;
 import com.timetogo.activity.LocationActivity;
 import com.timetogo.model.RouteResultForLocations;
 import com.timetogo.view.ILocationView;
+import com.timetogo.waze.RetreivesWazeRouteResult;
+import com.timetogo.waze.RetrievesWazeGeoLocation;
 
 import de.akquinet.android.androlog.Log;
 
 public class LocationController implements ILocationController {
 
   @Inject
-  private RetrievesGeoLocation retrievesGeoLocation;
+  private RetrievesWazeGeoLocation retrievesGeoLocation;
   @Inject
-  private RetreivesRouteResult retreivesRouteResult;
+  private RetreivesWazeRouteResult retreivesRouteResult;
   @Inject
   private ILocationView locationView;
 

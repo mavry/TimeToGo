@@ -10,14 +10,14 @@ import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.timetogo.controller.RetrievesGeoLocation;
 import com.timetogo.model.LocationResult;
+import com.timetogo.waze.RetrievesWazeGeoLocation;
 
-public class RetrievesGeoLocationTest {
+public class RetrievesWazeGeoLocationTest {
   private final HttpClient httpClient = new DefaultHttpClient();
 
-  RetrievesGeoLocation subject() {
-    return new RetrievesGeoLocation(httpClient);
+  RetrievesWazeGeoLocation subject() {
+    return new RetrievesWazeGeoLocation(httpClient);
   }
 
   @Test(expected = LocationNotFoundException.class)

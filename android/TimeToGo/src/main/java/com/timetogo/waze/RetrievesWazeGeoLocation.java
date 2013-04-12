@@ -1,4 +1,4 @@
-package com.timetogo.controller;
+package com.timetogo.waze;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -15,16 +15,17 @@ import org.json.JSONObject;
 
 import com.google.inject.Inject;
 import com.timetogo.LocationNotFoundException;
+import com.timetogo.facade.IRetrievesGeoLocation;
 import com.timetogo.model.LocationResult;
 
-public class RetrievesGeoLocation {
+public class RetrievesWazeGeoLocation implements IRetrievesGeoLocation {
 
   private final static String WAZE_LOCATION_BY_ADDRESS_URL = "http://www.waze.co.il/WAS/mozi?q=%s";
   private final HttpClient client;
 
   @Inject
-  public RetrievesGeoLocation(final HttpClient client) {
-    this.client = client;
+  public RetrievesWazeGeoLocation(final HttpClient client) {
+    this.client = client; 
   }
 
   public LocationResult[] retreive(final String query) throws ClientProtocolException, IOException, JSONException, URISyntaxException {

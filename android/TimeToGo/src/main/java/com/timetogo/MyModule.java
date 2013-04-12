@@ -5,8 +5,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.google.inject.AbstractModule;
 import com.timetogo.activity.LocationActivity;
-import com.timetogo.controller.ILocationController;
-import com.timetogo.controller.LocationController;
+import com.timetogo.facade.ILocationController;
+import com.timetogo.facade.LocationController;
 import com.timetogo.view.ILocationView;
 
 public class MyModule extends AbstractModule {
