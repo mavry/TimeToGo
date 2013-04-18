@@ -3,19 +3,19 @@ package com.timetogo.model;
 public class RouteResult {
 
   private final String routeName;
-  private final int seconds;
+  private final long minutes;
 
-  public RouteResult(final String routeName, final int seconds) {
+  public RouteResult(final String routeName, final long minutes) {
     this.routeName = routeName;
-    this.seconds = seconds;
+    this.minutes = minutes;
   }
 
   public String getRouteName() {
     return routeName;
   }
 
-  public int getSeconds() {
-    return seconds;
+  public long getETAInMinutes() {
+    return minutes;
   }
 
   @Override
@@ -23,7 +23,7 @@ public class RouteResult {
     final int prime = 31;
     int result = 1;
     result = prime * result + ((routeName == null) ? 0 : routeName.hashCode());
-    result = prime * result + seconds;
+    result = (int) (prime * result + minutes);
     return result;
   }
 
@@ -46,7 +46,7 @@ public class RouteResult {
     } else if (!routeName.equals(other.routeName)) {
       return false;
     }
-    if (seconds != other.seconds) {
+    if (minutes != other.minutes) {
       return false;
     }
     return true;

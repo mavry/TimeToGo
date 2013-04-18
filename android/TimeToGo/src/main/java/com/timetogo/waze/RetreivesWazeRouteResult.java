@@ -16,7 +16,6 @@ import com.google.inject.Inject;
 import com.timetogo.model.LocationResult;
 import com.timetogo.model.RouteResult;
 
-
 public class RetreivesWazeRouteResult {
 
   //	private static final String WAZE_ROUTES_BY_LOCATION = "http://www.waze.co.il/RoutingManager/routingRequest?to=x%3A%s+y%3A%s+bd%3Atrue&from=x%3A%s+y%3A%s+bd%3Atrue&returnJSON=true";
@@ -43,18 +42,18 @@ public class RetreivesWazeRouteResult {
     final JSONObject body = new JSONObject(responseBody);
     final JSONObject response = body.getJSONObject("response");
     final String routeName = response.getString("routeName");
-    final int crossTime = calcCrossTime(response.getJSONArray("results"));
+    final long crossTime = calcCrossTimeInMinutes(response.getJSONArray("results"));
     return new RouteResult[] { new RouteResult(routeName, crossTime) };
 
   }
 
-  private int calcCrossTime(final JSONArray results) throws JSONException {
-    int crossTime = 0;
+  private long calcCrossTimeInMinutes(final JSONArray results) throws JSONException {
+    int crossTimeInSeconds = 0;
     for (int i = 0; i < results.length(); i++) {
       final JSONObject result = results.getJSONObject(i);
-      crossTime += result.getInt("crossTime");
+      crossTimeInSeconds += result.getInt("crossTime");
     }
-    return crossTime;
+    return crossTimeInSeconds / 60;
   }
 
 }
