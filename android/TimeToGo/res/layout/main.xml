@@ -72,25 +72,7 @@
         android:layout_below="@+id/go"
        />
 
-       <TextView 
-        android:id="@+id/maxDrivingTime"
-        android:layout_marginTop="15dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Max Driving Time: (min)"
-        android:textIsSelectable="true" 
-        android:layout_below="@+id/eta"        
-         />
        
-
-     <Button
-         android:id="@+id/notifyMe"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_marginTop="15dp"
-         android:onClick="onNotifyMeBtnClicked"
-         android:text="@string/notifyMe" />
-
  	
     <TextView
         android:id="@+id/debug"

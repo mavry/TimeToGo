@@ -12,7 +12,7 @@ import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.Dialog;
+import android.app.AlertDialog.Builder;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
@@ -24,11 +24,9 @@ import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.text.Editable;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,17 +53,11 @@ public class LocationActivity extends RoboActivity implements ILocationView {
   @InjectView(R.id.eta)
   TextView etaView;
 
-  @InjectView(R.id.inputMaxDrivingTime)
-  EditText maxDrivingTimeText;
-
   @InjectView(R.id.inputFrom)
   EditText fromText;
 
   @InjectView(R.id.inputTo)
   EditText toText;
-
-  @InjectView(R.id.notifyMe)
-  Button notifyMeButton;
 
   @Inject
   ILocationController locationController;
@@ -100,7 +92,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     }
   };
 
-  private Dialog x;
+  long maxDrivingTime;
 
   public LocationActivity() {
   }
@@ -134,16 +126,9 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     }, 60 * 1000);
   }
 
-  public void onNotifyMeBtnClicked(final View v) throws ClientProtocolException, IOException, JSONException, URISyntaxException {
-    if (v.getId() == R.id.notifyMe) {
-      notifyMe(Long.parseLong(maxDrivingTimeText.getText().toString()));
-    }
-  }
-
-  public void notifyMe(final long maxDrivingTimeInMin) {
-    Log.i(Contants.TIME_TO_GO,
-        "@@ NotifyME button was clicked  with maxDrivingTimeInMin=" + maxDrivingTimeInMin + " ThreadID = " + Thread.currentThread());
-    service.setParameters(fromLocation, toLocation, maxDrivingTimeInMin);
+  public void notifyMe() {
+    Log.i(Contants.TIME_TO_GO, "@@ NotifyME button was clicked  with maxDrivingTimeInMin=" + maxDrivingTime + " ThreadID = " + Thread.currentThread());
+    service.setParameters(fromLocation, toLocation, maxDrivingTime);
   }
 
   void doBindService() {
@@ -176,37 +161,24 @@ public class LocationActivity extends RoboActivity implements ILocationView {
 
     final LayoutInflater inflater = getLayoutInflater();
     final View dialoglayout = inflater.inflate(R.layout.popup, null);
-    //    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    //    builder.setView(dialoglayout);
-    //    builder.show();
 
-    //
-    //    x = new Dialog(this) {
-    //
-    //      @Override
-    //      protected void onCreate(final Bundle savedInstanceState) {
-    //        setContentView(R.layout.popup);
-    //        super.onCreate(savedInstanceState);
-    //        setTitle("Driving Time: " + initialEta + "min (via " + routeResult.getRouteName() + ")");
-    //
-    //      }
-    //
-    //    };
-    //    x.show();
+    final Builder adb = new AlertDialog.Builder(LocationActivity.this);
+    adb.setTitle(createTitle(routeResult)).setView(dialoglayout).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+      public void onClick(final DialogInterface dialog, final int whichButton) {
+        final TextView mdt = (TextView) dialoglayout.findViewById(R.id.inputMaxDrivingTime);
+        maxDrivingTime = Integer.parseInt(mdt.getText().toString());
+        Log.i(Contants.TIME_TO_GO, "@@ textView=" + mdt);
+        notifyMe();
+      }
+    }).setNegativeButton("No Thanks", new DialogInterface.OnClickListener() {
+      public void onClick(final DialogInterface dialog, final int whichButton) {
+      }
+    }).show();
 
-    final EditText view = new EditText(this);
+  }
 
-    new AlertDialog.Builder(LocationActivity.this).setTitle("Driving Time: " + initialEta + "min (via " + routeResult.getRouteName() + ")")
-    //                                                  .setMessage("Notify me when driving time goes below ").
-                                                  .setView(dialoglayout).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                                    public void onClick(final DialogInterface dialog, final int whichButton) {
-                                                      final Editable value = view.getText();
-                                                    }
-                                                  }).setNegativeButton("No Thanks", new DialogInterface.OnClickListener() {
-                                                    public void onClick(final DialogInterface dialog, final int whichButton) {
-                                                      // Do nothing.
-                                                    }
-                                                  }).show();
+  private String createTitle(final RouteResult routeResult) {
+    return "Driving Time: " + initialEta + "min (via " + routeResult.getRouteName() + ")";
   }
 
   private void updateFields(final RouteResultForLocations routeResultForLocations, final RouteResult routeResult) {
