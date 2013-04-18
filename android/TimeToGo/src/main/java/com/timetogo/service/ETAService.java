@@ -1,11 +1,6 @@
 package com.timetogo.service;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Date;
-
-import org.apache.http.client.ClientProtocolException;
-import org.json.JSONException;
 
 import roboguice.RoboGuice;
 import roboguice.event.EventManager;
@@ -65,8 +60,6 @@ public class ETAService extends RoboIntentService implements IETAService {
   private PowerManager.WakeLock wakeLock;
   private boolean waitingForTrafficToGoDown = true;
   private MediaPlayer mplayer;
-  private String from;
-  private String to;
 
   public ETAService() {
     super("hello");
@@ -84,7 +77,7 @@ public class ETAService extends RoboIntentService implements IETAService {
   }
 
   private boolean shouldIDoSomething() {
-    return (from != null) && waitingForTrafficToGoDown;
+    return (fromLocation != null) && waitingForTrafficToGoDown;
   }
 
   private void handleCommand(final Intent intent) {
@@ -171,37 +164,18 @@ public class ETAService extends RoboIntentService implements IETAService {
   protected void onHandleIntent(final Intent intent) {
     Log.i(Contants.TIME_TO_GO, "@@ onHandleIntent - thread" + Thread.currentThread().getName());
     if (shouldIDoSomething()) {
-      if (shouldFetchGeoLocation()) {
-        try {
-          fetchGeoLocation();
-        } catch (final Exception e) {
-          Log.e(Contants.TIME_TO_GO, "@@ got exception while retrieving Waze GeoLocation " + e.getMessage());
-        }
-      }
       handleCommand(intent);
     } else {
       Log.i(Contants.TIME_TO_GO, "@@ do nothing....");
     }
   }
 
-  private void fetchGeoLocation() throws ClientProtocolException, IOException, JSONException, URISyntaxException {
-    fromLocation = retrievesWazeGeoLocation.retreive(from)[0];
-    toLocation = retrievesWazeGeoLocation.retreive(to)[0];
-  }
-
-  private boolean shouldFetchGeoLocation() {
-    return fromLocation == null;
-  }
-
   //TODO: should be synchronized
-  public void setParameters(final String from, final String to, final long maxDrivingTimeInMinutes) {
-    this.from = from;
-    this.to = to;
-    fromLocation = null;
-    toLocation = null;
+  public void setParameters(final LocationResult fromLocation, final LocationResult toLocation, final long maxDrivingTimeInMinutes) {
+    this.fromLocation = fromLocation;
+    this.toLocation = toLocation;
     this.maxDrivingTimeInMinutes = maxDrivingTimeInMinutes;
     waitingForTrafficToGoDown = true;
-
   }
 
   public void pause() {

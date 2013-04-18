@@ -6,4 +6,6 @@
     <string name="to">To</string>
     <string name="go">Go</string>
     <string name="notifyMe">Notify Me</string>
+    <string name="wantNotification">Notify me when driving time goes below</string>
+    <string name="minutes"> min</string>
 </resources>

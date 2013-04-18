@@ -1,13 +1,15 @@
 package com.timetogo.waze;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,9 +35,22 @@ public class RetreivesWazeRouteResult {
         URLEncoder.encode(String.format(PARAMS, from.getX(), from.getY()), "UTF-8"));
     System.out.println(url);
     final HttpGet getMethod = new HttpGet(url);
-    final ResponseHandler<String> responseHandler = new BasicResponseHandler();
-    final String responseBody = client.execute(getMethod, responseHandler);
-    return buildRouteResults(responseBody);
+
+    final HttpResponse response = client.execute(getMethod);
+    final String content = extractResponseContent(response);
+
+    return buildRouteResults(content);
+  }
+
+  private String extractResponseContent(final HttpResponse response) throws UnsupportedEncodingException, IOException {
+    final BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+
+    String line = "";
+    final StringBuilder sb = new StringBuilder();
+    while ((line = rd.readLine()) != null) {
+      sb.append(line);
+    }
+    return sb.toString();
   }
 
   private RouteResult[] buildRouteResults(final String responseBody) throws JSONException {

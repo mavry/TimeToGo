@@ -2,7 +2,6 @@ package com.timetogo.activity;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.http.client.ClientProtocolException;
@@ -12,9 +11,12 @@ import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.media.AudioManager;
@@ -22,7 +24,11 @@ import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.text.Editable;
+import android.text.format.DateFormat;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +37,7 @@ import com.google.inject.Inject;
 import com.timetogo.Contants;
 import com.timetogo.R;
 import com.timetogo.facade.ILocationController;
+import com.timetogo.model.LocationResult;
 import com.timetogo.model.RouteResult;
 import com.timetogo.model.RouteResultForLocations;
 import com.timetogo.service.ETAService;
@@ -57,6 +64,9 @@ public class LocationActivity extends RoboActivity implements ILocationView {
   @InjectView(R.id.inputTo)
   EditText toText;
 
+  @InjectView(R.id.notifyMe)
+  Button notifyMeButton;
+
   @Inject
   ILocationController locationController;
 
@@ -66,10 +76,17 @@ public class LocationActivity extends RoboActivity implements ILocationView {
   Intent intent;
 
   private PendingIntent pintent;
+  private long eta;
+
+  private LocationResult fromLocation;
+
+  private LocationResult toLocation;
+
+  private long initialEta;
 
   Handler h = new Handler();
+  DateFormat sdf = new DateFormat();
   private IETAService service;
-  SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
   private final ServiceConnection mConnection = new ServiceConnection() {
 
     public void onServiceConnected(final ComponentName className, final IBinder binder) {
@@ -83,7 +100,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     }
   };
 
-  private long eta;
+  private Dialog x;
 
   public LocationActivity() {
   }
@@ -99,15 +116,16 @@ public class LocationActivity extends RoboActivity implements ILocationView {
 
     locationController.setView(this);
     alarmManager.cancel(pintent);
-    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 60 * 1000, pintent);
+    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000, 60 * 1000, pintent);
     doBindService();
+
     h.postDelayed(new Runnable() {
 
       public void run() {
         if (service != null) {
           final Date date = service.getLastExecutionDate();
           eta = service.getEta();
-          final String text = String.format("eta: %s @ %s", String.valueOf(eta), sdf.format(date));
+          final String text = String.format("eta: %s @ %s", String.valueOf(eta), DateFormat.format("HH:mm", date));
           Log.i(Contants.TIME_TO_GO, "@@ updateing debug with " + text);
           debugView.setText(text);
           h.postDelayed(this, 60 * 1000);
@@ -125,7 +143,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
   public void notifyMe(final long maxDrivingTimeInMin) {
     Log.i(Contants.TIME_TO_GO,
         "@@ NotifyME button was clicked  with maxDrivingTimeInMin=" + maxDrivingTimeInMin + " ThreadID = " + Thread.currentThread());
-    service.setParameters(fromText.getText().toString(), toText.getText().toString(), maxDrivingTimeInMin);
+    service.setParameters(fromLocation, toLocation, maxDrivingTimeInMin);
   }
 
   void doBindService() {
@@ -138,6 +156,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
       final String from = fromText.getText().toString();
       final String to = toText.getText().toString();
       locationController.retrievesGeoLocations(from, to);
+
     }
   }
 
@@ -153,5 +172,46 @@ public class LocationActivity extends RoboActivity implements ILocationView {
 
     debugView.setText(String.format("%d min via %s", routeResult.getETAInMinutes(), routeResult.getRouteName()));
     etaView.setText(String.valueOf(routeResult.getETAInMinutes()));
+    updateFields(routeResultForLocations, routeResult);
+
+    final LayoutInflater inflater = getLayoutInflater();
+    final View dialoglayout = inflater.inflate(R.layout.popup, null);
+    //    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    //    builder.setView(dialoglayout);
+    //    builder.show();
+
+    //
+    //    x = new Dialog(this) {
+    //
+    //      @Override
+    //      protected void onCreate(final Bundle savedInstanceState) {
+    //        setContentView(R.layout.popup);
+    //        super.onCreate(savedInstanceState);
+    //        setTitle("Driving Time: " + initialEta + "min (via " + routeResult.getRouteName() + ")");
+    //
+    //      }
+    //
+    //    };
+    //    x.show();
+
+    final EditText view = new EditText(this);
+
+    new AlertDialog.Builder(LocationActivity.this).setTitle("Driving Time: " + initialEta + "min (via " + routeResult.getRouteName() + ")")
+    //                                                  .setMessage("Notify me when driving time goes below ").
+                                                  .setView(dialoglayout).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                    public void onClick(final DialogInterface dialog, final int whichButton) {
+                                                      final Editable value = view.getText();
+                                                    }
+                                                  }).setNegativeButton("No Thanks", new DialogInterface.OnClickListener() {
+                                                    public void onClick(final DialogInterface dialog, final int whichButton) {
+                                                      // Do nothing.
+                                                    }
+                                                  }).show();
+  }
+
+  private void updateFields(final RouteResultForLocations routeResultForLocations, final RouteResult routeResult) {
+    initialEta = routeResult.getETAInMinutes();
+    fromLocation = routeResultForLocations.getFrom();
+    toLocation = routeResultForLocations.getTo();
   }
 }
