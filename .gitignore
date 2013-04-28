@@ -1,6 +1,7 @@
 android/TimeToGo/bin
 android/TimeToGo/*.log
 android/TimeToGo/target
+android/TimeToGo/gen
 android/TimeToGo-it/target
 android/TimeToGo-it/bin
 android/TimeToGo-it/gen

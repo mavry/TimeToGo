@@ -8,4 +8,5 @@
     <string name="notifyMe">Notify Me</string>
     <string name="wantNotification">Notify me when driving time goes below</string>
     <string name="minutes"> min</string>
+    <string name="cancel">Cancel</string>
 </resources>
