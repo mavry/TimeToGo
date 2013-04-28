@@ -133,13 +133,16 @@
       </div>
     </div>
     <script language="javascript">
+        var androidInterface = androidInterface || null; 
     	$(".btn").click(function() {    	
-    		androidInterface.onGo($("#fromAddress").val(), $("#toAddress").val());
-    		//$("#myModal").modal();
+    		if (androidInterface != null) {
+    			androidInterface.onGo($("#fromAddress").val(), $("#toAddress").val());
+    		} else {
+    			$("#myModal").modal();
+    		}    		
     	});
     	
         function onETA(eta, route, updatedAt) {
-        	alert(eta);
         	$(".eta").text(eta);
         	$(".route").text(route);
         	$(".updatedAt").text(updatedAt);
