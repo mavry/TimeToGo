@@ -53,14 +53,14 @@ public class LocationActivity extends RoboActivity implements ILocationView {
   @Inject
   AlarmManager alarmManager;
 
+  private PendingIntent pintent;
   Intent intent;
 
-  private PendingIntent pintent;
-  private long drivingTime;
-  private Date lastUpdated;
-  private LocationResult fromLocation;
-  private String routeName;
+  //  private long drivingTime;
+  //  private Date lastUpdated;
+  //  private String routeName;
 
+  private LocationResult fromLocation;
   private LocationResult toLocation;
 
   Handler h = new Handler();
@@ -76,7 +76,6 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     }
 
     public void onServiceDisconnected(final ComponentName className) {
-      //      service = null;
     }
   };
 
@@ -115,7 +114,6 @@ public class LocationActivity extends RoboActivity implements ILocationView {
       Log.i(Contants.TIME_TO_GO, "@@ NotifyME button was clicked  with maxDrivingTimeInMin=" + mdt);
       maxDrivingTime = mdt;
       service.setParameters(fromLocation, toLocation, maxDrivingTime);
-      updateUI();
     }
   }
 
@@ -144,8 +142,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
 
       public void run() {
         if (service != null) {
-          updateDrivingTimeFeilds(service.getDrivingTime(), service.getRouteName(), service.getLastExecutionDate());
-          updateUI();
+          updateUI(service.getDrivingTime(), service.getRouteName(), service.getLastExecutionDate());
           h.postDelayed(this, 60 * 1000);
         }
       }
@@ -153,11 +150,11 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     }, 60 * 1000);
   }
 
-  private void updateDrivingTimeFeilds(final long drivingTime, final String routeName, final Date lastExecutionDate) {
-    this.drivingTime = drivingTime;
-    this.routeName = routeName;
-    lastUpdated = lastExecutionDate;
-  }
+  //  private void updateDrivingTimeFeilds(final long drivingTime, final String routeName, final Date lastExecutionDate) {
+  //    this.drivingTime = drivingTime;
+  //    this.routeName = routeName;
+  //    lastUpdated = lastExecutionDate;
+  //  }
 
   void doBindService() {
     final boolean bind = bindService(new Intent(this, ETAService.class), mConnection, Context.BIND_AUTO_CREATE);
@@ -179,13 +176,14 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     Log.i(Contants.TIME_TO_GO, "@@ in LocationActivity.onGeoLocations() routeResult=" + routeResult);
     Log.i(Contants.TIME_TO_GO, String.format(Locale.getDefault(), "%d min via %s", routeResult.getDrivingTimeInMinutes(), routeResult.getRouteName()));
     updateRequestField(routeResultForLocations, routeResult);
-    updateDrivingTimeFeilds(routeResult.getDrivingTimeInMinutes(), routeResult.getRouteName(), new Date());
+    //    
     h.post(new Runnable() {
 
       public void run() {
         final String now = formatUpdateTime(new Date());
         ///  updateUI();
-        invokeJS("onDrivingTime", String.valueOf(routeResult.getDrivingTimeInMinutes()) + " min", routeResult.getRouteName(), now);
+        invokeJS("onDrivingTime", String.valueOf(routeResult.getDrivingTimeInMinutes()), routeResult.getRouteName(), now);
+        updateUI(routeResult.getDrivingTimeInMinutes(), routeResult.getRouteName(), new Date());
       }
 
     });
@@ -194,12 +192,16 @@ public class LocationActivity extends RoboActivity implements ILocationView {
 
   @Override
   protected void onNewIntent(final Intent intent) {
-    Log.i(Contants.TIME_TO_GO, "got intent - probably form notification");
-    final boolean timeToGo = intent.getExtras().getBoolean("timeToGo");
+    Log.i(Contants.TIME_TO_GO, "got intent " + intent + "- probably form notification");
+    if (intent.getExtras() == null) {
+      Log.i(Contants.TIME_TO_GO, "no extras");
+    } else {
+      final boolean timeToGo = intent.getExtras().getBoolean("timeToGo");
+      Log.i(Contants.TIME_TO_GO, "timeToGo = " + timeToGo);
+      invokeJS("onTimeToGo", String.valueOf(service.getDrivingTime()) + " min", service.getRouteName(),
+          formatUpdateTime(service.getLastExecutionDate()));
+    }
     super.onNewIntent(intent);
-    Log.i(Contants.TIME_TO_GO, "timeToGo = " + timeToGo);
-    invokeJS("onTimeToGo", String.valueOf(service.getDrivingTime()) + " min", service.getRouteName(),
-        formatUpdateTime(service.getLastExecutionDate()));
 
   }
 
@@ -209,7 +211,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     toLocation = routeResultForLocations.getTo();
   }
 
-  private void updateUI() {
+  private void updateUI(final long drivingTime, final String routeName, final Date lastUpdated) {
     final String text = formatUpdateTime(lastUpdated);
     invokeJS("onUpdate", String.valueOf(drivingTime), routeName, text);
   }

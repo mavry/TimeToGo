@@ -2,6 +2,7 @@ package com.timetogo.facade;
 
 import android.os.AsyncTask;
 
+import com.timetogo.Contants;
 import com.timetogo.model.LocationResult;
 import com.timetogo.model.RouteResult;
 import com.timetogo.model.RouteResultForLocations;
@@ -29,9 +30,14 @@ class RetrievesGeoLocationTask extends AsyncTask<String, String, RouteResultForL
     try {
       final String fromText = params[0];
       final String toText = params[1];
+      Log.i(Contants.TIME_TO_GO, "query waze - from");
+
       final LocationResult fromLocation = retrievesGeoLocation.retreive(fromText)[0];
+      Log.i(Contants.TIME_TO_GO, "query waze - to");
       final LocationResult toLocation = retrievesGeoLocation.retreive(toText)[0];
+      Log.i(Contants.TIME_TO_GO, "query waze - route");
       final RouteResult[] routeResults = retreivesRouteResult.retreive(fromLocation, toLocation);
+      Log.i(Contants.TIME_TO_GO, "back from waze");
       return new RouteResultForLocations(fromLocation, toLocation, routeResults[0]);
     } catch (final Exception e) {
       Log.e(e.getMessage());

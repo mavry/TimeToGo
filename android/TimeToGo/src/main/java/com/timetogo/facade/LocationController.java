@@ -23,9 +23,11 @@ public class LocationController implements ILocationController {
   }
 
   public void retrievesGeoLocations(final String from, final String to) {
+    Log.i(Contants.TIME_TO_GO, "query waze");
     new RetrievesGeoLocationTask(retrievesGeoLocation, retreivesRouteResult, new IRouteResultForLocationsHandler() {
 
       public void onRoutesResultForLocations(final RouteResultForLocations routeResultForLocations) {
+        Log.i(Contants.TIME_TO_GO, "got response from waze");
         locationView.onGeoLocations(routeResultForLocations);
       }
     }).execute(from, to);
