@@ -1,0 +1,3 @@
+[submodule "android/TimeToGo/assets"]
+	path = android/TimeToGo/assets
+	url = git://github.com/mavry/mavry.github.io.git
