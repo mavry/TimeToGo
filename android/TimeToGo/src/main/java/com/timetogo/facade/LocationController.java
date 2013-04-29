@@ -50,7 +50,7 @@ public class LocationController implements ILocationController {
   }
 
   private boolean isItTimeToGo(final long maxDrivingTimeInMin, final RouteResultForLocations routeResultForLocations) {
-    final long eta = routeResultForLocations.getRouteResult().getETAInMinutes();
+    final long eta = routeResultForLocations.getRouteResult().getDrivingTimeInMinutes();
     Log.i(Contants.TIME_TO_GO, "comparing eta " + eta + " vs " + maxDrivingTimeInMin);
     return eta <= maxDrivingTimeInMin;
   }

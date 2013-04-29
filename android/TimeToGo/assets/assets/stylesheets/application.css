@@ -20,7 +20,9 @@ body {
     text-shadow: 1px 1px 0 black;
     text-align: center;
 }
-
+#time2go {
+  display: none;	
+}
 .modal-body {
    text-align: center;
 }

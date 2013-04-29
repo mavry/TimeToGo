@@ -11,6 +11,8 @@ public interface IETAService {
 
   public void pause();
 
-  public long getEta();
+  public long getDrivingTime();
+
+  public String getRouteName();
 
 }

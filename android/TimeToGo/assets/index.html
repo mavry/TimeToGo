@@ -60,15 +60,15 @@
             </div>
             <div class="span1">
               <span class="label label-info">Total of</span>
-              <p class="eta">
+              <p class="drivingTime">
               55 min
               </p>
             </div>
           </div>
-          Too long? notify me when time goes below <input type="number"  placeholder="minutes">
+          Too long? notify me when time goes below <input id="maxDrivingTime" type="number" placeholder="minutes">
         </div>
         <div class="modal-footer">
-          <button class="btn btn-primary" data-dismiss="modal" aria-hide="true">Notify Me</button>
+          <button id="notify" class="btn btn-primary" data-dismiss="modal" aria-hide="true">Notify Me</button>
         </div>
       </div>
       <div class="row">
@@ -90,7 +90,7 @@
               <p>
               <div class="control-group">
                 <div class="controls">
-                  <button type="submit" class="btn btn-primary" data-toggle="modal" data-controls-modal="myModal">
+                  <button id="go" type="submit" class="btn btn-primary" data-toggle="modal" data-controls-modal="myModal">
                     Go
                     <i class="icon-road icon-white"> </i>
                   </button>
@@ -101,9 +101,6 @@
           </div>
           <div class="row">
             <div class="well time-to-destination">
-              <h3>
-                Time to Destination
-              </h3>
               <div class="row">
                 <div class="span1">
                   <span class="label label-info">Drive via</span>
@@ -113,7 +110,7 @@
                 </div>
                 <div class="span1">
                   <span class="label label-info">Total of</span>
-                  <p class="eta">
+                  <p class="drivingTime">
                   55 min
                   </p>
                 </div>
@@ -124,7 +121,7 @@
                   </p>
                 </div>
                 <div class="span1">
-                  <span class="label label-success">Time2Go</span>
+                  <span class="label label-success" id="time2go">Time2Go</span>
                 </div>
               </div>
             </div>
@@ -134,7 +131,13 @@
     </div>
     <script language="javascript">
         var androidInterface = androidInterface || null; 
-    	$(".btn").click(function() {    	
+        $("#notify").click(function() {    	
+    		if (androidInterface != null) {
+    			androidInterface.onNotify($("#maxDrivingTime").val());
+    		}		
+    	});
+    	
+    	$("#go").click(function() {    	
     		if (androidInterface != null) {
     			androidInterface.onGo($("#fromAddress").val(), $("#toAddress").val());
     		} else {
@@ -142,13 +145,25 @@
     		}    		
     	});
     	
-        function onETA(eta, route, updatedAt) {
-        	$(".eta").text(eta);
+        function onDrivingTime(drivingTime, route, updatedAt) {
+        	$(".drivingTime").text(drivingTime);
         	$(".route").text(route);
         	$(".updatedAt").text(updatedAt);
-        	$(".time-to-destination").show();
         	$("#myModal").modal();
         }
+        
+        function onUpdate(drivingTime, route, updatedAt) {
+            $(".time-to-destination").show();
+        	$(".drivingTime").text(drivingTime);
+        	$(".route").text(route);
+        	$(".updatedAt").text(updatedAt);
+        }
+        
+         function onTimeToGo(drivingTime, route, updatedAt) {
+        	onUpdate(drivingTime, route, updatedAt);
+        	$("#time2go").show();
+        }
+
     </script>
   </body>
 </html>

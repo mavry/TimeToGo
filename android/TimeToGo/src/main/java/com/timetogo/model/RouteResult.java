@@ -14,7 +14,7 @@ public class RouteResult {
     return routeName;
   }
 
-  public long getETAInMinutes() {
+  public long getDrivingTimeInMinutes() {
     return minutes;
   }
 

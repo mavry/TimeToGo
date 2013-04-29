@@ -26,6 +26,7 @@
         <uses-library android:name="android.test.runner" />
         <activity
             android:name="com.timetogo.activity.LocationActivity"
+            android:windowSoftInputMode="adjustPan"
             android:label="@string/app_name" android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

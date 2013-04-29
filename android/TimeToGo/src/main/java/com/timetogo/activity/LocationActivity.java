@@ -3,22 +3,18 @@ package com.timetogo.activity;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Locale;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.media.AudioManager;
@@ -27,13 +23,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.text.format.DateFormat;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.inject.Inject;
@@ -52,18 +44,6 @@ import de.akquinet.android.androlog.Log;
 //@ContentView(R.layout.main)
 public class LocationActivity extends RoboActivity implements ILocationView {
 
-  //  @InjectView(R.id.debug)
-  TextView debugView;
-
-  //  @InjectView(R.id.eta)
-  TextView etaView;
-
-  //  @InjectView(R.id.inputFrom)
-  EditText fromText;
-
-  //  @InjectView(R.id.inputTo)
-  EditText toText;
-
   @InjectView(R.id.webview)
   WebView mywebview;
 
@@ -76,21 +56,16 @@ public class LocationActivity extends RoboActivity implements ILocationView {
   Intent intent;
 
   private PendingIntent pintent;
-  private long eta;
-
+  private long drivingTime;
+  private Date lastUpdated;
   private LocationResult fromLocation;
+  private String routeName;
 
   private LocationResult toLocation;
-
-  private long initialEta;
 
   Handler h = new Handler();
   DateFormat sdf = new DateFormat();
   private IETAService service;
-
-  private final AtomicInteger evalJsIndex = new AtomicInteger(0);
-  private final Map<Integer, String> jsReturnValues = new HashMap<Integer, String>();
-  private final Object jsReturnValueLock = new Object();
 
   private final ServiceConnection mConnection = new ServiceConnection() {
 
@@ -107,6 +82,9 @@ public class LocationActivity extends RoboActivity implements ILocationView {
 
   long maxDrivingTime;
 
+  @SuppressWarnings("unused")
+  private long initialDrivingTime;
+
   public LocationActivity() {
   }
 
@@ -119,21 +97,29 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     }
   }
 
-  private static class MyJavascriptInterface {
+  private class MyJavascriptInterface {
     private final LocationActivity activity;
 
     public MyJavascriptInterface(final LocationActivity activity) {
       this.activity = activity;
     }
 
-    // this annotation is required in Jelly Bean and later:
-    //    @JavascriptInterface
+    @SuppressWarnings("unused")
     public void onGo(final String fromAddress, final String toAddress) throws ClientProtocolException, IOException, JSONException, URISyntaxException {
       Log.i(Contants.TIME_TO_GO, "onGO [" + fromAddress + "][" + toAddress + "]");
       activity.onGoBtnClicked(fromAddress, toAddress);
     }
+
+    @SuppressWarnings("unused")
+    public void onNotify(final long mdt) {
+      Log.i(Contants.TIME_TO_GO, "@@ NotifyME button was clicked  with maxDrivingTimeInMin=" + mdt);
+      maxDrivingTime = mdt;
+      service.setParameters(fromLocation, toLocation, maxDrivingTime);
+      updateUI();
+    }
   }
 
+  @SuppressLint("SetJavaScriptEnabled")
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
     Log.i(Contants.TIME_TO_GO, "@@ onCreate mywebview=" + mywebview);
@@ -150,27 +136,27 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     pintent = PendingIntent.getService(this, 0, intent, 0);
 
     locationController.setView(this);
-    //    alarmManager.cancel(pintent);
-    //    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000, 60 * 1000, pintent);
-    //    doBindService();
+    alarmManager.cancel(pintent);
+    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000, 60 * 1000, pintent);
+    doBindService();
 
-    //    h.postDelayed(new Runnable() {
-    //
-    //      public void run() {
-    //        if (service != null) {
-    //          final Date date = service.getLastExecutionDate();
-    //          eta = service.getEta();
-    //          final String text = String.format("eta: %s @ %s", String.valueOf(eta), DateFormat.format("hh", date));
-    //          Log.i(Contants.TIME_TO_GO, "@@ updateing debug with " + text);
-    //          h.postDelayed(this, 60 * 1000);
-    //        }
-    //      }
-    //    }, 60 * 1000);
+    h.postDelayed(new Runnable() {
+
+      public void run() {
+        if (service != null) {
+          updateDrivingTimeFeilds(service.getDrivingTime(), service.getRouteName(), service.getLastExecutionDate());
+          updateUI();
+          h.postDelayed(this, 60 * 1000);
+        }
+      }
+
+    }, 60 * 1000);
   }
 
-  public void notifyMe() {
-    Log.i(Contants.TIME_TO_GO, "@@ NotifyME button was clicked  with maxDrivingTimeInMin=" + maxDrivingTime + " ThreadID = " + Thread.currentThread());
-    service.setParameters(fromLocation, toLocation, maxDrivingTime);
+  private void updateDrivingTimeFeilds(final long drivingTime, final String routeName, final Date lastExecutionDate) {
+    this.drivingTime = drivingTime;
+    this.routeName = routeName;
+    lastUpdated = lastExecutionDate;
   }
 
   void doBindService() {
@@ -184,56 +170,80 @@ public class LocationActivity extends RoboActivity implements ILocationView {
   }
 
   public void onTimeToGo() {
-    debugView.setText("@@ TIME TO GO");
     final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
     tg.startTone(ToneGenerator.TONE_PROP_BEEP);
   }
 
   public void onGeoLocations(final RouteResultForLocations routeResultForLocations) {
     final RouteResult routeResult = routeResultForLocations.getRouteResult();
-    Log.i("@@ in LocationActivity.onGeoLocations() routeResult=" + routeResult + " fromText=" + fromText + " debugView=" + debugView);
-
-    Log.i(Contants.TIME_TO_GO, String.format("%d min via %s", routeResult.getETAInMinutes(), routeResult.getRouteName()));
+    Log.i(Contants.TIME_TO_GO, "@@ in LocationActivity.onGeoLocations() routeResult=" + routeResult);
+    Log.i(Contants.TIME_TO_GO, String.format(Locale.getDefault(), "%d min via %s", routeResult.getDrivingTimeInMinutes(), routeResult.getRouteName()));
+    updateRequestField(routeResultForLocations, routeResult);
+    updateDrivingTimeFeilds(routeResult.getDrivingTimeInMinutes(), routeResult.getRouteName(), new Date());
     h.post(new Runnable() {
 
       public void run() {
-        final String now = DateFormat.format("kk:mm", new Date()).toString();
-        //mywebview.loadUrl("javascript:onETA(" + routeResult.getETAInMinutes() + "," + routeResult.getRouteName() + "," + 12 + ");");
-        mywebview.loadUrl("javascript:onETA(" + routeResult.getETAInMinutes() + ",'" + routeResult.getRouteName() + "','" + now + "');");
+        final String now = formatUpdateTime(new Date());
+        ///  updateUI();
+        invokeJS("onDrivingTime", String.valueOf(routeResult.getDrivingTimeInMinutes()) + " min", routeResult.getRouteName(), now);
       }
+
     });
-    if (1 < 2) {
-      return;
-    }
-
-    etaView.setText(String.valueOf(routeResult.getETAInMinutes()));
-    updateFields(routeResultForLocations, routeResult);
-
-    final LayoutInflater inflater = getLayoutInflater();
-    final View dialoglayout = inflater.inflate(R.layout.popup, null);
-
-    final Builder adb = new AlertDialog.Builder(LocationActivity.this);
-    adb.setTitle(createTitle(routeResult)).setView(dialoglayout).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-      public void onClick(final DialogInterface dialog, final int whichButton) {
-        final TextView mdt = (TextView) dialoglayout.findViewById(R.id.inputMaxDrivingTime);
-        maxDrivingTime = Integer.parseInt(mdt.getText().toString());
-        Log.i(Contants.TIME_TO_GO, "@@ textView=" + mdt);
-        notifyMe();
-      }
-    }).setNegativeButton("No Thanks", new DialogInterface.OnClickListener() {
-      public void onClick(final DialogInterface dialog, final int whichButton) {
-      }
-    }).show();
 
   }
 
-  private String createTitle(final RouteResult routeResult) {
-    return "Driving Time: " + initialEta + "min (via " + routeResult.getRouteName() + ")";
+  @Override
+  protected void onNewIntent(final Intent intent) {
+    Log.i(Contants.TIME_TO_GO, "got intent - probably form notification");
+    final boolean timeToGo = intent.getExtras().getBoolean("timeToGo");
+    super.onNewIntent(intent);
+    Log.i(Contants.TIME_TO_GO, "timeToGo = " + timeToGo);
+    invokeJS("onTimeToGo", String.valueOf(service.getDrivingTime()) + " min", service.getRouteName(),
+        formatUpdateTime(service.getLastExecutionDate()));
+
   }
 
-  private void updateFields(final RouteResultForLocations routeResultForLocations, final RouteResult routeResult) {
-    initialEta = routeResult.getETAInMinutes();
+  private void updateRequestField(final RouteResultForLocations routeResultForLocations, final RouteResult routeResult) {
+    initialDrivingTime = routeResult.getDrivingTimeInMinutes();
     fromLocation = routeResultForLocations.getFrom();
     toLocation = routeResultForLocations.getTo();
   }
+
+  private void updateUI() {
+    final String text = formatUpdateTime(lastUpdated);
+    invokeJS("onUpdate", String.valueOf(drivingTime), routeName, text);
+  }
+
+  private void invokeJS(final String methodName, final String... args) {
+    final StringBuilder sb = new StringBuilder("javascript:");
+    sb.append(methodName + "(");
+    boolean firstTime = true;
+    for (final String arg : args) {
+      if (!firstTime) {
+        sb.append(",");
+      }
+      sb.append("'");
+      sb.append(arg);
+      sb.append("'");
+      firstTime = false;
+    }
+    sb.append(");");
+    mywebview.loadUrl(sb.toString());
+  }
+
+  private String formatUpdateTime(final Date d) {
+    final Date now = new Date();
+    final int minDiff = now.getMinutes() - d.getMinutes();
+    if (minDiff <= 0) {
+      return "now";
+    }
+    if (minDiff <= 1) {
+      return "1 min ago";
+    }
+    if (minDiff <= 10) {
+      return minDiff + " minuts ago";
+    }
+    return DateFormat.format("kk:mm", d).toString();
+  }
+
 }

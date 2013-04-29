@@ -34,7 +34,8 @@ public class ETAService extends RoboIntentService implements IETAService {
   private static final int NOTIFICATION_ID = 0;
   LocationResult fromLocation;
   LocationResult toLocation;
-  long eta;
+  long drivingTime;
+  String routeName;
 
   public class MyBinder extends Binder {
     public ETAService getService() {
@@ -86,9 +87,10 @@ public class ETAService extends RoboIntentService implements IETAService {
       final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
 
       final RouteResult[] routeResultForLocations = retreivesRouteResult.retreive(fromLocation, toLocation);
-      eta = routeResultForLocations[0].getETAInMinutes();
-      if (isItTimeToGo(eta)) {
-        notify(eta);
+      routeName = routeResultForLocations[0].getRouteName();
+      drivingTime = routeResultForLocations[0].getDrivingTimeInMinutes();
+      if (isItTimeToGo(drivingTime)) {
+        notify(drivingTime);
         waitingForTrafficToGoDown = false;
       }
       tg.startTone(ToneGenerator.TONE_PROP_BEEP);
@@ -105,6 +107,7 @@ public class ETAService extends RoboIntentService implements IETAService {
   @SuppressWarnings("deprecation")
   private void notify(final long eta) {
     final Intent intent = new Intent(this, LocationActivity.class);
+    intent.putExtra("timeToGo", true);
     final PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     @SuppressWarnings("deprecation")
     final Notification notification = new Notification(R.drawable.ic_launcher, "Time To Go", System.currentTimeMillis());
@@ -179,11 +182,14 @@ public class ETAService extends RoboIntentService implements IETAService {
   }
 
   public void pause() {
-    //TODO: impl pause
   }
 
-  public long getEta() {
-    return eta;
+  public long getDrivingTime() {
+    return drivingTime;
+  }
+
+  public String getRouteName() {
+    return routeName;
   }
 
 }
