@@ -89,6 +89,7 @@ public class ETAService extends RoboIntentService implements IETAService {
       final RouteResult[] routeResultForLocations = retreivesRouteResult.retreive(fromLocation, toLocation);
       routeName = routeResultForLocations[0].getRouteName();
       drivingTime = routeResultForLocations[0].getDrivingTimeInMinutes();
+      Log.i(Contants.TIME_TO_GO, "service got info from waze " + drivingTime + " min via " + routeName);
       if (isItTimeToGo(drivingTime)) {
         notify(drivingTime);
         waitingForTrafficToGoDown = false;

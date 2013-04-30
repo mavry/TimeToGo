@@ -143,7 +143,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
       public void run() {
         if (service != null) {
           updateUI(service.getDrivingTime(), service.getRouteName(), service.getLastExecutionDate());
-          h.postDelayed(this, 60 * 1000);
+          h.postDelayed(this, 20 * 1000);
         }
       }
 
