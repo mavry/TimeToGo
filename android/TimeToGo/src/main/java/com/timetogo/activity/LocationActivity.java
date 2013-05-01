@@ -180,9 +180,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     h.post(new Runnable() {
 
       public void run() {
-        final String now = formatUpdateTime(new Date());
-        ///  updateUI();
-        invokeJS("onDrivingTime", String.valueOf(routeResult.getDrivingTimeInMinutes()), routeResult.getRouteName(), now);
+        invokeJS("onDrivingTime", String.valueOf(routeResult.getDrivingTimeInMinutes()));
         updateUI(routeResult.getDrivingTimeInMinutes(), routeResult.getRouteName(), new Date());
       }
 
