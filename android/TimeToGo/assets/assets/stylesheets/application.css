@@ -13,7 +13,6 @@ body {
 .well.time-to-destination {
   background-color: rgba(0, 0, 0, 0.5);
   border: 1px solid #333;
-  display: none;
 }
 .time-to-destination h3, .time-to-destination div {
     color: #ddd;
@@ -24,13 +23,11 @@ body {
   display: none;	
 }
 
-.modal-body {
-   text-align: center;
-}
 #maxDrivingTime{
-    width: 80px;
+  width: 40px;
+  margin: 0;
 }
 
-.spinner {
-	margin-top: -8px;
+#notify{
+  margin-top: 1em;
 }

@@ -10,6 +10,7 @@
     <link href="bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" >
     <link href="assets/stylesheets/application.css" rel="stylesheet" media="screen">
     <script src="assets/js/jquery-1.9.1.min.js"></script>
+    <script src="assets/js/android_interface.js"></script>
     <script src="bootstrap/js/bootstrap.js"></script>
   </head>
   <body>
@@ -45,45 +46,6 @@
     <div class="container content">
 
       <!-- Modal -->
-      <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-          <h3 id="myModalLabel">Time to Destination</h3>
-        </div>
-        <div class="modal-body">
-          <div class="row">
-            <div class="span1">
-              <span class="label label-info">Drive via</span>
-              <p class="route">
-              2 South
-              </p>
-            </div>
-            <div class="span1">
-              <span class="label label-info">Total of</span>
-              <p class="drivingTime">
-              55 min
-              </p>
-            </div>
-          </div>
-          <div class="row">
-            <h5 class="span1">
-              Too long?
-            </h5>
-            <div class="span5">
-              Notify me when time goes below 
-              <button id="plus" class="spinner btn btn-inverse btn-small"><i class="icon-white icon-plus"></i></button>
-              <input id="maxDrivingTime" type="number" class="span1"> minutes
-              <button id="minus" class="spinner btn btn-inverse btn-small"><i class="icon-white icon-minus"></i></button>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button id="notify" class="btn btn-primary" data-dismiss="modal" aria-hide="true">
-          	Notify
-          	<i class="icon-bell icon-white"> </i>
-          </button>
-        </div>
-      </div>
       <div class="row">
         <div class="span6 offset3">
           <div class="row">
@@ -103,38 +65,61 @@
               <p>
               <div class="control-group">
                 <div class="controls">
-                  <button id="go" type="submit" class="btn btn-primary" data-toggle="modal" data-controls-modal="myModal">
+                  <a id="go" type="submit" class="btn btn-primary" data-toggle="collapse" data-target="#myCollapse">
                     Go
                     <i class="icon-road icon-white"> </i>
-                  </button>
+                  </a>
                 </div>
               </div>
             </p>
             </form>
           </div>
-          <div class="row">
+          <div id="myCollapse" class="accordion-body collapse" style="height: 0px;">
             <div class="well time-to-destination">
               <div class="row">
-                <div class="span1">
-                  <span class="label label-info">Drive via</span>
-                  <p class="route">
-                  2 South
-                  </p>
-                </div>
-                <div class="span1">
-                  <span class="label label-info">Total of</span>
-                  <p class="drivingTime">
-                  55 min
-                  </p>
-                </div>
-                <div class="span1">
-                  <span class="label label-info">Last updated</span>
-                  <p class="updatedAt">
-                  10:34
-                  </p>
-                </div>
-                <div class="span1">
-                  <span class="label label-success" id="time2go">Time2Go</span>
+                <div class="span6">
+                  <h3 id="myModalLabel">Time to Destination</h3>
+                  <div class="row">
+                      <div class="span1 offset2">
+                        <span class="label label-info">Drive via</span>
+                        <p class="route">
+                        2 South
+                        </p>
+                      </div>
+                      <div class="span1">
+                        <span class="label label-info">Total of</span>
+                        <p class="drivingTime">
+                        55 min
+                        </p>
+                      </div>
+                  </div>
+                  <hr/>
+                  <h5>
+                    Too long?
+                  </h5>
+                  <div class="row">
+                    <div class="span6">
+                      Notify me when time goes below 
+                      <button id="plus" class="spinner btn btn-inverse btn-small">
+                        <i class="icon-white icon-plus">
+                        </i>
+                      </button>
+                      <input id="maxDrivingTime" type="number" class="span1">
+                      <button id="minus" class="spinner btn btn-inverse btn-small">
+                        <i class="icon-white icon-minus">
+                        </i>
+                      </button>
+                      minutes
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="span6">
+                      <button id="notify" class="btn btn-primary" data-toggle="collapse" data-target="#myCollapse">
+                        Notify
+                        <i class="icon-bell icon-white"> </i>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -142,47 +127,5 @@
         </div>
       </div>
     </div>
-    <script language="javascript">
-        var androidInterface = androidInterface || null; 
-        $("#notify").click(function() {    	
-    		if (androidInterface != null) {
-    			androidInterface.onNotify(parseInt($("#maxDrivingTime").val()));
-    		}		
-    	});
-    	
-    	$("#go").click(function() {    	
-    		if (androidInterface != null) {
-    			androidInterface.onGo($("#fromAddress").val(), $("#toAddress").val());
-    		} else {
-    			$("#myModal").modal();
-    		}    		
-    	});
-    	
-    	$("#minus").click(function() {
-    		$("#maxDrivingTime").val(parseInt($("#maxDrivingTime").val())-1);
-    	});
-    	
-    	$("#plus").click(function() {
-    		$("#maxDrivingTime").val(parseInt($("#maxDrivingTime").val())+1);
-    	});
-
-        function onDrivingTime(drivingTime, route, updatedAt) {
-        	$("#maxDrivingTime").val(drivingTime);
-        	$("#myModal").modal();
-        }
-        
-        function onUpdate(drivingTime, route, updatedAt) {
-            $(".time-to-destination").show();
-            $(".drivingTime").text(drivingTime);
-            $(".route").text(route);
-            $(".updatedAt").text(updatedAt);
-        }
-        
-         function onTimeToGo(drivingTime, route, updatedAt) {
-            onUpdate(drivingTime, route, updatedAt);
-            $("#time2go").show();
-        }
-
-    </script>
   </body>
 </html>
