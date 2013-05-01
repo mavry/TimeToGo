@@ -10,6 +10,10 @@ body {
   padding-top: 20px;
 }
 
+.well {
+  margin: 2px;
+  padding: 10px;
+}
 .well.time-to-destination {
   background-color: rgba(0, 0, 0, 0.5);
   border: 1px solid #333;
@@ -18,9 +22,6 @@ body {
     color: #ddd;
     text-shadow: 1px 1px 0 black;
     text-align: center;
-}
-#time2go {
-  display: none;	
 }
 
 #maxDrivingTime{

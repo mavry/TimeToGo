@@ -1,11 +1,12 @@
 var mockedAndroiadInterface = {
-  onGo: function(fromAddress, toAddress) {
+  onGo: function (fromAddress, toAddress) {
     onDrivingTime(50);
-    onUpdate(50, "6 דרום", "1 min gao");
+    onUpdate("50 min", "6 דרום", "1 min gao");
   },
-  onNotify :function(maxDrivingTime) {
+  onNotify: function (maxDrivingTime) {
   //here the android will invoke onUpdate(...) each min and at the ned it will invoke onTimeToGo()
-    setTimeout(function(){ onTimeToGo(40,"6 דרום", "now");},3000);
+    setTimeout(function () { onUpdate("45 min", "6 דרום", "now"); }, 3000);
+    setTimeout(function () { onTimeToGo("40 min", "6 דרום", "now"); }, 6000);
   }
 };
 
@@ -16,12 +17,14 @@ var drivingTimeVal = function () {
 };
 
 TouchClick("#notify", function () {
-  $("#myCollapse").collapse('hide');
+  $("#notificationArea").hide();
+  $('#myCollapse .progress').show();
   androidInterface.onNotify(drivingTimeVal());
 });
 
 TouchClick("#go", function () {
   androidInterface.onGo($("#fromAddress").val(), $("#toAddress").val());
+  $('#go').addClass('disabled');
 });
 
 TouchClick("#minus", function () {
@@ -35,19 +38,30 @@ TouchClick("#plus", function () {
 function onDrivingTime(drivingTime) {
   $("#maxDrivingTime").val(drivingTime);
   $("#myCollapse").collapse('show');
+  $("#notificationArea").show();
+  $("#time2go").hide();
 }
 
 function onUpdate(drivingTime, route, updatedAt) {
-  $(".time-to-destination").show();
   $(".drivingTime").text(drivingTime);
+  $(".drivingTime").css("-webkit-transition", "all 0.6s ease")
+    .css("backgroundColor", "transparent")
+    .css("-moz-transition", "all 0.6s ease")
+    .css("-o-transition", "all 0.6s ease")
+    .css("-ms-transition", "all 0.6s ease")
+    .css("backgroundColor", "white").delay(200).queue(function () {
+        $(this).css("backgroundColor", "transparent");
+        $(this).dequeue(); //Prevents box from holding color with no fadeOut on second click.
+      });
   $(".route").text(route);
   $(".updatedAt").text(updatedAt);
 }
 
 function onTimeToGo(drivingTime, route, updatedAt) {
+  $('#myCollapse .progress').hide();
   onUpdate(drivingTime, route, updatedAt);
-  $("#myCollapse").collapse('show');
   $("#time2go").show();
+  $('#go').removeClass('disabled');
 }
 
 function TouchClick(sel, fnc) {

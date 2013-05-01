@@ -46,46 +46,46 @@
           <div id="myCollapse" class="accordion-body collapse" style="height: 0px;">
             <div class="well time-to-destination">
               <div class="row">
+                <div class="span1 offset1">
+                  <span class="label label-info">Drive via</span>
+                  <p class="route">
+                  </p>
+                </div>
+                <div class="span1">
+                  <span class="label label-info">Total of</span>
+                  <p class="drivingTime">
+                  </p>
+                </div>
+                <div class="span1 hide" id="time2go">
+                  <span class="label label-success">Time2Go</span>
+                </div>
+                <div class="span1 progress progress-striped active hide">
+                  <div class="bar" style="width: 100%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="well time-to-destination" id="notificationArea">
+              <div class="row">
                 <div class="span6">
-                  <div class="row">
-                    <div class="span1 offset2">
-                      <span class="label label-info">Drive via</span>
-                      <p class="route">
-                      </p>
-                    </div>
-                    <div class="span1">
-                      <span class="label label-info">Total of</span>
-                      <p class="drivingTime">
-                      </p>
-                    </div>
-                  </div>
-                  <hr/>
-                  <h5>
-                    Too long?
-                  </h5>
-                  <div class="row">
-                    <div class="span6">
-                      Notify me when time goes below <br/>
-                      <button id="plus" class="spinner btn btn-inverse btn-small">
-                        <i class="icon-white icon-plus">
-                        </i>
-                      </button>
-                      <input id="maxDrivingTime" type="number">
-                      <button id="minus" class="spinner btn btn-inverse btn-small">
-                        <i class="icon-white icon-minus">
-                        </i>
-                      </button>
-                      minutes
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="span6">
-                      <button id="notify" class="btn btn-primary" data-toggle="collapse" data-target="#myCollapse">
-                        Notify
-                        <i class="icon-bell icon-white"> </i>
-                      </button>
-                    </div>
-                  </div>
+                  Too long? notify me when time goes below <br/>
+                  <button id="plus" class="spinner btn btn-inverse btn-small">
+                    <i class="icon-white icon-plus">
+                    </i>
+                  </button>
+                  <input id="maxDrivingTime" type="number">
+                  <button id="minus" class="spinner btn btn-inverse btn-small">
+                    <i class="icon-white icon-minus">
+                    </i>
+                  </button>
+                  minutes
+                </div>
+              </div>
+              <div class="row">
+                <div class="span6">
+                  <button id="notify" class="btn btn-primary" data-toggle="collapse" data-target="#myCollapse">
+                    Notify
+                    <i class="icon-bell icon-white"> </i>
+                  </button>
                 </div>
               </div>
             </div>
