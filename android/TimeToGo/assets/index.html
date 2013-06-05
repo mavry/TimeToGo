@@ -21,14 +21,15 @@
               <div class="control-group">
                 <label class="control-label">From:</label>
                 <div class="controls">
-                  <input id="fromAddress" type="text" placeholder="Your Location" value="כרם מהרל"></input>
+                  <input id="fromAddress" type="text" placeholder="Your Location" value="---">
+                    <img id="gps" src="assets/images/gps.png" width="32" height="32">
                 </div>
               </div>
               <div class="control-group">
                 <label class="control-label">To:</label>
                 <div class="controls">
                   <input type="text" id='toAddress' placeholder="Destination"  value="אריה רגב 6, נתניה"  style="margin: 0 auto;"
-                  data-provide="typeahead" data-items="4"  data-source='["Alabama","Alaska","Arizona"]'></input>
+                  data-provide="typeahead" data-items="4"  data-source='["Alabama","Alaska","Arizona"]'>
                 </div>
               </div>
               <p>
@@ -44,7 +45,7 @@
             </form>
           </div>
           <div id="myCollapse" class="accordion-body collapse" style="height: 0px;">
-            <div class="well time-to-destination">
+            <div class="well time-to-destination" id="infoArea">
               <div class="row">
                 <div class="span1 offset1">
                   <span class="label label-info">Drive via</span>

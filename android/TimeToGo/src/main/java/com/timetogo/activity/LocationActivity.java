@@ -3,6 +3,7 @@ package com.timetogo.activity;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.http.client.ClientProtocolException;
@@ -17,6 +18,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
@@ -42,208 +47,332 @@ import com.timetogo.view.ILocationView;
 import de.akquinet.android.androlog.Log;
 
 //@ContentView(R.layout.main)
-public class LocationActivity extends RoboActivity implements ILocationView {
+public class LocationActivity extends RoboActivity implements ILocationView, LocationListener {
 
-  @InjectView(R.id.webview)
-  WebView mywebview;
+	@InjectView(R.id.webview)
+	WebView mywebview;
 
-  @Inject
-  ILocationController locationController;
+	@Inject
+	ILocationController locationController;
 
-  @Inject
-  AlarmManager alarmManager;
+	@Inject
+	AlarmManager alarmManager;
 
-  private PendingIntent pintent;
-  Intent intent;
+	LocationManager locationManager;
 
-  //  private long drivingTime;
-  //  private Date lastUpdated;
-  //  private String routeName;
+	private PendingIntent pintent;
+	Intent intent;
 
-  private LocationResult fromLocation;
-  private LocationResult toLocation;
+	// private long drivingTime;
+	// private Date lastUpdated;
+	// private String routeName;
 
-  Handler h = new Handler();
-  DateFormat sdf = new DateFormat();
-  private IETAService service;
+	private LocationResult fromLocation;
+	private LocationResult toLocation;
 
-  private final ServiceConnection mConnection = new ServiceConnection() {
+	Handler h = new Handler();
+	DateFormat sdf = new DateFormat();
+	private IETAService service;
 
-    public void onServiceConnected(final ComponentName className, final IBinder binder) {
-      service = ((ETAService.MyBinder) binder).getService();
-      Toast.makeText(LocationActivity.this, "Connected", Toast.LENGTH_SHORT).show();
-      Log.i(Contants.TIME_TO_GO, "@@ got reference to service");
-    }
+	private final ServiceConnection mConnection = new ServiceConnection() {
 
-    public void onServiceDisconnected(final ComponentName className) {
-    }
-  };
+		public void onServiceConnected(final ComponentName className,
+				final IBinder binder) {
+			service = ((ETAService.MyBinder) binder).getService();
+			Toast.makeText(LocationActivity.this, "Connected",
+					Toast.LENGTH_SHORT).show();
+			Log.i(Contants.TIME_TO_GO, "@@ got reference to service");
+		}
 
-  long maxDrivingTime;
+		public void onServiceDisconnected(final ComponentName className) {
+		}
+	};
 
-  @SuppressWarnings("unused")
-  private long initialDrivingTime;
+	long maxDrivingTime;
 
-  public LocationActivity() {
-  }
+	@SuppressWarnings("unused")
+	private long initialDrivingTime;
 
-  final class MyWebChromeClient extends WebChromeClient {
-    @Override
-    public boolean onJsAlert(final WebView view, final String url, final String message, final JsResult result) {
-      Log.i(Contants.TIME_TO_GO, message);
-      result.confirm();
-      return true;
-    }
-  }
+	private String provider;
 
-  private class MyJavascriptInterface {
-    private final LocationActivity activity;
+	public LocationActivity() {
+	}
 
-    public MyJavascriptInterface(final LocationActivity activity) {
-      this.activity = activity;
-    }
+	final class MyWebChromeClient extends WebChromeClient {
+		@Override
+		public boolean onJsAlert(final WebView view, final String url,
+				final String message, final JsResult result) {
+			Log.i(Contants.TIME_TO_GO, "alert: "+message);
+			result.confirm();
+			return true;
+		}
+	}
 
-    @SuppressWarnings("unused")
-    public void onGo(final String fromAddress, final String toAddress) throws ClientProtocolException, IOException, JSONException, URISyntaxException {
-      Log.i(Contants.TIME_TO_GO, "onGO [" + fromAddress + "][" + toAddress + "]");
-      activity.onGoBtnClicked(fromAddress, toAddress);
-    }
+	private class MyJavascriptInterface {
+		private final LocationActivity activity;
 
-    @SuppressWarnings("unused")
-    public void onNotify(final long mdt) {
-      Log.i(Contants.TIME_TO_GO, "@@ NotifyME button was clicked  with maxDrivingTimeInMin=" + mdt);
-      maxDrivingTime = mdt;
-      service.setParameters(fromLocation, toLocation, maxDrivingTime);
-    }
-  }
+		public MyJavascriptInterface(final LocationActivity activity) {
+			this.activity = activity;
+		}
 
-  @SuppressLint("SetJavaScriptEnabled")
-  @Override
-  protected void onCreate(final Bundle savedInstanceState) {
-    Log.i(Contants.TIME_TO_GO, "@@ onCreate mywebview=" + mywebview);
-    super.onCreate(savedInstanceState);
+		@SuppressWarnings("unused")
+		public void onGo(final String fromAddress, final String toAddress)
+				throws ClientProtocolException, IOException, JSONException,
+				URISyntaxException {
+			Log.i(Contants.TIME_TO_GO, "onGO [" + fromAddress + "]["
+					+ toAddress + "]");
+			activity.onGoBtnClicked(fromAddress, toAddress);
+		}
 
-    setContentView(R.layout.main);
-    //mywebview.loadUrl("http://mavry.github.io/");
-    mywebview.loadUrl("file:///android_asset/index.html");
-    mywebview.getSettings().setJavaScriptEnabled(true);
-    mywebview.addJavascriptInterface(new MyJavascriptInterface(this), "androidInterface");
-    mywebview.setWebChromeClient(new MyWebChromeClient());
-
-    intent = new Intent(this, ETAService.class);
-    pintent = PendingIntent.getService(this, 0, intent, 0);
-
-    locationController.setView(this);
-    alarmManager.cancel(pintent);
-    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000, 60 * 1000, pintent);
-    doBindService();
-
-    h.postDelayed(new Runnable() {
-
-      public void run() {
-        if (service != null) {
-          updateUI(service.getDrivingTime(), service.getRouteName(), service.getLastExecutionDate());
-          h.postDelayed(this, 20 * 1000);
+        public void onLocation() throws JSONException, URISyntaxException, IOException {
+            Log.i(Contants.TIME_TO_GO, "onLocation");
+            activity.onLocationBtnClicked();
         }
-      }
 
-    }, 60 * 1000);
-  }
+		@SuppressWarnings("unused")
+		public void onNotify(final long mdt) {
+			Log.i(Contants.TIME_TO_GO,
+					"@@ NotifyME button was clicked  with maxDrivingTimeInMin="
+							+ mdt);
+			maxDrivingTime = mdt;
+			service.setParameters(fromLocation, toLocation, maxDrivingTime);
+		}
+	}
 
-  //  private void updateDrivingTimeFeilds(final long drivingTime, final String routeName, final Date lastExecutionDate) {
-  //    this.drivingTime = drivingTime;
-  //    this.routeName = routeName;
-  //    lastUpdated = lastExecutionDate;
-  //  }
+	@SuppressLint("SetJavaScriptEnabled")
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		Log.i(Contants.TIME_TO_GO, "@@ onCreate mywebview=" + mywebview);
+		super.onCreate(savedInstanceState);
 
-  void doBindService() {
-    final boolean bind = bindService(new Intent(this, ETAService.class), mConnection, Context.BIND_AUTO_CREATE);
-    Log.i("bind sucess = " + bind);
-  }
+		locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+		setContentView(R.layout.main);
+		// mywebview.loadUrl("http://mavry.github.io/");
+		mywebview.loadUrl("file:///android_asset/index.html");
+		mywebview.getSettings().setJavaScriptEnabled(true);
+		mywebview.addJavascriptInterface(new MyJavascriptInterface(this),
+				"androidInterface");
+		mywebview.setWebChromeClient(new MyWebChromeClient());
 
-  public void onGoBtnClicked(final String fromAddress, final String toAddress) throws ClientProtocolException, IOException, JSONException,
-      URISyntaxException {
-    locationController.retrievesGeoLocations(fromAddress, toAddress);
-  }
+		intent = new Intent(this, ETAService.class);
+		pintent = PendingIntent.getService(this, 0, intent, 0);
 
-  public void onTimeToGo() {
-    final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
-    tg.startTone(ToneGenerator.TONE_PROP_BEEP);
-  }
+		locationController.setView(this);
+		alarmManager.cancel(pintent);
+		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
+				System.currentTimeMillis() + 1000, 60 * 1000, pintent);
+		doBindService();
+        obtainProvider();
+		
+		h.postDelayed(new Runnable() {
 
-  public void onGeoLocations(final RouteResultForLocations routeResultForLocations) {
-    final RouteResult routeResult = routeResultForLocations.getRouteResult();
-    Log.i(Contants.TIME_TO_GO, "@@ in LocationActivity.onGeoLocations() routeResult=" + routeResult);
-    Log.i(Contants.TIME_TO_GO, String.format(Locale.getDefault(), "%d min via %s", routeResult.getDrivingTimeInMinutes(), routeResult.getRouteName()));
-    updateRequestField(routeResultForLocations, routeResult);
-    //    
-    h.post(new Runnable() {
+			public void run() {
+				if (service != null && maxDrivingTime > 0) {
+					updateUI(service.getDrivingTime(), service.getRouteName(),
+							service.getLastExecutionDate());
+				}
+				h.postDelayed(this, 20 * 1000);
+			}
 
-      public void run() {
-        invokeJS("onDrivingTime", String.valueOf(routeResult.getDrivingTimeInMinutes()));
-        updateUI(routeResult.getDrivingTimeInMinutes(), routeResult.getRouteName(), new Date());
-      }
+		}, 60 * 1000);
+	}
 
-    });
+	// private void updateDrivingTimeFeilds(final long drivingTime, final String
+	// routeName, final Date lastExecutionDate) {
+	// this.drivingTime = drivingTime;
+	// this.routeName = routeName;
+	// lastUpdated = lastExecutionDate;
+	// }
 
-  }
+	private void obtainProvider() {
+        Criteria criteria = new Criteria();
+//        criteria.setAccuracy(Criteria.ACCURACY_FINE | Criteria.ACCURACY_COARSE );
+        criteria.setAccuracy(Criteria.NO_REQUIREMENT);
+        criteria.setPowerRequirement(Criteria.NO_REQUIREMENT);
 
-  @Override
-  protected void onNewIntent(final Intent intent) {
-    Log.i(Contants.TIME_TO_GO, "got intent " + intent + "- probably form notification");
-    if (intent.getExtras() == null) {
-      Log.i(Contants.TIME_TO_GO, "no extras");
-    } else {
-      final boolean timeToGo = intent.getExtras().getBoolean("timeToGo");
-      Log.i(Contants.TIME_TO_GO, "timeToGo = " + timeToGo);
-      invokeJS("onTimeToGo", String.valueOf(service.getDrivingTime()) + " min", service.getRouteName(),
-          formatUpdateTime(service.getLastExecutionDate()));
+		provider = locationManager.getBestProvider(criteria, true);
+		Log.i(Contants.TIME_TO_GO, "provider = " + provider);
+	}
+
+	private void printLocation(Location location) {
+		String lat = String.valueOf((location.getLatitude()));
+		String lng = String.valueOf(location.getLongitude());
+		Log.i(Contants.TIME_TO_GO, "got Location: " + lat + "," + lng);
+	}
+
+	void doBindService() {
+		final boolean bind = bindService(new Intent(this, ETAService.class),
+				mConnection, Context.BIND_AUTO_CREATE);
+		Log.i(Contants.TIME_TO_GO, "bind success = " + bind);
+	}
+
+	public void onGoBtnClicked(final String fromAddress, final String toAddress)
+			throws ClientProtocolException, IOException, JSONException,
+			URISyntaxException {
+		locationController.retrievesGeoLocations(fromAddress, toAddress);
+	}
+
+    public void onLocationBtnClicked()
+            throws ClientProtocolException, IOException, JSONException,
+            URISyntaxException {
+        obtainProvider();
+        final Location location = obtainLocation();
+        if (location==null) {
+            invokeJS("onCurrentLocation");
+        } else {
+            h.post(
+            new Runnable() {
+                public void run() {
+                    invokeJS("onCurrentLocation", String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
+                }
+            });
+        }
     }
-    super.onNewIntent(intent);
 
-  }
 
-  private void updateRequestField(final RouteResultForLocations routeResultForLocations, final RouteResult routeResult) {
-    initialDrivingTime = routeResult.getDrivingTimeInMinutes();
-    fromLocation = routeResultForLocations.getFrom();
-    toLocation = routeResultForLocations.getTo();
-  }
 
-  private void updateUI(final long drivingTime, final String routeName, final Date lastUpdated) {
-    final String text = formatUpdateTime(lastUpdated);
-    invokeJS("onUpdate", String.valueOf(drivingTime), routeName, text);
-  }
 
-  private void invokeJS(final String methodName, final String... args) {
-    final StringBuilder sb = new StringBuilder("javascript:");
-    sb.append(methodName + "(");
-    boolean firstTime = true;
-    for (final String arg : args) {
-      if (!firstTime) {
-        sb.append(",");
-      }
-      sb.append("'");
-      sb.append(arg);
-      sb.append("'");
-      firstTime = false;
+    private Location obtainLocation() {
+        boolean isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        Log.i(Contants.TIME_TO_GO, "GPS enabled = "+ isGpsEnabled);
+
+        if (provider==null) {
+            Log.i(Contants.TIME_TO_GO, "have no provider");
+            return null;
+        }
+		Location location = locationManager.getLastKnownLocation(provider);
+		if (location != null) {
+			printLocation(location);
+		} else {
+			Log.i(Contants.TIME_TO_GO, "NO Location");
+		}
+		return location;
+	}
+
+	public void onTimeToGo() {
+		final ToneGenerator tg = new ToneGenerator(
+				AudioManager.STREAM_NOTIFICATION, 100);
+		tg.startTone(ToneGenerator.TONE_PROP_BEEP);
+	}
+
+	public void onGeoLocations(
+			final RouteResultForLocations routeResultForLocations) {
+		final RouteResult routeResult = routeResultForLocations
+				.getRouteResult();
+		Log.i(Contants.TIME_TO_GO,
+				"@@ in LocationActivity.onGeoLocations() routeResult="
+						+ routeResult);
+		Log.i(Contants.TIME_TO_GO,
+				String.format(Locale.getDefault(), "%d min via %s",
+						routeResult.getDrivingTimeInMinutes(),
+						routeResult.getRouteName()));
+		updateRequestField(routeResultForLocations, routeResult);
+		//
+		h.post(new Runnable() {
+
+			public void run() {
+				invokeJS("onDrivingTime",
+						String.valueOf(routeResult.getDrivingTimeInMinutes()));
+				updateUI(routeResult.getDrivingTimeInMinutes(),
+						routeResult.getRouteName(), new Date());
+			}
+
+		});
+
+	}
+
+	@Override
+	protected void onNewIntent(final Intent intent) {
+		Log.i(Contants.TIME_TO_GO, "got intent " + intent
+				+ "- probably form notification");
+		if (intent.getExtras() == null) {
+			Log.i(Contants.TIME_TO_GO, "no extras");
+		} else {
+			final boolean timeToGo = intent.getExtras().getBoolean("timeToGo");
+			Log.i(Contants.TIME_TO_GO, "timeToGo = " + timeToGo);
+			invokeJS("onTimeToGo", String.valueOf(service.getDrivingTime())
+					+ " min", service.getRouteName(),
+					formatUpdateTime(service.getLastExecutionDate()));
+		}
+		super.onNewIntent(intent);
+
+	}
+
+	private void updateRequestField(
+			final RouteResultForLocations routeResultForLocations,
+			final RouteResult routeResult) {
+		initialDrivingTime = routeResult.getDrivingTimeInMinutes();
+		fromLocation = routeResultForLocations.getFrom();
+		toLocation = routeResultForLocations.getTo();
+	}
+
+	private void updateUI(final long drivingTime, final String routeName,
+			final Date lastUpdated) {
+		final String text = formatUpdateTime(lastUpdated);
+		invokeJS("onUpdate", String.valueOf(drivingTime), routeName, text);
+	}
+
+	private void invokeJS(final String methodName, final String... args) {
+		final StringBuilder sb = new StringBuilder("javascript:");
+		sb.append(methodName + "(");
+		boolean firstTime = true;
+		for (final String arg : args) {
+			if (!firstTime) {
+				sb.append(",");
+			}
+			sb.append("'");
+			sb.append(arg);
+			sb.append("'");
+			firstTime = false;
+		}
+		sb.append(");");
+		mywebview.loadUrl(sb.toString());
+	}
+
+	private String formatUpdateTime(final Date d) {
+		final Date now = new Date();
+		final int minDiff = now.getMinutes() - d.getMinutes();
+		if (minDiff <= 0) {
+			return "now";
+		}
+		if (minDiff <= 1) {
+			return "1 min ago";
+		}
+		if (minDiff <= 10) {
+			return minDiff + " minuts ago";
+		}
+		return DateFormat.format("kk:mm", d).toString();
+	}
+    /* Request updates at startup */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        locationManager.requestLocationUpdates(provider, 400, 1, this);
     }
-    sb.append(");");
-    mywebview.loadUrl(sb.toString());
-  }
 
-  private String formatUpdateTime(final Date d) {
-    final Date now = new Date();
-    final int minDiff = now.getMinutes() - d.getMinutes();
-    if (minDiff <= 0) {
-      return "now";
+    /* Remove the locationlistener updates when Activity is paused */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        locationManager.removeUpdates(this);
     }
-    if (minDiff <= 1) {
-      return "1 min ago";
+    public void onLocationChanged(Location location){
+        Log.i(Contants.TIME_TO_GO,"got location update");
+        if (location==null)
+        {
+            Log.i(Contants.TIME_TO_GO,"null");
+            return;
+        }
+        printLocation(location);
     }
-    if (minDiff <= 10) {
-      return minDiff + " minuts ago";
-    }
-    return DateFormat.format("kk:mm", d).toString();
-  }
 
+    public void onStatusChanged(java.lang.String provider, int status, android.os.Bundle extras){
+
+    }
+    public void onProviderEnabled(java.lang.String provider){
+        Log.i(Contants.TIME_TO_GO,"provider "+provider+" was enabled");
+    }
+    public void onProviderDisabled(java.lang.String provider){
+        Log.i(Contants.TIME_TO_GO,"provider "+provider+" was disabled");
+    }
 }

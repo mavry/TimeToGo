@@ -3,6 +3,9 @@ var mockedAndroiadInterface = {
     onDrivingTime(50);
     onUpdate("50 min", "6 דרום", "1 min gao");
   },
+  onLocation: function() {
+    onCurrentLocation(32.79288,35.522935);
+  },
   onNotify: function (maxDrivingTime) {
   //here the android will invoke onUpdate(...) each min and at the ned it will invoke onTimeToGo()
     setTimeout(function () { onUpdate("45 min", "6 דרום", "now"); }, 3000);
@@ -11,6 +14,13 @@ var mockedAndroiadInterface = {
 };
 
 var androidInterface = androidInterface || mockedAndroiadInterface;
+
+androidInterface.onLocation();
+
+TouchClick("#gps", function () {
+  androidInterface.onLocation();
+});
+
 
 var drivingTimeVal = function () {
   return Number($("#maxDrivingTime").val()) || 0;
@@ -34,6 +44,19 @@ TouchClick("#minus", function () {
 TouchClick("#plus", function () {
   $("#maxDrivingTime").val(drivingTimeVal() + 1);
 });
+
+function onCurrentLocation(lat, lng) {
+	if (typeof(lat) == 'undefined') {
+		$("#fromAddress").val("***");
+	} else {
+	    var url ="http://maps.googleapis.com/maps/api/geocode/json?sensor=true&language=iw&latlng="+lat+","+lng;
+		$.getJSON(url, function(data) {
+			var address = data.results[0].formatted_address;
+			$("#fromAddress").val(address);
+
+		});
+	}
+}
 
 function onDrivingTime(drivingTime) {
   $("#maxDrivingTime").val(drivingTime);
