@@ -9,4 +9,5 @@ lint.xml
 .classpath
 .settings
 .project
-
+.idea
+TimeToGo.iml
