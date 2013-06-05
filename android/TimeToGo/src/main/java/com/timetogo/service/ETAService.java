@@ -142,7 +142,7 @@ public class ETAService extends RoboIntentService implements IETAService {
     injector.injectMembers(this);
     wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, Contants.TIME_TO_GO);
     super.onCreate();
-    Log.i("@@ MyUpdateService.onCreate");
+    Log.i(Contants.TIME_TO_GO, "MyUpdateService.onCreate");
 
     eventManager.fire(new OnCreateEvent());
     mplayer = MediaPlayer.create(this, R.raw.its_time_to_go);
