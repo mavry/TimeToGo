@@ -50,7 +50,7 @@ TouchClick("#go", function () {
 });
 
 function isMyLocation(address){
-    return address.indexOf("My Location" >=0);
+    return address.indexOf("My Location") >= 0;
 }
 TouchClick("#minus", function () {
   $("#maxDrivingTime").val(drivingTimeVal() - 1);
