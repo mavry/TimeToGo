@@ -116,12 +116,13 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 		}
 
 		@SuppressWarnings("unused")
-		public void onGo(final String fromAddress, final String toAddress)
-				throws ClientProtocolException, IOException, JSONException,
+		public void onGo(final String fromLat,final String fromLng, final String toLat, final String toLng)
+        throws ClientProtocolException, IOException, JSONException,
 				URISyntaxException {
-			Log.i(Contants.TIME_TO_GO, "onGO [" + fromAddress + "]["
-					+ toAddress + "]");
-			activity.onGoBtnClicked(fromAddress, toAddress);
+			Log.i(Contants.TIME_TO_GO, "onGO [" + fromLat+","+fromLng + "]->["+ toLat+","+toLng+ "]");
+            LocationResult fromLocation = new LocationResult("", fromLng, fromLat);
+            LocationResult toLocation = new LocationResult("", toLng, toLat);
+			activity.onGoBtnClicked(fromLocation,toLocation);
 		}
 
         public void onLocation() throws JSONException, URISyntaxException, IOException {
@@ -206,10 +207,10 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 		Log.i(Contants.TIME_TO_GO, "bind success = " + bind);
 	}
 
-	public void onGoBtnClicked(final String fromAddress, final String toAddress)
+	public void onGoBtnClicked(LocationResult fromLocation, LocationResult toLocation)
 			throws ClientProtocolException, IOException, JSONException,
 			URISyntaxException {
-		locationController.retrievesGeoLocations(fromAddress, toAddress);
+		locationController.retrievesGeoLocations(fromLocation, toLocation);
 	}
 
     public void onLocationBtnClicked()

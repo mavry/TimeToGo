@@ -1,5 +1,5 @@
 var mockedAndroiadInterface = {
-  onGo: function (fromAddress, toAddress) {
+  onGo: function (fromLat, fromLng, toLat, toLng) {
     onDrivingTime(50);
     onUpdate("50 min", "6 דרום", "1 min gao");
   },
@@ -33,10 +33,25 @@ TouchClick("#notify", function () {
 });
 
 TouchClick("#go", function () {
-  androidInterface.onGo($("#fromAddress").val(), $("#toAddress").val());
+    var fromAddress = $("#fromAddress").val();
+//  androidInterface.onGo($("#fromAddress").val(), $("#toAddress").val());
+    GeoLocationProvider.getGeoLocationForAddress($("#toAddress").val(), function(toLocation) {
+        if (isMyLocation(fromAddress)) {
+            androidInterface.onGo(myFromLocation.lat,myFromLocation.lng, toLocation.lat, toLocation.lng);
+        }
+        else
+        {
+            GeoLocationProvider.getGeoLocationForAddress($("#fromAddress").val(), function(fromLocation) {
+                androidInterface.onGo(fromLocation.lat,fromLocation.lng, toLocation.lat, toLocation.lng);
+            });
+        }
+    });
   $('#go').addClass('disabled');
 });
 
+function isMyLocation(address){
+    return address.indexOf("My Location" >=0);
+}
 TouchClick("#minus", function () {
   $("#maxDrivingTime").val(drivingTimeVal() - 1);
 });
@@ -45,15 +60,17 @@ TouchClick("#plus", function () {
   $("#maxDrivingTime").val(drivingTimeVal() + 1);
 });
 
+var myFromLocation;
+
 function onCurrentLocation(lat, lng) {
 	if (typeof(lat) == 'undefined') {
 		$("#fromAddress").val("***");
 	} else {
+	    myFromLocation = {lat:lat, lng:lng};
 	    var url ="http://maps.googleapis.com/maps/api/geocode/json?sensor=true&language=iw&latlng="+lat+","+lng;
 		$.getJSON(url, function(data) {
-			var address = data.results[0].formatted_address;
+			var address = "My Location ("+data.results[0].formatted_address+")";
 			$("#fromAddress").val(address);
-
 		});
 	}
 }

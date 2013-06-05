@@ -3,21 +3,21 @@ package com.timetogo.model;
 public class LocationResult {
 
   private final String name;
+    private final String lat;
   private final String lon;
-  private final String lat;
 
-  public LocationResult(final String name, final String lon, final String lat) {
+  public LocationResult(final String name, final String lat, final String lon) {
     this.name = name;
-    this.lon = lon;
     this.lat = lat;
+    this.lon = lon;
   }
 
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((lat == null) ? 0 : lat.hashCode());
     result = prime * result + ((lon == null) ? 0 : lon.hashCode());
+    result = prime * result + ((lat == null) ? 0 : lat.hashCode());
     result = prime * result + ((name == null) ? 0 : name.hashCode());
     return result;
   }

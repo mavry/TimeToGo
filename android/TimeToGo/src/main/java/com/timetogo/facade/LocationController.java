@@ -3,6 +3,7 @@ package com.timetogo.facade;
 import com.google.inject.Inject;
 import com.timetogo.Contants;
 import com.timetogo.activity.LocationActivity;
+import com.timetogo.model.LocationResult;
 import com.timetogo.model.RouteResultForLocations;
 import com.timetogo.view.ILocationView;
 import com.timetogo.waze.RetreivesWazeRouteResult;
@@ -13,8 +14,6 @@ import de.akquinet.android.androlog.Log;
 public class LocationController implements ILocationController {
 
   @Inject
-  private RetrievesWazeGeoLocation retrievesGeoLocation;
-  @Inject
   private RetreivesWazeRouteResult retreivesRouteResult;
   @Inject
   private ILocationView locationView;
@@ -22,39 +21,20 @@ public class LocationController implements ILocationController {
   public LocationController() {
   }
 
-  public void retrievesGeoLocations(final String from, final String to) {
+  public void retrievesGeoLocations(LocationResult fromLocation, LocationResult toLocation) {
     Log.i(Contants.TIME_TO_GO, "query waze");
-    new RetrievesGeoLocationTask(retrievesGeoLocation, retreivesRouteResult, new IRouteResultForLocationsHandler() {
+    new RetrievesGeoLocationTask(retreivesRouteResult, new IRouteResultForLocationsHandler() {
 
       public void onRoutesResultForLocations(final RouteResultForLocations routeResultForLocations) {
         Log.i(Contants.TIME_TO_GO, "got response from waze");
         locationView.onGeoLocations(routeResultForLocations);
       }
-    }).execute(from, to);
+    }).execute(fromLocation, toLocation);
   }
 
-  public void onNotifyMe(final String from, final String to, final long maxDrivingTimeInMin) {
-    new RetrievesGeoLocationTask(retrievesGeoLocation, retreivesRouteResult, new IRouteResultForLocationsHandler() {
-
-      public void onRoutesResultForLocations(final RouteResultForLocations routeResultForLocations) {
-        if (isItTimeToGo(maxDrivingTimeInMin, routeResultForLocations)) {
-          locationView.onTimeToGo();
-        } else {
-          Log.i(Contants.TIME_TO_GO, "@@ driving is too long. will keep check");
-        }
-      }
-
-    }).execute(from, to);
-  }
 
   public void setView(final LocationActivity locationActivity) {
     locationView = locationActivity;
-  }
-
-  private boolean isItTimeToGo(final long maxDrivingTimeInMin, final RouteResultForLocations routeResultForLocations) {
-    final long eta = routeResultForLocations.getRouteResult().getDrivingTimeInMinutes();
-    Log.i(Contants.TIME_TO_GO, "comparing eta " + eta + " vs " + maxDrivingTimeInMin);
-    return eta <= maxDrivingTimeInMin;
   }
 
 }

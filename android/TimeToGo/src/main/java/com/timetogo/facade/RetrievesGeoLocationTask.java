@@ -11,31 +11,23 @@ import com.timetogo.waze.RetrievesWazeGeoLocation;
 
 import de.akquinet.android.androlog.Log;
 
-class RetrievesGeoLocationTask extends AsyncTask<String, String, RouteResultForLocations> {
+class RetrievesGeoLocationTask extends AsyncTask<LocationResult, String, RouteResultForLocations> {
 
-  private final RetrievesWazeGeoLocation retrievesGeoLocation;
   private final RetreivesWazeRouteResult retreivesRouteResult;
   private final IRouteResultForLocationsHandler routeResultForLocationsHandler;
 
-  public RetrievesGeoLocationTask(final RetrievesWazeGeoLocation retrievesGeoLocation, final RetreivesWazeRouteResult retreivesRouteResult,
+  public RetrievesGeoLocationTask(final RetreivesWazeRouteResult retreivesRouteResult,
       final IRouteResultForLocationsHandler routeResultForLocationsHandler) {
     super();
-    this.retrievesGeoLocation = retrievesGeoLocation;
     this.retreivesRouteResult = retreivesRouteResult;
     this.routeResultForLocationsHandler = routeResultForLocationsHandler;
   }
 
   @Override
-  protected RouteResultForLocations doInBackground(final String... params) {
+  protected RouteResultForLocations doInBackground(final LocationResult... params) {
     try {
-      final String fromText = params[0];
-      final String toText = params[1];
-      Log.i(Contants.TIME_TO_GO, "query waze - from");
-
-      final LocationResult fromLocation = retrievesGeoLocation.retreive(fromText)[0];
-      Log.i(Contants.TIME_TO_GO, "query waze - to");
-      final LocationResult toLocation = retrievesGeoLocation.retreive(toText)[0];
-      Log.i(Contants.TIME_TO_GO, "query waze - route");
+      final LocationResult fromLocation = params[0];
+      final LocationResult toLocation= params[1];
       final RouteResult[] routeResults = retreivesRouteResult.retreive(fromLocation, toLocation);
       Log.i(Contants.TIME_TO_GO, "back from waze");
       return new RouteResultForLocations(fromLocation, toLocation, routeResults[0]);
