@@ -11,3 +11,5 @@ lint.xml
 .project
 .idea
 TimeToGo.iml
+build.log
+build-log.xml
