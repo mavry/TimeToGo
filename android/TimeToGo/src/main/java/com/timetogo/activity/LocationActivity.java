@@ -18,6 +18,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -94,8 +95,9 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 	private long initialDrivingTime;
 
 	private String provider;
+    private Location myLocation;
 
-	public LocationActivity() {
+    public LocationActivity() {
 	}
 
 	final class MyWebChromeClient extends WebChromeClient {
@@ -125,11 +127,6 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 			activity.onGoBtnClicked(fromLocation,toLocation);
 		}
 
-        public void onLocation() throws JSONException, URISyntaxException, IOException {
-            Log.i(Contants.TIME_TO_GO, "onLocation");
-            activity.onLocationBtnClicked();
-        }
-
 		@SuppressWarnings("unused")
 		public void onNotify(final long mdt) {
 			Log.i(Contants.TIME_TO_GO,
@@ -140,13 +137,18 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 		}
 	}
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Log.i(Contants.TIME_TO_GO, "@@ HERE AT ON CONFIGURATION CHANGED "+newConfig.orientation);
+    }
+
 	@SuppressLint("SetJavaScriptEnabled")
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		Log.i(Contants.TIME_TO_GO, "@@ onCreate mywebview=" + mywebview);
+		Log.i(Contants.TIME_TO_GO, "@@ onCreate");
 		super.onCreate(savedInstanceState);
-
-		locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+  		locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 		setContentView(R.layout.main);
 		// mywebview.loadUrl("http://mavry.github.io/");
 		mywebview.loadUrl("file:///android_asset/index.html");
@@ -203,7 +205,7 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 
 	void doBindService() {
 		final boolean bind = bindService(new Intent(this, ETAService.class),
-				mConnection, Context.BIND_AUTO_CREATE);
+                mConnection, Context.BIND_AUTO_CREATE);
 		Log.i(Contants.TIME_TO_GO, "bind success = " + bind);
 	}
 
@@ -213,42 +215,20 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 		locationController.retrievesGeoLocations(fromLocation, toLocation);
 	}
 
-    public void onLocationBtnClicked()
+    public void updateL()
             throws ClientProtocolException, IOException, JSONException,
             URISyntaxException {
-        obtainProvider();
-        final Location location = obtainLocation();
-        if (location==null) {
+        if (myLocation==null) {
             invokeJS("onCurrentLocation");
         } else {
             h.post(
             new Runnable() {
                 public void run() {
-                    invokeJS("onCurrentLocation", String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
+                    invokeJS("onCurrentLocation", String.valueOf(myLocation.getLatitude()), String.valueOf(myLocation.getLongitude()));
                 }
             });
         }
     }
-
-
-
-
-    private Location obtainLocation() {
-        boolean isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        Log.i(Contants.TIME_TO_GO, "GPS enabled = "+ isGpsEnabled);
-
-        if (provider==null) {
-            Log.i(Contants.TIME_TO_GO, "have no provider");
-            return null;
-        }
-		Location location = locationManager.getLastKnownLocation(provider);
-		if (location != null) {
-			printLocation(location);
-		} else {
-			Log.i(Contants.TIME_TO_GO, "NO Location");
-		}
-		return location;
-	}
 
 	public void onTimeToGo() {
 		final ToneGenerator tg = new ToneGenerator(
@@ -261,8 +241,8 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 		final RouteResult routeResult = routeResultForLocations
 				.getRouteResult();
 		Log.i(Contants.TIME_TO_GO,
-				"@@ in LocationActivity.onGeoLocations() routeResult="
-						+ routeResult);
+                "@@ in LocationActivity.onGeoLocations() routeResult="
+                        + routeResult);
 		Log.i(Contants.TIME_TO_GO,
 				String.format(Locale.getDefault(), "%d min via %s",
 						routeResult.getDrivingTimeInMinutes(),
@@ -284,8 +264,7 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 
 	@Override
 	protected void onNewIntent(final Intent intent) {
-		Log.i(Contants.TIME_TO_GO, "got intent " + intent
-				+ "- probably form notification");
+		Log.i(Contants.TIME_TO_GO, "onNewIntent");
 		if (intent.getExtras() == null) {
 			Log.i(Contants.TIME_TO_GO, "no extras");
 		} else {
@@ -340,7 +319,7 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 			return "1 min ago";
 		}
 		if (minDiff <= 10) {
-			return minDiff + " minuts ago";
+			return minDiff + " minutes ago";
 		}
 		return DateFormat.format("kk:mm", d).toString();
 	}
@@ -348,6 +327,7 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
     @Override
     protected void onResume() {
         super.onResume();
+        Log.i(Contants.TIME_TO_GO, "@@ onResume");
         locationManager.requestLocationUpdates(provider, 400, 1, this);
     }
 
@@ -355,6 +335,7 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
     @Override
     protected void onPause() {
         super.onPause();
+        Log.i(Contants.TIME_TO_GO, "@@ onPause");
         locationManager.removeUpdates(this);
     }
     public void onLocationChanged(Location location){
@@ -364,7 +345,27 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
             Log.i(Contants.TIME_TO_GO,"null");
             return;
         }
+        updateLocation(location);
+    }
+
+    private void updateLocation(Location location) {
         printLocation(location);
+        myLocation=location;
+        h.post(
+            new Runnable() {
+                public void run() {
+                    if (myLocation==null) {
+                        invokeJS("onCurrentLocation");
+                    } else{
+                    invokeJS("onCurrentLocation", String.valueOf(myLocation.getLatitude()), String.valueOf(myLocation.getLongitude()), provider);
+                    }
+                }
+        });
+    }
+
+    protected void onStart () {
+        super.onStart();
+        Log.i(Contants.TIME_TO_GO, "on Start");
     }
 
     public void onStatusChanged(java.lang.String provider, int status, android.os.Bundle extras){
