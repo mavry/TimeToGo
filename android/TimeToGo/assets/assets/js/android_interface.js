@@ -17,10 +17,9 @@ window.Application = {
   inititialize: function () {
     var self = this;
     self.androidInterface = typeof androidInterface !== 'undefined' ? androidInterface : mockedAndroidInterface;
-    if (androidInterface === mockedAndroiadInterface) {
+    if (self.androidInterface === mockedAndroidInterface) {
       setTimeout(function () { self.onCurrentLocation(32.79288, 35.522935, "mock"); }, 3000);
     }
-    self.androidInterface.onLocation();
 
     var TouchClick = function (sel, fnc) {
       $(sel).on('touchstart click', function (event) {
@@ -86,12 +85,12 @@ window.Application = {
     return (address.indexOf("My Location") >= 0 || address.indexOf("מיקום שלי") >= 0);
   },
 
-  onCurrentLocation: function (lat, lng) {
+  onCurrentLocation: function (lat, lng, provider) {
     if (typeof(lat) == 'undefined') {
       $("#fromAddress").val("***");
     }
     else {
-      myFromLocation = {lat: lat, lng: lng};
+      this.myFromLocation = {lat: lat, lng: lng};
       var url = "http://maps.googleapis.com/maps/api/geocode/json?sensor=true&language=iw&latlng=" + lat + "," + lng;
       $.getJSON(url, function (data) {
         var address = "מיקום שלי-" + provider + "-" + data.results[0].formatted_address;
