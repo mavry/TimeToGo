@@ -1,112 +1,134 @@
-var mockedAndroiadInterface = {
+var mockedAndroidInterface = {
   onGo: function (fromLat, fromLng, toLat, toLng) {
-    onDrivingTime(50);
-    onUpdate("50 min", "6 דרום", "1 min gao");
+    Application.onDrivingTime(50);
+    Application.onUpdate("50 min", "6 דרום", "1 min gao");
   },
-
   onNotify: function (maxDrivingTime) {
   //here the android will invoke onUpdate(...) each min and at the ned it will invoke onTimeToGo()
-    setTimeout(function () { onUpdate("45 min", "6 דרום", "now"); }, 3000);
-    setTimeout(function () { onTimeToGo("40 min", "6 דרום", "now"); }, 6000);
+    setTimeout(function () { Application.onUpdate("45 min", "6 דרום", "now"); }, 3000);
+    setTimeout(function () { Application.onTimeToGo("40 min", "6 דרום", "now"); }, 6000);
+  },
+  onReset: function () {
+    Application.onResetPage();
   }
 };
 
-var drivingTimeVal = function () {
-  return Number($("#maxDrivingTime").val()) || 0;
-};
+window.Application = {
+  inititialize: function () {
+    var self = this;
+    self.androidInterface = typeof androidInterface !== 'undefined' ? androidInterface : mockedAndroidInterface;
+    if (androidInterface === mockedAndroiadInterface) {
+      setTimeout(function () { self.onCurrentLocation(32.79288, 35.522935, "mock"); }, 3000);
+    }
+    self.androidInterface.onLocation();
 
-TouchClick("#notify", function () {
-  $("#notificationArea").hide();
-  $('#myCollapse .progress').show();
-  androidInterface.onNotify(drivingTimeVal());
-});
+    var TouchClick = function (sel, fnc) {
+      $(sel).on('touchstart click', function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+        if (event.handled !== true) {
+          fnc(event);
+          event.handled = true;
+        } else {
+          return false;
+        }
+      });
+    };
 
-TouchClick("#go", function () {
-    var fromAddress = $("#fromAddress").val();
-//  androidInterface.onGo($("#fromAddress").val(), $("#toAddress").val());
-    GeoLocationProvider.getGeoLocationForAddress($("#toAddress").val(), function(toLocation) {
-        if (isMyLocation(fromAddress)) {
-            androidInterface.onGo(myFromLocation.lat,myFromLocation.lng, toLocation.lat, toLocation.lng);
+    TouchClick("a.close, #dismiss", function () {
+      self.androidInterface.onReset();
+    });
+
+
+    TouchClick("#notify", function () {
+      $("#notificationArea").addClass('hide');
+      $('#myCollapse a.close').addClass('hide');
+      $('#myCollapse .progress').removeClass('hide');
+      $('#dismiss').removeClass('hide');
+      self.androidInterface.onNotify(self.drivingTimeVal());
+    });
+
+    TouchClick("#go", function () {
+      var fromAddress = $("#fromAddress").val();
+      //  androidInterface.onGo($("#fromAddress").val(), $("#toAddress").val());
+      GeoLocationProvider.getGeoLocationForAddress($("#toAddress").val(), function (toLocation) {
+        if (self.isMyLocation(fromAddress)) {
+          self.androidInterface.onGo(self.myFromLocation.lat, self.myFromLocation.lng, toLocation.lat, toLocation.lng);
         }
         else
         {
-            GeoLocationProvider.getGeoLocationForAddress($("#fromAddress").val(), function(fromLocation) {
-                androidInterface.onGo(fromLocation.lat,fromLocation.lng, toLocation.lat, toLocation.lng);
-            });
+          GeoLocationProvider.getGeoLocationForAddress($("#fromAddress").val(), function (fromLocation) {
+            self.androidInterface.onGo(fromLocation.lat, fromLocation.lng, toLocation.lat, toLocation.lng);
+          });
         }
-    });
-  $('#go').addClass('disabled');
-});
-
-function isMyLocation(address){
-    return (address.indexOf("My Location") >= 0 || address.indexOf("מיקום שלי") >=0 );
-}
-TouchClick("#minus", function () {
-  $("#maxDrivingTime").val(drivingTimeVal() - 1);
-});
-
-TouchClick("#plus", function () {
-  $("#maxDrivingTime").val(drivingTimeVal() + 1);
-});
-
-var myFromLocation;
-
-function onCurrentLocation(lat, lng, provider) {
-	if (typeof(lat) == 'undefined') {
-		$("#fromAddress").val("***");
-	} else {
-	    myFromLocation = {lat:lat, lng:lng};
-	    var url ="http://maps.googleapis.com/maps/api/geocode/json?sensor=true&language=iw&latlng="+lat+","+lng;
-		$.getJSON(url, function(data) {
-			var address = "מיקום שלי-"+provider+"-"+data.results[0].formatted_address;
-			$("#fromAddress").val(address);
-		});
-	}
-}
-
-function onDrivingTime(drivingTime) {
-  $("#maxDrivingTime").val(drivingTime);
-  $("#myCollapse").collapse('show');
-  $("#notificationArea").show();
-  $("#time2go").hide();
-}
-
-function onUpdate(drivingTime, route, updatedAt) {
-  $(".drivingTime").text(drivingTime);
-  $(".drivingTime").css("-webkit-transition", "all 0.6s ease")
-    .css("backgroundColor", "transparent")
-    .css("-moz-transition", "all 0.6s ease")
-    .css("-o-transition", "all 0.6s ease")
-    .css("-ms-transition", "all 0.6s ease")
-    .css("backgroundColor", "white").delay(200).queue(function () {
-        $(this).css("backgroundColor", "transparent");
-        $(this).dequeue(); //Prevents box from holding color with no fadeOut on second click.
       });
-  $(".route").text(route);
-  $(".updatedAt").text(updatedAt);
-}
+      $('#go').addClass('disabled');
+    });
 
-function onTimeToGo(drivingTime, route, updatedAt) {
-  $('#myCollapse .progress').hide();
-  onUpdate(drivingTime, route, updatedAt);
-  $("#time2go").show();
-  $('#go').removeClass('disabled');
-}
+    TouchClick("#plus", function () {
+      $("#maxDrivingTime").val(self.drivingTimeVal() + 1);
+    });
+  },
 
-function TouchClick(sel, fnc) {
-  $(sel).on('touchstart click', function (event) {
-    event.stopPropagation();
-    event.preventDefault();
-    if (event.handled !== true) {
-      fnc(event);
-      event.handled = true;
-    } else {
-      return false;
+  onResetPage: function () {
+    $("#myCollapse").collapse('hide');
+    $('#dismiss').addClass('hide');
+    $('#notificationArea').addClass('hide');
+    $('#myCollapse .close').removeClass('hide');
+    $('#go').removeClass('disabled');
+  },
+
+  drivingTimeVal: function () {
+    return Number($("#maxDrivingTime").val()) || 0;
+  },
+
+  isMyLocation: function (address) {
+    return (address.indexOf("My Location") >= 0 || address.indexOf("מיקום שלי") >= 0);
+  },
+
+  onCurrentLocation: function (lat, lng) {
+    if (typeof(lat) == 'undefined') {
+      $("#fromAddress").val("***");
     }
-  });
-}
+    else {
+      myFromLocation = {lat: lat, lng: lng};
+      var url = "http://maps.googleapis.com/maps/api/geocode/json?sensor=true&language=iw&latlng=" + lat + "," + lng;
+      $.getJSON(url, function (data) {
+        var address = "מיקום שלי-" + provider + "-" + data.results[0].formatted_address;
+        $("#fromAddress").val(address);
+      });
+    }
+  },
 
-var androidInterface = androidInterface || mockedAndroiadInterface;
-if (androidInterface==mockedAndroiadInterface){
-    setTimeout(function(){onCurrentLocation(32.79288,35.522935, "mock");},3000);
-}
+  onDrivingTime: function (drivingTime) {
+    $("#maxDrivingTime").val(drivingTime);
+    $("#myCollapse").collapse('show');
+    $("#notificationArea").removeClass('hide');
+    $("#time2go").addClass('hide');
+    $('#dismiss').addClass('hide');
+    $('#myCollapse .close').removeClass('hide');
+  },
+
+  onUpdate: function (drivingTime, route, updatedAt) {
+    $(".drivingTime").text(drivingTime);
+    $(".drivingTime").css("-webkit-transition", "all 0.6s ease")
+      .css("backgroundColor", "transparent")
+      .css("-moz-transition", "all 0.6s ease")
+      .css("-o-transition", "all 0.6s ease")
+      .css("-ms-transition", "all 0.6s ease")
+      .css("backgroundColor", "white").delay(200).queue(function () {
+          $(this).css("backgroundColor", "transparent");
+          $(this).dequeue(); //Prevents box from holding color with no fadeOut on second click.
+        });
+    $(".route").text(route);
+    $(".updatedAt").text(updatedAt);
+  },
+
+  onTimeToGo: function (drivingTime, route, updatedAt) {
+    $('#myCollapse .progress').addClass('hide');
+    this.onUpdate(drivingTime, route, updatedAt);
+    $("#time2go").removeClass('hide');
+    $('#go').removeClass('disabled');
+  }
+};
+window.Application.inititialize();
