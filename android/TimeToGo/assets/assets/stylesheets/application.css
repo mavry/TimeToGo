@@ -6,6 +6,10 @@ body {
   background-size: cover;
 }
 
+.loadinggif {
+    background:url('../images/ajax-loader.gif') no-repeat right center;
+}
+
 .content{
   padding-top: 20px;
 }

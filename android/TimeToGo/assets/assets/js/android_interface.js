@@ -4,6 +4,10 @@ var mockedAndroiadInterface = {
     onUpdate("50 min", "6 דרום", "1 min gao");
   },
 
+  getLocation: function() {
+    return "{lat:32.79288, lng:35.522935}";
+  },
+
   onNotify: function (maxDrivingTime) {
   //here the android will invoke onUpdate(...) each min and at the ned it will invoke onTimeToGo()
     setTimeout(function () { onUpdate("45 min", "6 דרום", "now"); }, 3000);
@@ -21,8 +25,14 @@ TouchClick("#notify", function () {
   androidInterface.onNotify(drivingTimeVal());
 });
 
+function getLocation() {
+    var l = androidInterface.getLocation();
+    return {lat:eval("("+l+")").lat, lng:eval("("+l+")").lng};
+}
 TouchClick("#go", function () {
     var fromAddress = $("#fromAddress").val();
+    var myLocation = getLocation();
+    alert("got myLocation = "+JSON.stringify(myLocation));
 //  androidInterface.onGo($("#fromAddress").val(), $("#toAddress").val());
     GeoLocationProvider.getGeoLocationForAddress($("#toAddress").val(), function(toLocation) {
         if (isMyLocation(fromAddress)) {
@@ -55,13 +65,31 @@ function onCurrentLocation(lat, lng, provider) {
 	if (typeof(lat) == 'undefined') {
 		$("#fromAddress").val("***");
 	} else {
+	    $('#fromAddress').removeClass('loadinggif');
 	    myFromLocation = {lat:lat, lng:lng};
 	    var url ="http://maps.googleapis.com/maps/api/geocode/json?sensor=true&language=iw&latlng="+lat+","+lng;
 		$.getJSON(url, function(data) {
-			var address = "מיקום שלי-"+provider+"-"+data.results[0].formatted_address;
+			var address = "My Location("+provider+") "+data.results[0].formatted_address;
 			$("#fromAddress").val(address);
 		});
 	}
+}
+
+function onCreate() {
+    alert(" ---- ---- in onCreate() --- --- ");
+    $('#fromAddress').addClass('loadinggif');
+}
+
+function onStart() {
+    alert("in onStart()");
+
+    alert("onStart");
+}
+function onResume() {
+    alert("onResume");
+}
+function onPause() {
+    alert("onPause");
 }
 
 function onDrivingTime(drivingTime) {

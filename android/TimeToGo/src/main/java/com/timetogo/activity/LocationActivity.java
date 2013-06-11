@@ -135,6 +135,10 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 			maxDrivingTime = mdt;
 			service.setParameters(fromLocation, toLocation, maxDrivingTime);
 		}
+
+        public String getLocation() {
+            return "{lat:"+ myLocation.getLatitude()+", lng:"+myLocation.getLongitude()+"}";
+        }
 	}
 
     @Override
@@ -157,6 +161,12 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 				"androidInterface");
 		mywebview.setWebChromeClient(new MyWebChromeClient());
 
+        h.postDelayed(new Runnable() {
+            public void run() {
+                invokeJS("onCreate");
+            }
+        }, 1000);
+
 		intent = new Intent(this, ETAService.class);
 		pintent = PendingIntent.getService(this, 0, intent, 0);
 
@@ -168,7 +178,6 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
         obtainProvider();
 		
 		h.postDelayed(new Runnable() {
-
 			public void run() {
 				if (service != null && maxDrivingTime > 0) {
 					updateUI(service.getDrivingTime(), service.getRouteName(),
@@ -178,6 +187,8 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 			}
 
 		}, 60 * 1000);
+
+
 	}
 
 	// private void updateDrivingTimeFeilds(final long drivingTime, final String
@@ -329,6 +340,7 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
         super.onResume();
         Log.i(Contants.TIME_TO_GO, "@@ onResume");
         locationManager.requestLocationUpdates(provider, 400, 1, this);
+        invokeJS("onResume");
     }
 
     /* Remove the locationlistener updates when Activity is paused */
@@ -337,7 +349,9 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
         super.onPause();
         Log.i(Contants.TIME_TO_GO, "@@ onPause");
         locationManager.removeUpdates(this);
+        invokeJS("onPause");
     }
+
     public void onLocationChanged(Location location){
         Log.i(Contants.TIME_TO_GO,"got location update");
         if (location==null)
@@ -366,6 +380,8 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
     protected void onStart () {
         super.onStart();
         Log.i(Contants.TIME_TO_GO, "on Start");
+        invokeJS("onStart");
+
     }
 
     public void onStatusChanged(java.lang.String provider, int status, android.os.Bundle extras){
