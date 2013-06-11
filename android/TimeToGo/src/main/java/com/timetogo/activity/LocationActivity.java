@@ -305,7 +305,8 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 
 	private void invokeJS(final String methodName, final String... args) {
 		final StringBuilder sb = new StringBuilder("javascript:");
-		sb.append(methodName + "(");
+        sb.append("window.Application.");
+        sb.append(methodName + "(");
 		boolean firstTime = true;
 		for (final String arg : args) {
 			if (!firstTime) {
