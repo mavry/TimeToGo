@@ -4,7 +4,7 @@ var mockedAndroidInterface = {
     Application.onUpdate("50 min", "6 דרום", "1 min gao");
   },
 
-  getLocation: function() {
+  getLocation: function () {
     return "{lat:32.79288, lng:35.522935}";
   },
 
@@ -39,17 +39,15 @@ window.Application = {
       });
     };
 
-    TouchClick("a.close, #dismiss", function () {
-        Application.onResetPage();
-        self.androidInterface.onReset();
+    TouchClick("#dismiss", function () {
+      self.onResetPage();
+      self.androidInterface.onReset();
     });
 
 
     TouchClick("#notify", function () {
       $("#notificationArea").addClass('hide');
-      $('#myCollapse a.close').addClass('hide');
       $('#myCollapse .progress').removeClass('hide');
-      $('#dismiss').removeClass('hide');
       self.androidInterface.onNotify(self.drivingTimeVal());
     });
 
@@ -84,15 +82,11 @@ window.Application = {
 //      return {lat:eval("("+l+")").lat, lng:eval("("+l+")").lng};
 //    }
 
-},
-
-
+  },
 
   onResetPage: function () {
     $("#myCollapse").collapse('hide');
-    $('#dismiss').addClass('hide');
     $('#notificationArea').addClass('hide');
-    $('#myCollapse .close').removeClass('hide');
     $('#go').removeClass('disabled');
   },
 
@@ -109,7 +103,7 @@ window.Application = {
       $("#fromAddress").val("***");
     }
     else {
-	    $('#fromAddress').removeClass('loadinggif');
+      $('#fromAddress').removeClass('loadinggif');
       this.myFromLocation = {lat: lat, lng: lng};
       var url = "http://maps.googleapis.com/maps/api/geocode/json?sensor=true&language=iw&latlng=" + lat + "," + lng;
       $.getJSON(url, function (data) {
@@ -119,29 +113,26 @@ window.Application = {
     }
   },
 
-onCreate:  function () {
+  onCreate:  function () {
     $('#fromAddress').addClass('loadinggif');
-},
+  },
 
-onStart : function () {
+  onStart : function () {
 
-},
+  },
 
-onResume :function () {
+  onResume : function () {
 
-},
-onPause: function () {
+  },
+  onPause: function () {
 
-},
-
+  },
 
   onDrivingTime: function (drivingTime) {
     $("#maxDrivingTime").val(drivingTime);
     $("#myCollapse").collapse('show');
     $("#notificationArea").removeClass('hide');
     $("#time2go").addClass('hide');
-    $('#dismiss').addClass('hide');
-    $('#myCollapse .close').removeClass('hide');
   },
 
   onUpdate: function (drivingTime, route, updatedAt) {
