@@ -1,11 +1,11 @@
 var mockedAndroidInterface = {
   onGo: function (fromLat, fromLng, toLat, toLng) {
     Application.onDrivingTime(50);
-    Application.onUpdate("50 min", "6 דרום", "1 min gao");
+    Application.onUpdate("50", "6 דרום", "1 min gao");
   },
 
   getLocation: function() {
-    return "{lat:32.79288, lng:35.522935}";
+    return '{"lat":"32.79288", "lng":"35.522935"}';
   },
 
   onNotify: function (maxDrivingTime) {
@@ -55,7 +55,9 @@ window.Application = {
 
     TouchClick("#go", function () {
       var fromAddress = $("#fromAddress").val();
-      //var myLocation = getLocation();
+      var myLocation = JSON.parse(self.androidInterface.getLocation());
+      // alert("myLocation = "+JSON.stringify(myLocation));
+
 
       GeoLocationProvider.getGeoLocationForAddress($("#toAddress").val(), function (toLocation) {
         if (self.isMyLocation(fromAddress)) {
@@ -80,8 +82,7 @@ window.Application = {
     });
 
 //    function getLocation () {
-//      var l = self.androidInterface.getLocation();
-//      return {lat:eval("("+l+")").lat, lng:eval("("+l+")").lng};
+//      return JSON.parse(self.androidInterface.getLocation());
 //    }
 
 },
@@ -145,7 +146,7 @@ onPause: function () {
   },
 
   onUpdate: function (drivingTime, route, updatedAt) {
-    $(".drivingTime").text(drivingTime);
+    $(".drivingTime").text(drivingTime+" min");
     $(".drivingTime").css("-webkit-transition", "all 0.6s ease")
       .css("backgroundColor", "transparent")
       .css("-moz-transition", "all 0.6s ease")

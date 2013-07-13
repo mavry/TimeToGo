@@ -137,7 +137,9 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 		}
 
         public String getLocation() {
-            return "{lat:"+ myLocation.getLatitude()+", lng:"+myLocation.getLongitude()+"}";
+            String locationAsJson = String.format("{\"lat\": \"%s\", \"lng\":\"%s\"}", myLocation.getLatitude() , myLocation.getLongitude());
+            Log.i(Contants.TIME_TO_GO, "@@ getLocation: "+locationAsJson);
+            return locationAsJson;
         }
 	}
 
@@ -226,20 +228,6 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 		locationController.retrievesGeoLocations(fromLocation, toLocation);
 	}
 
-    public void updateL()
-            throws ClientProtocolException, IOException, JSONException,
-            URISyntaxException {
-        if (myLocation==null) {
-            invokeJS("onCurrentLocation");
-        } else {
-            h.post(
-            new Runnable() {
-                public void run() {
-                    invokeJS("onCurrentLocation", String.valueOf(myLocation.getLatitude()), String.valueOf(myLocation.getLongitude()));
-                }
-            });
-        }
-    }
 
 	public void onTimeToGo() {
 		final ToneGenerator tg = new ToneGenerator(
@@ -354,7 +342,7 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
     }
 
     public void onLocationChanged(Location location){
-        Log.i(Contants.TIME_TO_GO,"got location update");
+        Log.i(Contants.TIME_TO_GO,"onLocationChanged");
         if (location==null)
         {
             Log.i(Contants.TIME_TO_GO,"null");
