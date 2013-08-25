@@ -327,8 +327,14 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
     @Override
     protected void onResume() {
         super.onResume();
+        onLocationChanged(locationManager.getLastKnownLocation(provider));
         Log.i(Contants.TIME_TO_GO, "@@ onResume");
-        locationManager.requestLocationUpdates(provider, 400, 1, this);
+        final LocationActivity that = this;
+        h.postDelayed(new Runnable() {
+            public void run() {
+                locationManager.requestLocationUpdates(provider, 400, 1, that);
+            }
+        }, 1000);
         invokeJS("onResume");
     }
 
@@ -374,7 +380,7 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
     }
 
     public void onStatusChanged(java.lang.String provider, int status, android.os.Bundle extras){
-
+        Log.i(Contants.TIME_TO_GO,"provider "+provider+" status is now set to "+status);
     }
     public void onProviderEnabled(java.lang.String provider){
         Log.i(Contants.TIME_TO_GO,"provider "+provider+" was enabled");
