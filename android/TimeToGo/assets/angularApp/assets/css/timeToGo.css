@@ -1,3 +1,7 @@
 .submitButton {
 	width:100%
 }
+
+.loadinggif {
+    background:url('../images/ajax-loader.gif') no-repeat right center;
+}

@@ -1,11 +1,21 @@
-  <div class="navbar navbar-default" >
+  <div class="navbar navbar-default" ng-controller="NavigationBarCtrl">
     <div class="navbar-collapse collapse">
-
-
-          <ul class="nav navbar-nav">
-            <li><a href="#/home">Home</a></li>
-          </ul>
-
+      <ul class="nav navbar-nav">
+        <li><a href="#/home">Home</a></li>
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" >Simulator...<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a ng-click='simulator.onCreate()'>OnCreate</a></li>
+              <li><a ng-click='simulator.onStart()'>onStart</a></li>
+              <li><a ng-click='simulator.onResume()'>onResume</a></li>
+              <li><a ng-click='simulator.onPause()'>onPause</a></li>
+              <li><a ng-click='simulator.updateUI()'>updateUI</a></li>
+              <li><a ng-click='simulator.onTimeToGo()'>onTimeToGo</a></li>
+              <li><a ng-click='simulator.onDrivingTime()'>onDrivingTime</a></li>
+              <li><a ng-click='simulator.onCurrentLocation(8,9)'>onCurrentLocation</a></li>
+            </ul>
+          </li>
+      </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
           <a href="#/config">
