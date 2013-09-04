@@ -6,16 +6,21 @@ var ROOT;
 
 
 var mockedAndroidInterface = {};
+var timeToGoApp = angular.module('timeToGo', ["backendServices", "simulatorServices", "localStorageServices"]);
 
-angular.module('timeToGo', ["backendServices", "simulatorServices"], 
-  function($routeProvider, $locationProvider ) {	
+timeToGoApp.value('prefix', 'timeToGo');
+timeToGoApp.constant('cookie', { expiry:30, path: '/'});
+timeToGoApp.constant('notify', { setItem: true, removeItem: false} );
+
+
+timeToGoApp.config(function($routeProvider, $locationProvider ) {	
     $routeProvider.
       when('/home', {templateUrl: 'assets/templates/home/home.html', controller: 'HomeCtrl'}).
       when('/config', {templateUrl: 'assets/templates/config/config.html', controller: 'ConfigCtrl'}).
       when('/route',  {templateUrl: 'assets/templates/route/route.html', controller: 'RouteCtrl'}).
       otherwise({redirectTo: '/home'});
   }
-).run(function ($rootScope) {
+).run(function ($rootScope, localStorageService) {
 
   ROOT = $rootScope;
 
@@ -34,7 +39,8 @@ angular.module('timeToGo', ["backendServices", "simulatorServices"],
       console.log("in onCurrentLocation");
       $rootScope.waitingForLocation = false;
     },
-  }
-
+  };
+  $rootScope.history = localStorageService.get('localStorageKey') ||  {list:[]};
+  localStorageService.add('localStorageKey', $rootScope.history);
 });
 

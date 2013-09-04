@@ -2,8 +2,9 @@
 
 /* Controllers */
 
-function HomeCtrl($scope, $rootScope, $location, Backend) {
+function HomeCtrl($scope, $rootScope, $location, Backend, localStorageService) {
 
+    $scope.gPlace="";;
 
 	$scope.showStartLocation = false;
 
@@ -12,7 +13,7 @@ function HomeCtrl($scope, $rootScope, $location, Backend) {
 	}
 
 	$scope.obtainCurrentLocation = function() {
-	  $rootScope.waitingForLocation = true;
+//	  $rootScope.waitingForLocation = true;
 	}
 
 	$scope.startLocation={
@@ -31,12 +32,11 @@ function HomeCtrl($scope, $rootScope, $location, Backend) {
 
 	$scope.submit = function ()
 	{
-	  //console.log("in submit Backend doIt = "+Backend.doIt());
-
-	 // $location.path("route");
+		console.log("on submit")
+		$rootScope.history =  localStorageService.get('localStorageKey');
+		$rootScope.history.list.push({name:$scope.startLocation.input})
+		localStorageService.add('localStorageKey', $rootScope.history);
 	};
-
-
 }
 
  
