@@ -40,7 +40,7 @@ timeToGoApp.config(function($routeProvider, $locationProvider ) {
       $rootScope.waitingForLocation = false;
     },
   };
-  $rootScope.history = localStorageService.get('localStorageKey') ||  {list:[]};
+  $rootScope.history = localStorageService.get('localStorageKey') ||  {list:[]}
   localStorageService.add('localStorageKey', $rootScope.history);
 });
 

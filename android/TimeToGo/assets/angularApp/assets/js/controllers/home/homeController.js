@@ -6,19 +6,26 @@ function HomeCtrl($scope, $rootScope, $location, Backend, localStorageService) {
 
     $scope.gPlace="";;
 
-	$scope.showStartLocation = false;
-
-	$scope.onStartLocationClick = function(){
-	  $scope.showStartLocation = true;
-	}
-
-	$scope.obtainCurrentLocation = function() {
-//	  $rootScope.waitingForLocation = true;
-	}
+//	$scope.showStartLocation = false;
 
 	$scope.startLocation={
 		input:""
 	};
+
+	$scope.onStartLocationClick = function(){
+	  $scope.startLocationTyping = true;
+	}
+	$scope.onDestinationLocationClick = function() {
+		$scope.destinationLocationTyping = true;
+	}
+
+	$scope.updateFromByHistory = function(location) {
+		$scope.startLocation.input=location;
+	}
+	
+	$scope.obtainCurrentLocation = function() {
+//	  $rootScope.waitingForLocation = true;
+	}
 
 	$scope.onCurrentLocation = function(x, y) {
 	  console.log("in onCurrentLocation()");
