@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-function ConfigCtrl($scope) {
-}
+angular.module('timeToGo.controllers').controller('ConfigCtrl',  function ($scope) {	
+ });
 
  

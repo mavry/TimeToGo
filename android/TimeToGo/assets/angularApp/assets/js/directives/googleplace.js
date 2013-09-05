@@ -1,4 +1,4 @@
-timeToGoApp.directive('googleplace', function() {
+angular.module('timeToGo.directives').directive('googleplace', function () {
     return {
         require: 'ngModel',
         link: function(scope, element, attrs, model) {

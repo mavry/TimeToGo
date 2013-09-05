@@ -6,13 +6,10 @@
 // angularLocalStorage.constant('cookie', { expiry:30, path: '/'});
 // angularLocalStorage.constant('notify', { setItem: true, removeItem: false} );
 
-angular.module('localStorageServices', []).factory('localStorageService', 
+//angular.module('timeToGo', []).
+timeToGoApp.
+factory('localStorageService', 
 
-// timeToGoApp.service('localStorageService', [
-//   '$rootScope',
-//   'prefix',
-//   'cookie',
-//   'notify',
   function($rootScope, prefix, cookie, notify) { 
 
   // If there is a prefix set in the config lets use that with an appended period for readability

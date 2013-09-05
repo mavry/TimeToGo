@@ -4,8 +4,9 @@
 // setTimeout(function () { ROOT.fromAndroiad.onCreate(); }, 3000);
 
 
-angular.module('backendServices', []).
-    factory('Backend', function(){
+//angular.module('timeToGo', []).
+timeToGoApp.
+service('Backend', function(){
 
      var mockedAndroidInterface = {
       onGo: function (fromLat, fromLng, toLat, toLng) {

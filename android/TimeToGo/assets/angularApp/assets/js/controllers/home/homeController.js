@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-function HomeCtrl($scope, $rootScope, $location, Backend, localStorageService) {
+angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope, $rootScope, $location, Backend, localStorageService) {	
 
     $scope.gPlace="";;
 
@@ -14,15 +14,17 @@ function HomeCtrl($scope, $rootScope, $location, Backend, localStorageService) {
 
 	$scope.onStartLocationClick = function(){
 	  $scope.startLocationTyping = true;
-	}
-	$scope.onDestinationLocationClick = function() {
-		$scope.destinationLocationTyping = true;
+	  $scope.destinationLocationTyping = false;
+	  $rootScope.doBack = function() {  $scope.startLocationTyping = false; }
 	}
 
-	$scope.updateFromByHistory = function(location) {
-		$scope.startLocation.input=location;
-	}
-	
+	$scope.onDestinationLocationClick = function(){
+	  $scope.destinationLocationTyping = true;
+	  $scope.startLocationTyping = false;
+	  $rootScope.doBack = function() {  $scope.destinationLocationTyping = false; }
+	}	
+
+
 	$scope.obtainCurrentLocation = function() {
 //	  $rootScope.waitingForLocation = true;
 	}
@@ -44,6 +46,7 @@ function HomeCtrl($scope, $rootScope, $location, Backend, localStorageService) {
 		$rootScope.history.list.push({name:$scope.startLocation.input})
 		localStorageService.add('localStorageKey', $rootScope.history);
 	};
-}
+ });
+
 
  

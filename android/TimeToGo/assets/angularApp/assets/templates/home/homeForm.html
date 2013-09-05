@@ -8,7 +8,7 @@
           <div ng-click="obtainCurrentLocation()"> Use Current Location <img src="assets/images/locationIndicator.png" />
           </div>
         </div>
-        <div ng-include="'assets/templates/home/history.html'"></div>
+        <history-list ng-show="startLocationTyping"></history-list>
       </div>
     </div>
   </div>
@@ -17,6 +17,7 @@
     <div class="col-lg-4">
       <div class="form-group">  
         <input ng-model="toAddress" type="text" class="form-control" placeholder="Destination" ng-click="onDestinationLocationClick()"  googleplace>
+        <history-list ng-show="destinationLocationTyping"></history-list>
       </div>
     </div>
   </div>

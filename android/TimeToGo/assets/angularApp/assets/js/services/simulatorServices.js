@@ -1,4 +1,6 @@
-angular.module('simulatorServices', []). factory('simulator', function($rootScope){
+//angular.module('timeToGo', []).
+timeToGoApp.
+factory('simulator', function($rootScope){
   return {
     onCreate: function() {
       $rootScope.fromAndroaid.onCreate();

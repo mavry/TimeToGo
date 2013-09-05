@@ -6,14 +6,17 @@ var ROOT;
 
 
 var mockedAndroidInterface = {};
-var timeToGoApp = angular.module('timeToGo', ["backendServices", "simulatorServices", "localStorageServices"]);
-
+angular.module('timeToGo.controllers',[]);
+angular.module('timeToGo.directives',[]);
+angular.module('timeToGo.services',[]);
+var timeToGoApp = angular.module('timeToGo', ['timeToGo.controllers', 'timeToGo.directives', 'timeToGo.services']);
+//"Backend", "localStorageService", "simulator"
 timeToGoApp.value('prefix', 'timeToGo');
 timeToGoApp.constant('cookie', { expiry:30, path: '/'});
 timeToGoApp.constant('notify', { setItem: true, removeItem: false} );
 
 
-timeToGoApp.config(function($routeProvider, $locationProvider ) {	
+timeToGoApp.config(function($routeProvider ) {	
     $routeProvider.
       when('/home', {templateUrl: 'assets/templates/home/home.html', controller: 'HomeCtrl'}).
       when('/config', {templateUrl: 'assets/templates/config/config.html', controller: 'ConfigCtrl'}).
