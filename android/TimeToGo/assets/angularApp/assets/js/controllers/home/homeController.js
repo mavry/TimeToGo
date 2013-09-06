@@ -8,9 +8,8 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 
 //	$scope.showStartLocation = false;
 
-	$scope.startLocation={
-		input:""
-	};
+	$scope.startLocation = {input:""};
+	$scope.destinationLocation =  {input:""};
 
 	$scope.onStartLocationClick = function(){
 	  $scope.startLocationTyping = true;
@@ -44,7 +43,10 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 		console.log("on submit")
 		$rootScope.history =  localStorageService.get('localStorageKey');
 		$rootScope.history.list.push({name:$scope.startLocation.input})
+		$rootScope.history.list.push({name:$scope.destinationLocation.input})
+
 		localStorageService.add('localStorageKey', $rootScope.history);
+		$location.hash("#route");
 	};
  });
 
