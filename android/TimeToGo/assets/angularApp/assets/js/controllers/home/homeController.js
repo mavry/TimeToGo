@@ -46,7 +46,7 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 		$rootScope.history.list.push({name:$scope.destinationLocation.input})
 
 		localStorageService.add('localStorageKey', $rootScope.history);
-		$location.hash("#route");
+		$location.path("/route");
 	};
  });
 
