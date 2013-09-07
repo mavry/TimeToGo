@@ -8,11 +8,11 @@ angular.module('timeToGo.directives').directive('historyList', function () {
     templateUrl: "assets/templates/home/historyList.html",
 
     controller: function($scope, $element, $attrs) {
-      $scope.x = $attrs.ngModel;
-      $scope.attrs = $attrs;
+      $scope.model = $attrs.ngModel;
+      $scope.show = $attrs.ngShow;
       $scope.update = function(location) {
-        console.log("about to chnage: "+$scope.x);
-        $scope.$eval($scope.x+"='"+location+"'");
+        $scope.$eval($scope.model+"='"+location+"'");
+        $scope.$eval($scope.show+"='"+false+"'");
 	    }
     }
   };

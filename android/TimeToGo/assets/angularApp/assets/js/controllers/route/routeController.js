@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-angular.module('timeToGo.controllers'). controller('RouteCtrl',  function ($scope) {	
+angular.module('timeToGo.controllers'). controller('RouteCtrl',  function ($scope, $rootScope, $location) {	
 // this should be received from 'server'
 	var route = {
 		"road": "Road 1 South",
@@ -15,6 +15,10 @@ angular.module('timeToGo.controllers'). controller('RouteCtrl',  function ($scop
 			"travelTime": route.travelTime
 		}
 	};
+
+	$rootScope.doBack = function() { 
+		$location.path("/home");
+	}
 
 	$scope.up = function() {
 		$scope.notify.request.travelTime += 1;

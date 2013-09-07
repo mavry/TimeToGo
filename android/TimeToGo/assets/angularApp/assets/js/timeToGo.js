@@ -9,8 +9,8 @@ var mockedAndroidInterface = {};
 angular.module('timeToGo.controllers',[]);
 angular.module('timeToGo.directives',[]);
 angular.module('timeToGo.services',[]);
+
 var timeToGoApp = angular.module('timeToGo', ['timeToGo.controllers', 'timeToGo.directives', 'timeToGo.services']);
-//"Backend", "localStorageService", "simulator"
 timeToGoApp.value('prefix', 'timeToGo');
 timeToGoApp.constant('cookie', { expiry:30, path: '/'});
 timeToGoApp.constant('notify', { setItem: true, removeItem: false} );

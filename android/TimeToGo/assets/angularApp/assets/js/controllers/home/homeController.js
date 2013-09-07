@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope, $rootScope, $location, Backend, localStorageService) {	
+angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope, $rootScope, $location, Backend, localStorageService, GeoLocationForAddressService) {	
 
     $scope.gPlace="";;
 
@@ -42,11 +42,17 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 	{
 		console.log("on submit")
 		$rootScope.history =  localStorageService.get('localStorageKey');
-		$rootScope.history.list.push({name:$scope.startLocation.input})
-		$rootScope.history.list.push({name:$scope.destinationLocation.input})
 
 		localStorageService.add('localStorageKey', $rootScope.history);
-		$location.path("/route");
+		GeoLocationForAddressService.getGeoLocationForAddress($scope.startLocation.input, function (geoLocation) {
+			console.log("geo location for startLocation is "+JSON.stringify(geoLocation));
+			GeoLocationForAddressService.getGeoLocationForAddress($scope.destinationLocation.input, function (geoLocation) {
+				console.log("geo location for destinationLocation is "+JSON.stringify(geoLocation));
+				$rootScope.history.list.push({name:$scope.startLocation.input})
+				$rootScope.history.list.push({name:$scope.destinationLocation.input})
+				$location.path("/route");
+			});			
+		});
 	};
  });
 
