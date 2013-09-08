@@ -1,29 +1,36 @@
 <html ng-app='timeToGo'>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<!-- style -->    
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="bootstrap/css/bootstrap-theme.css" >
     <link rel="stylesheet" href="assets/css/timeToGo.css" >
+<!-- libs -->    
     <script src="assets/libs/jquery/jquery-1.10.2.js"></script>
     <script src="assets/libs/angular/angular.1.1.5.js"></script>
     <script src="bootstrap/js/bootstrap.js"></script>    
+    <script src="assets/libs/sprintf/sprintf.js"></script>
+    <script src="assets/libs/momentjs/moment.js"></script>
+<!-- the TTG app -->
     <script src="assets/js/timeToGo.js"></script>
 <!-- services -->    
     <script src="assets/js/services/localStorageModule.js"></script>
     <script src="assets/js/services/backendServices.js"></script>
     <script src="assets/js/services/simulatorServices.js"></script>    
-    <script src="assets/js/services/geoLocationForAddressService.js"></script>    
+    <script src="assets/js/services/geoLocationForAddressService.js"></script>
+    <script src="assets/js/services/wazeTravelTimeService.js"></script>    
+    <script src="assets/js/services/historyService.js"></script>    
 <!-- controllers -->    
     <script src="assets/js/controllers/home/homeController.js"></script>
     <script src="assets/js/controllers/nav/navigationBarController.js"></script>
     <script src="assets/js/controllers/route/routeController.js"></script>
     <script src="assets/js/controllers/config/configController.js"></script>
+    <script src="assets/js/controllers/go/goController.js"></script>
 <!-- directives -->
     <script src="assets/js/directives/googleplace.js"></script>
     <script src="assets/js/directives/historyListDirective.js"></script>
 
 <!-- Requires network -->
-
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script> 
 
 

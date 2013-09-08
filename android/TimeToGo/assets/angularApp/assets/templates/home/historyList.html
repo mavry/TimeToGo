@@ -1,6 +1,6 @@
 <div>
-	<h3 ng-show="history.list.length > 0 ">History: {{history.list.length}} items<h3>
-	<h3 ng-hide="history.list.length > 0 ">No History<h3>
+	<strong ng-show="history.list.length > 0 ">History: {{history.list.length}} items</strong>
+	<strong ng-hide="history.list.length > 0 ">No History</strong>
 	<br/>               
 	<ul>
 	  <ui ng-repeat="location in history.list">

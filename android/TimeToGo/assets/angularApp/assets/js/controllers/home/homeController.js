@@ -2,14 +2,20 @@
 
 /* Controllers */
 
-angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope, $rootScope, $location, Backend, localStorageService, GeoLocationForAddressService) {	
+angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope, $rootScope, $location, Backend, HistoryService, GeoLocationForAddressService) {	
 
     $scope.gPlace="";;
 
-//	$scope.showStartLocation = false;
+	$rootScope.data = $rootScope.data || {};
+	$rootScope.data.startLocation = $rootScope.data.startLocation || {};
+	$rootScope.data.startLocation.address = $rootScope.data.startLocation.address || "";
 
-	$scope.startLocation = {input:""};
-	$scope.destinationLocation =  {input:""};
+	$rootScope.data = $rootScope.data || {};
+	$rootScope.data.destinationLocation = $rootScope.data.destinationLocation || {};
+	$rootScope.data.destinationLocation.address = $rootScope.data.destinationLocation.address || "";
+	
+
+//	$scope.showStartLocation = false;
 
 	$scope.onStartLocationClick = function(){
 	  $scope.startLocationTyping = true;
@@ -40,16 +46,14 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 
 	$scope.submit = function ()
 	{
-		console.log("on submit")
-		$rootScope.history =  localStorageService.get('localStorageKey');
-
-		localStorageService.add('localStorageKey', $rootScope.history);
-		GeoLocationForAddressService.getGeoLocationForAddress($scope.startLocation.input, function (geoLocation) {
-			console.log("geo location for startLocation is "+JSON.stringify(geoLocation));
-			GeoLocationForAddressService.getGeoLocationForAddress($scope.destinationLocation.input, function (geoLocation) {
-				console.log("geo location for destinationLocation is "+JSON.stringify(geoLocation));
-				$rootScope.history.list.push({name:$scope.startLocation.input})
-				$rootScope.history.list.push({name:$scope.destinationLocation.input})
+		console.log("on submit");
+		GeoLocationForAddressService.getGeoLocationForAddress($rootScope.data.startLocation.address, function (geoLocation) {
+			$rootScope.data.startLocation.geoLocation = geoLocation;
+			console.log(JSON.stringify(geoLocation));
+			GeoLocationForAddressService.getGeoLocationForAddress($rootScope.data.destinationLocation.address, function (geoLocation) {
+				$rootScope.data.destinationLocation.geoLocation = geoLocation;
+				HistoryService.add($rootScope.data.startLocation.address);
+				HistoryService.add($rootScope.data.destinationLocation.address);
 				$location.path("/route");
 			});			
 		});

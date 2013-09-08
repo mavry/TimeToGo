@@ -9,7 +9,7 @@
 			<button class="spinner btn btn-inverse btn-small" ng-click="up()">
 	        	<i class="glyphicon glyphicon-chevron-up" />
     		</button>		
-			<input id="maxDrivingTime" type="number" ng-model="notify.request.travelTime" >
+			<input id="maxDrivingTime" type="number" ng-model="maxDrivingTime" >
 			<button class="spinner btn btn-inverse btn-small" ng-click="down()">
 		        <i class="glyphicon glyphicon-chevron-down" />
 			</button>
@@ -18,11 +18,11 @@
 			minutes
 		</div>
   	    <div class="row">
-			via {{notify.request.road}}
+			via {{roadName}}
 		</div>
 		<div class="row">
 	    	<div class="col-lg-4">
-	      		<button type="button" class="btn btn-success"  ng-click="submit()" class="submitButton">Notify Me</button>
+	      		<button type="button" class="btn btn-success"  ng-click="notifyMe()" class="submitButton">Notify Me</button>
 		    </div>
 	  	</div>	
   </div>	
