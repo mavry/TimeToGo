@@ -30,11 +30,11 @@ timeToGoApp.config(function($routeProvider ) {
   HistoryService.init();
   
   ROOT.fromAndroiad = {
-    onCreate : function() {
+    onCreate: function() {
         console.log("in onCreate");
         $rootScope.waitingForLocation = false;
     },
-    onStart : function() {},
+    onStart: function() {},
     onResume: function() {},
     onPause: function() {},
     updateUI: function(travelTime, routeName, updateTime) {},
