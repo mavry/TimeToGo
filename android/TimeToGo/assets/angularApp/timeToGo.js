@@ -6,11 +6,18 @@ var ROOT;
 
 
 var mockedAndroidInterface = {};
-angular.module('timeToGo.controllers',[]);
-angular.module('timeToGo.directives',[]);
-angular.module('timeToGo.services',[]);
+angular.module('timeToGo.controllers', []);
+angular.module('timeToGo.directives', []);
+angular.module('timeToGo.controllers.mock', []);
 
-var timeToGoApp = angular.module('timeToGo', ['timeToGo.controllers', 'timeToGo.directives', 'timeToGo.services']);
+var mockServices = typeof androidInterface !== 'undefined' ? ['timeToGo.services.Backend'] : ['timeToGo.services.mock.Backend'];
+
+var timeToGoApp = angular.module('timeToGo', 
+  ['timeToGo.controllers', 'timeToGo.directives', 'timeToGo.controllers.mock',
+  'timeToGo.services.GeoLocationForAddressService',
+  'timeToGo.services.HistoryService', 'timeToGo.services.localStorageService', 'timeToGo.services.localStorageService'
+  ].concat(mockServices) );
+
 timeToGoApp.value('prefix', 'timeToGo');
 timeToGoApp.constant('cookie', { expiry:30, path: '/'});
 timeToGoApp.constant('notify', { setItem: true, removeItem: false} );
@@ -18,10 +25,10 @@ timeToGoApp.constant('notify', { setItem: true, removeItem: false} );
 
 timeToGoApp.config(function($routeProvider ) {	
     $routeProvider.
-      when('/home', {templateUrl: 'assets/templates/home/home.html', controller: 'HomeCtrl'}).
-      when('/config', {templateUrl: 'assets/templates/config/config.html', controller: 'ConfigCtrl'}).
-      when('/route',  {templateUrl: 'assets/templates/route/route.html', controller: 'RouteCtrl'}).
-      when('/timeToGo',  {templateUrl: 'assets/templates/go/go.html', controller: 'GoCtrl'}).
+      when('/home', {templateUrl: 'templates/home/home.html', controller: 'HomeCtrl'}).
+      when('/config', {templateUrl: 'templates/config/config.html', controller: 'ConfigCtrl'}).
+      when('/route',  {templateUrl: 'templates/route/route.html', controller: 'RouteCtrl'}).
+      when('/timeToGo',  {templateUrl: 'templates/go/go.html', controller: 'GoCtrl'}).
       otherwise({redirectTo: '/home'});
   }
 ).run(function ($rootScope, HistoryService, $location) {

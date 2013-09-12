@@ -2,21 +2,20 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
 <!-- style -->    
-    <link rel="stylesheet" href="assets/libs/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="assets/libs/bootstrap/css/bootstrap-theme.css" >
+    <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="libs/bootstrap/css/bootstrap-theme.css" >
     <link rel="stylesheet" href="style/timeToGo.css" >
 <!-- libs -->    
-    <script src="assets/libs/jquery/jquery-1.10.2.js"></script>
-    <script src="assets/libs/angular/angular.1.1.5.js"></script>
-    <script src="assets/libs/bootstrap/js/bootstrap.js"></script>    
-    <script src="assets/libs/sprintf/sprintf.js"></script>
-    <script src="assets/libs/momentjs/moment.js"></script>
+    <script src="libs/jquery/jquery-1.10.2.js"></script>
+    <script src="libs/angular/angular.1.1.5.js"></script>
+    <script src="libs/bootstrap/js/bootstrap.js"></script>    
+    <script src="libs/sprintf/sprintf.js"></script>
+    <script src="libs/momentjs/moment.js"></script>
 <!-- the TTG app -->
     <script src="timeToGo.js"></script>
 <!-- services -->    
     <script src="services/localStorageModule.js"></script>
     <script src="services/backendServices.js"></script>
-    <script src="services/simulatorServices.js"></script>    
     <script src="services/geoLocationForAddressService.js"></script>
     <script src="services/wazeTravelTimeService.js"></script>    
     <script src="services/historyService.js"></script>    
@@ -26,6 +25,11 @@
     <script src="controllers/route/routeController.js"></script>
     <script src="controllers/config/configController.js"></script>
     <script src="controllers/go/goController.js"></script>
+<!-- simulator -->
+    <script src="controllers/simulator/SimulatorController.js"></script>
+    <script src="services/simulatorServices.js"></script>  
+    <script src="services/mock/mockedBackendServices.js"></script>
+
 <!-- directives -->
     <script src="directives/googleplace.js"></script>
     <script src="directives/historyListDirective.js"></script>

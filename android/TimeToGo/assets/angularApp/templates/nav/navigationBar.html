@@ -4,45 +4,40 @@
         <li><a ng-click="doBack()" ng-show="showBack()">back</a></li>
 
         <li><a href="#/home">Home</a></li>
-        <li class="dropdown">
-          <a class="dropdown-toggle" data-toggle="dropdown" >Simulatorr...<b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a ng-click='simulator.onCreate()'>OnCreate</a></li>
-              <li><a ng-click='simulator.onStart()'>onStart</a></li>
-              <li><a ng-click='simulator.onResume()'>onResume</a></li>
-              <li><a ng-click='simulator.onPause()'>onPause</a></li>
-              <li><a ng-click='simulator.updateUI()'>updateUI</a></li>
-              <li><a ng-click='simulator.onTimeToGo()'>onTimeToGo</a></li>
-              <li><a ng-click='simulator.onDrivingTime()'>onDrivingTime</a></li>
-              <li><a ng-click='simulator.onCurrentLocation(8,9)'>onCurrentLocation</a></li>
-            </ul>
-          </li>
-        <li class="dropdown navbar-right">
-          <a class="dropdown-toggle" data-toggle="dropdown" >Mock<b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <form>
-                <li>
-                  <div class="input-group input-group-sm">
-                    <span class="input-group-addon">Travel Time</span>
-                    <input type="text" class="form-control" placeholder="Travel Time" ng-model="mock.travelTime">
-                  </div>
-                </li>
-                <li>
-                  <div class="input-group input-group-sm">
-                    <span class="input-group-addon">Road Name</span>
-                    <input type="text" class="form-control" placeholder="Road Name" ng-model="mock.roadName">
-                  </div>
-                </li>
-                <li>
-                  <div class="input-group input-group-sm">
-                    <span class="input-group-addon">Location</span>
-                    <input type="text" class="form-control" placeholder="Lat" ng-model="mock.currentLocation.lat">
-                    <input type="text" class="form-control" placeholder="Lng" ng-model="mock.currentLocation.lng">
-                  </div>
-                </li>
-              </form>
-            </ul>
-          </li>
+        <li class="dropdown" ng-controller="SimulatorCtrl">
+          <a class="dropdown-toggle" data-toggle="dropdown" >Simulator<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <form>
+              <li>
+                <div class="input-group input-group-sm">
+                  <span class="input-group-addon">Travel Time</span>
+                  <input type="text" class="form-control" placeholder="Travel Time" ng-model="mockData.travelTime">
+                </div>
+              </li>
+              <li>
+                <div class="input-group input-group-sm">
+                  <span class="input-group-addon">Road Name</span>
+                  <input type="text" class="form-control" placeholder="Road Name" ng-model="mockData.roadName">
+                </div>
+              </li>
+              <li>
+                <div class="input-group input-group-sm">
+                  <span class="input-group-addon">Location</span>
+                  <input type="text" class="form-control" placeholder="Lat" ng-model="mockData.currentLocation.lat">
+                  <input type="text" class="form-control" placeholder="Lng" ng-model="mockData.currentLocation.lng">
+                </div>
+              </li>
+            </form>
+            <li><a ng-click='onCreate()'>OnCreate</a></li>
+            <li><a ng-click='onStart()'>onStart</a></li>
+            <li><a ng-click='onResume()'>onResume</a></li>
+            <li><a ng-click='onPause()'>onPause</a></li>
+            <li><a ng-click='updateUI()'>updateUI</a></li>
+            <li><a ng-click='onTimeToGo()'>onTimeToGo</a></li>
+            <li><a ng-click='onDrivingTime()'>onDrivingTime</a></li>
+            <li><a ng-click='onCurrentLocation(8,9)'>onCurrentLocation</a></li>
+          </ul>
+        </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>

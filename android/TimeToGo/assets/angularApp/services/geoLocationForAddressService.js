@@ -1,5 +1,5 @@
-//angular.module('timeToGo', []).
-timeToGoApp.
+angular.module('timeToGo.services.GeoLocationForAddressService', []).
+//timeToGoApp.
 service('GeoLocationForAddressService', function($http){
   return {
     getGeoLocationForAddress: function (address, callback) {

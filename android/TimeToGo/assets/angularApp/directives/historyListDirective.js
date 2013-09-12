@@ -5,7 +5,7 @@ angular.module('timeToGo.directives').directive('historyList', function () {
   return {
     restrict: 'E',
     scope: true, 
-    templateUrl: "assets/templates/home/historyList.html",
+    templateUrl: "templates/home/historyList.html",
 
     controller: function($scope, $element, $attrs) {
       $scope.model = $attrs.ngModel;

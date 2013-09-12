@@ -1,5 +1,4 @@
-//angular.module('timeToGo', []).
-timeToGoApp.
+angular.module('timeToGo.services.WazeTravelTimeService', []).
 service('WazeTravelTimeService', function($http){
   return {
     getRoute: function (startLocation, destinationLocation, callback) {

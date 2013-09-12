@@ -1,5 +1,4 @@
-//angular.module('timeToGo', []).
-timeToGoApp.
+angular.module('timeToGo.services.HistoryService', []).
 service('HistoryService', function($rootScope, localStorageService){
   return {
     init: function() {
