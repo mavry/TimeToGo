@@ -1,0 +1,19 @@
+{
+  "name": "ttg",
+  "version": "0.0.1",
+  "main": "timeToGo.html",
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt"
+  ],
+  "dependencies": {
+    "angular": "1.2.0-rc.2",
+    "angular-route": "1.2.0-rc.2",
+    "jquery": "1.10.2",
+    "bootstrap": "v3.0.0",
+    "sprintf": "git://github.com/alexei/sprintf.js.git",
+    "momentjs": "2.2.1"
+  },
+  "devDependencies": {
+  }
+}

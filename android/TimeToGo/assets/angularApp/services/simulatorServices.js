@@ -22,8 +22,9 @@ factory('simulatorService', function($rootScope){
     onDrivingTime: function() {
       $rootScope.fromAndroaid.onDrivingTime();
     },
-    onCurrentLocation: function(lat, lon) {
-      $rootScope.fromAndroiad.onCurrentLocation(lat, lon);
+    onCurrentLocation: function(lat, lng) {
+      console.log("onCurrentLocation "+lat+" / "+lng);
+      fromAndroiad.onCurrentLocation({"lat":lat, "lng":lng});
     }
   } 
 });

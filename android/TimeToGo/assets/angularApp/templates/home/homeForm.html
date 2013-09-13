@@ -3,7 +3,7 @@
     <div class="col-lg-4">
       <div class="form-group">
         <input type="text" class="form-control" placeholder="Enter Starting Location" ng-model="data.startLocation.address"
-        ng-class="{loadinggif : waitingForLocation}" ng-click="onStartLocationClick()" googleplace > 
+        ng-class="{loadinggif : waitingForLocation}" ng-focus="startLocationFocus()" ng-blur="startLocationBlur()" googleplace > 
         <div ng-show="startLocationTyping" >
           <div ng-click="obtainCurrentLocation()"> Use Current Location <img src="images/locationIndicator.png" />
           </div>
@@ -15,7 +15,7 @@
   <div class="row">
     <div class="col-lg-4">
       <div class="form-group">  
-        <input type="text" class="form-control" placeholder="Destination" ng-model="data.destinationLocation.address" ng-click="onDestinationLocationClick()"  googleplace>
+        <input type="text" class="form-control" placeholder="Destination" ng-model="data.destinationLocation.address" googleplace ng-focus="destinationLocationFocus()" ng-blur="destinationLocationBlur()">
         <history-list ng-show="destinationLocationTyping" ng-model="data.destinationLocation.address" ></history-list>
       </div>
     </div>

@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-angular.module('timeToGo.controllers.mock'). controller('SimulatorCtrl',  function ($rootScope, $scope, localStorageService) {	
+angular.module('timeToGo.controllers.mock'). controller('SimulatorCtrl',  function ($rootScope, $scope, localStorageService, simulatorService) {	
 
  var mockData = localStorageService.get("timeToGo.mock") || {
     travelTime: 51,
@@ -44,8 +44,8 @@ angular.module('timeToGo.controllers.mock'). controller('SimulatorCtrl',  functi
   $scope.onDrivingTime = function() {
     // fromAndroaid.onDrivingTime();
   };
-  $scope.onCurrentLocation = function(lat, lon) {
-    // fromAndroiad.onCurrentLocation(lat, lon);
+  $scope.onCurrentLocation = function(lat, lng) {
+    simulatorService.onCurrentLocation(mockData.currentLocation.lat,mockData.currentLocation.lng);
   };
 
  

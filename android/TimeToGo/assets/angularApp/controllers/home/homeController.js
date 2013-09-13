@@ -16,28 +16,43 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 	      destinationLocation: {
 	        address: ""
 	      }
-	    }
+	    },
+	    requestForCurrentLocatin: false
 	  };
 	  $rootScope.data = data;	
 	  $rootScope.waitingForLocation = false;	
 	};
 
+	$scope.$watch("currentLocation", function(val1, val2){
+  	  if (JSON.stringify(val1)==JSON.stringify(val2)) return;
+      console.log("location changed " + JSON.stringify(val1)+" --> "+JSON.stringify(val2));
+    });
+
 	(function() { $scope.init(); })();
 
-	$scope.onStartLocationClick = function(){
+	$scope.startLocationFocus = function(){
 	  $scope.startLocationTyping = true;
-	  $scope.destinationLocationTyping = false;
 	  $rootScope.doBack = function() {  $scope.startLocationTyping = false; }
 	}
 
-	$scope.onDestinationLocationClick = function(){
+	$scope.startLocationBlur = function(){
+      $scope.startLocationTyping = false;
+      $rootScope.doBack = null;
+	}
+
+	$scope.destinationLocationFocus = function(){
 	  $scope.destinationLocationTyping = true;
-	  $scope.startLocationTyping = false;
 	  $rootScope.doBack = function() {  $scope.destinationLocationTyping = false; }
-	}	
+	}
+
+	$scope.destinationLocationBlur = function(){
+      $scope.destinationLocationTyping = false;
+      $rootScope.doBack = null;
+	}
 
 
 	$scope.obtainCurrentLocation = function() {
+	  $scope.data.requestForCurrentLocatin = true;
 //	  $rootScope.waitingForLocation = true;
 	}
 
