@@ -39,3 +39,7 @@
   float:left;
   margin-left:1em;
 }
+
+.pac-container:after {
+  background-image: url("");
+}

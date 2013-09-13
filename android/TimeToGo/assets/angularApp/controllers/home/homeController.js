@@ -4,18 +4,25 @@
 
 angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope, $rootScope, $location, Backend, HistoryService, GeoLocationForAddressService) {	
 
-    $scope.gPlace="";;
+	var data;
 
-	$rootScope.data = $rootScope.data || {};
-	$rootScope.data.startLocation = $rootScope.data.startLocation || {};
-	$rootScope.data.startLocation.address = $rootScope.data.startLocation.address || "";
+	$scope.init = function() {
+	  $scope.gPlace="";
+	  data = {
+	    locations: {
+		  startLocation: {
+	        address: ""
+	      },
+	      destinationLocation: {
+	        address: ""
+	      }
+	    }
+	  };
+	  $rootScope.data = data;	
+	  $rootScope.waitingForLocation = false;	
+	};
 
-	$rootScope.data = $rootScope.data || {};
-	$rootScope.data.destinationLocation = $rootScope.data.destinationLocation || {};
-	$rootScope.data.destinationLocation.address = $rootScope.data.destinationLocation.address || "";
-	
-
-//	$scope.showStartLocation = false;
+	(function() { $scope.init(); })();
 
 	$scope.onStartLocationClick = function(){
 	  $scope.startLocationTyping = true;
@@ -39,22 +46,26 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
       $rootScope.waitingForLocation = false;
 	};
 	
-//	setTimeout(function () { $scope.fromAndroiad.onCurrentLocation("123","456"); }, 6000);
-
-
-    $rootScope.waitingForLocation = false;
 
 	$scope.submit = function ()
 	{
 		console.log("on submit");
-		GeoLocationForAddressService.getGeoLocationForAddress($rootScope.data.startLocation.address, function (geoLocation) {
-			$rootScope.data.startLocation.geoLocation = geoLocation;
+		GeoLocationForAddressService.getGeoLocationForAddress(data.locations.startLocation.address, function (geoLocation) {
+			data.locations.startLocation.geoLocation = geoLocation;
 			console.log(JSON.stringify(geoLocation));
-			GeoLocationForAddressService.getGeoLocationForAddress($rootScope.data.destinationLocation.address, function (geoLocation) {
-				$rootScope.data.destinationLocation.geoLocation = geoLocation;
-				HistoryService.add($rootScope.data.startLocation.address);
-				HistoryService.add($rootScope.data.destinationLocation.address);
-				$location.path("/route");
+			GeoLocationForAddressService.getGeoLocationForAddress(data.locations.destinationLocation.address, function (geoLocation) {
+				data.locations.destinationLocation.geoLocation = geoLocation;
+				HistoryService.add(data.locations.startLocation.address);
+				HistoryService.add(data.locations.destinationLocation.address);
+
+				  Backend.onGo(data.locations, function(time, name, lastUpdated) {
+				  	$rootScope.data.route = {
+				  		drivingTime: time,
+				  		roadName: name,
+				  		lastUpdated: lastUpdated
+				  	}
+					$location.path("/notify/");
+				  });
 			});			
 		});
 	};

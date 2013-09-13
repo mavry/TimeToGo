@@ -10,13 +10,14 @@ angular.module('timeToGo.controllers', []);
 angular.module('timeToGo.directives', []);
 angular.module('timeToGo.controllers.mock', []);
 
-var mockServices = typeof androidInterface !== 'undefined' ? ['timeToGo.services.Backend'] : ['timeToGo.services.mock.Backend'];
+
+
+var moreServices = typeof androidInterface !== 'undefined' ? ['timeToGo.services.Backend','timeToGo.services.GeoLocationForAddressService'] : ['timeToGo.services.mock.Backend', 'timeToGo.services.mock.GeoLocationForAddressService'];
 
 var timeToGoApp = angular.module('timeToGo', 
   ['timeToGo.controllers', 'timeToGo.directives', 'timeToGo.controllers.mock',
-  'timeToGo.services.GeoLocationForAddressService',
-  'timeToGo.services.HistoryService', 'timeToGo.services.localStorageService', 'timeToGo.services.localStorageService'
-  ].concat(mockServices) );
+  'timeToGo.services.HistoryService', 'timeToGo.services.localStorageService',
+  ].concat(moreServices) );
 
 timeToGoApp.value('prefix', 'timeToGo');
 timeToGoApp.constant('cookie', { expiry:30, path: '/'});
@@ -27,7 +28,7 @@ timeToGoApp.config(function($routeProvider ) {
     $routeProvider.
       when('/home', {templateUrl: 'templates/home/home.html', controller: 'HomeCtrl'}).
       when('/config', {templateUrl: 'templates/config/config.html', controller: 'ConfigCtrl'}).
-      when('/route',  {templateUrl: 'templates/route/route.html', controller: 'RouteCtrl'}).
+      when('/notify/:data',  {templateUrl: 'templates/notify/notify.html', controller: 'NotifyCtrl'}).
       when('/timeToGo',  {templateUrl: 'templates/go/go.html', controller: 'GoCtrl'}).
       otherwise({redirectTo: '/home'});
   }

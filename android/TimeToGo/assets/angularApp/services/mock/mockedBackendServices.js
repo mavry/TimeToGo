@@ -3,7 +3,7 @@
 angular.module('timeToGo.services.mock.Backend', []).service('Backend', function($rootScope, $timeout, $location, localStorageService){
   console.log("mocked backEnd Service.No android is needed");
   return {
-    onGo: function (fromLat, fromLng, toLat, toLng, callback) {
+    onGo: function (locations, callback) {
       // $timeout(function() {
           callback($rootScope.mockData.travelTime, $rootScope.mockData.roadName, "1 min gao")
         // }, 3000);
