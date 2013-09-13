@@ -31,22 +31,22 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 	(function() { $scope.init(); })();
 
 	$scope.startLocationFocus = function(){
-	  $scope.startLocationTyping = true;
-	  $rootScope.doBack = function() {  $scope.startLocationTyping = false; }
+	  $scope.inStartLocationField = true;
+	  $rootScope.doBack = function() {  $scope.inStartLocationField = false }
 	}
 
 	$scope.startLocationBlur = function(){
-      $scope.startLocationTyping = false;
+      $scope.inStartLocationField = false;
       $rootScope.doBack = null;
 	}
 
 	$scope.destinationLocationFocus = function(){
-	  $scope.destinationLocationTyping = true;
-	  $rootScope.doBack = function() {  $scope.destinationLocationTyping = false; }
+	  $scope.inDestinationLocationField = true;
+	  $rootScope.doBack = function() {  $scope.inDestinationLocationField = false; }
 	}
 
 	$scope.destinationLocationBlur = function(){
-      $scope.destinationLocationTyping = false;
+      $scope.inDestinationLocationField = false;
       $rootScope.doBack = null;
 	}
 
