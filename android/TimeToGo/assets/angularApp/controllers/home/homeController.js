@@ -11,21 +11,26 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 	  data = {
 	    locations: {
 		  startLocation: {
-	        address: ""
+	        address: null
 	      },
 	      destinationLocation: {
-	        address: ""
+	        address: null
 	      }
 	    },
-	    requestForCurrentLocatin: false
+	    currentLocation: {
+	      location: null,
+	      hasLocation: false,
+	      lastUpdated: null
+	    }
 	  };
 	  $rootScope.data = data;	
-	  $rootScope.waitingForLocation = false;	
 	};
 
-	$scope.$watch("currentLocation", function(val1, val2){
-  	  if (JSON.stringify(val1)==JSON.stringify(val2)) return;
-      console.log("location changed " + JSON.stringify(val1)+" --> "+JSON.stringify(val2));
+
+	$scope.$watch("currentLocation", function(newVal, oldVal){
+  	  if (JSON.stringify(newVal)==JSON.stringify(oldVal)) return;
+      console.log("location changed " + JSON.stringify(oldVal)+" --> "+JSON.stringify(newVal));
+      $scope.onCurrentLocation(newVal);
     });
 
 	(function() { $scope.init(); })();
@@ -51,14 +56,16 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 	}
 
 
-	$scope.obtainCurrentLocation = function() {
+	$scope.useCurrentLocation = function() {
 	  $scope.data.requestForCurrentLocatin = true;
 //	  $rootScope.waitingForLocation = true;
 	}
 
-	$scope.onCurrentLocation = function(x, y) {
+	$scope.onCurrentLocation = function(geoLocation) {
 	  console.log("in onCurrentLocation()");
-      $rootScope.waitingForLocation = false;
+	  $scope.data.currentLocation.lastUpdated = moment();
+      $scope.data.currentLocation.location=geoLocation;
+      $scope.data.currentLocation.hasLocation = true;
 	};
 	
 
