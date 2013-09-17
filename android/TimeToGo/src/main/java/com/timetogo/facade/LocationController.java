@@ -7,7 +7,6 @@ import com.timetogo.model.LocationResult;
 import com.timetogo.model.RouteResultForLocations;
 import com.timetogo.view.ILocationView;
 import com.timetogo.waze.RetreivesWazeRouteResult;
-import com.timetogo.waze.RetrievesWazeGeoLocation;
 
 import de.akquinet.android.androlog.Log;
 

@@ -4,11 +4,17 @@
       <div class="form-group">
         <input type="text" class="form-control" placeholder="Enter Starting Location" ng-model="data.locations.startLocation.address"
         ng-class="{loadinggif : waitingForLocation}" ng-focus="startLocationFocus()" ng-blur="startLocationBlur()" googleplace > 
-        <div ng-show="inStartLocationField" >
-          <div data-ng-class="{noCurrentLocation: !data.currentLocation.hasLocation}" ng-click="useCurrentLocation()"> Use Current Location <img src="images/locationIndicator.png" />
+        <div > <!-- ng-show="inStartLocationField" > -->
+          <div ng-show="!data.currentLocation.hasLocation" class="noCurrentLocation" ng-click="useCurrentLocation()" >
+             Obtaining current Location
+             <img src="images/locationIndicator.png" />
+          </div>
+          <div  ng-show="data.currentLocation.hasLocation"  ng-click="useCurrentLocation()" >
+              Use Current Location {{data.currentLocation.address }} @ {{data.currentLocation.location.accuracy}} m
+              <img src="images/locationIndicator.png" />
           </div>
         </div>
-        <history-list ng-show="inStartLocationField" ng-model="data.startLocation.address" ></history-list>
+        <history-list ng-show="inStartLocationField" ng-model="data.locations.startLocation.address" ></history-list>
       </div>
     </div>
   </div>
@@ -16,7 +22,7 @@
     <div class="col-lg-4">
       <div class="form-group">  
         <input type="text" class="form-control" placeholder="Destination" ng-model="data.locations.destinationLocation.address" googleplace ng-focus="destinationLocationFocus()" ng-blur="destinationLocationBlur()">
-        <history-list ng-show="inDestinationLocationField" ng-model="data.destinationLocation.address" ></history-list>
+        <history-list ng-show="inDestinationLocationField" ng-model="data.locations.destinationLocation.address" ></history-list>
       </div>
     </div>
   </div>

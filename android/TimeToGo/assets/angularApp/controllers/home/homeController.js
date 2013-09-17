@@ -2,9 +2,24 @@
 
 /* Controllers */
 
-angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope, $rootScope, $location, Backend, HistoryService, GeoLocationForAddressService) {	
+angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope, $rootScope, $location, Backend, HistoryService, GeoLocationForAddressService, AddressForGeoLocationService, $timeout) {	
 
 	var data;
+
+	$scope.pollForLocation = function() {
+	  console.log("poll for location");
+	  Backend.getLocation();
+	  // if (typeof locAsStrng === "undefined") {
+	  //   console.log("*** got location: undefined");
+	  // }
+	  // else {
+	  // 	console.log("got location: "+locAsStrng)
+	  // 	var currentLocation = $.parseJSON(locAsStrng);
+	  // 	$scope.onCurrentLocation(currentLocation);
+	  // }
+	};
+
+
 
 	$scope.init = function() {
 	  $scope.gPlace="";
@@ -20,18 +35,21 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 	    currentLocation: {
 	      location: null,
 	      hasLocation: false,
-	      lastUpdated: null
+	      lastUpdated: null,
+	      accuracy: -1,
 	    }
 	  };
 	  $rootScope.data = data;	
 	};
 
 
-	$scope.$watch("currentLocation", function(newVal, oldVal){
-  	  if (JSON.stringify(newVal)==JSON.stringify(oldVal)) return;
-      console.log("location changed " + JSON.stringify(oldVal)+" --> "+JSON.stringify(newVal));
-      $scope.onCurrentLocation(newVal);
-    });
+
+
+	 $scope.$watch("currentLocation", function(newVal, oldVal){
+   	  if (JSON.stringify(newVal)==JSON.stringify(oldVal)) return;
+       console.log("@@ location changed " + JSON.stringify(oldVal)+" --> "+JSON.stringify(newVal));
+       $scope.onCurrentLocation(newVal);
+     }, true);
 
 	(function() { $scope.init(); })();
 
@@ -41,8 +59,8 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 	}
 
 	$scope.startLocationBlur = function(){
-      $scope.inStartLocationField = false;
-      $rootScope.doBack = null;
+      // $scope.inStartLocationField = false;
+      // $rootScope.doBack = null;
 	}
 
 	$scope.destinationLocationFocus = function(){
@@ -51,21 +69,24 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 	}
 
 	$scope.destinationLocationBlur = function(){
-      $scope.inDestinationLocationField = false;
-      $rootScope.doBack = null;
+      // $scope.inDestinationLocationField = false;
+      // $rootScope.doBack = null;
 	}
 
 
 	$scope.useCurrentLocation = function() {
-	  $scope.data.requestForCurrentLocatin = true;
-//	  $rootScope.waitingForLocation = true;
+	  console.log("in useCurrentLocation");
+	  $scope.pollForLocation();
 	}
 
 	$scope.onCurrentLocation = function(geoLocation) {
-	  console.log("in onCurrentLocation()");
+	  console.log("@@ in onCurrentLocation()");
 	  $scope.data.currentLocation.lastUpdated = moment();
       $scope.data.currentLocation.location=geoLocation;
       $scope.data.currentLocation.hasLocation = true;
+      AddressForGeoLocationService.getAddressForGeoLocation($scope.data.currentLocation.location, function(address) {
+      	$scope.data.currentLocation.address = address;
+      });
 	};
 	
 

@@ -1,7 +1,7 @@
 package com.timetogo;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
+import com.timetogo.model.LocationResult;
+import com.timetogo.waze.RetrievesWazeGeoLocation;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -10,8 +10,8 @@ import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.timetogo.model.LocationResult;
-import com.timetogo.waze.RetrievesWazeGeoLocation;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class RetrievesWazeGeoLocationTest {
   private final HttpClient httpClient = new DefaultHttpClient();

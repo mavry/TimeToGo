@@ -1,4 +1,4 @@
-angular.module('timeToGo.services.localStorageService', []).
+angular.module('timeToGo.services.SimulatorService', []).
 factory('simulatorService', function($rootScope){
   return {
     onCreate: function() {
@@ -24,7 +24,7 @@ factory('simulatorService', function($rootScope){
     },
     onCurrentLocation: function(lat, lng) {
       console.log("onCurrentLocation "+lat+" / "+lng);
-      fromAndroiad.onCurrentLocation({"lat":lat, "lng":lng});
+      window.Application.onCurrentLocation({"lat":lat, "lng":lng});
     }
   } 
 });

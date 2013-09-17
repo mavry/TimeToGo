@@ -1,3 +1,4 @@
+/*global timeToGoApp */
 
 /* Start angularLocalStorage */
 
@@ -8,9 +9,9 @@
 
 //angular.module('timeToGo', []).
 timeToGoApp.
-factory('localStorageService', 
+factory('localStorageService',
 
-  function($rootScope, prefix, cookie, notify) { 
+  function($rootScope, prefix, cookie, notify) {
 
   // If there is a prefix set in the config lets use that with an appended period for readability
   //var prefix = angularLocalStorage.constant;

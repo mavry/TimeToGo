@@ -1,12 +1,12 @@
 package com.timetogo.facade;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
+import com.timetogo.model.LocationResult;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
-import com.timetogo.model.LocationResult;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 public interface IRetrievesGeoLocation {
 

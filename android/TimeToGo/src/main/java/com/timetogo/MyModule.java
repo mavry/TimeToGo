@@ -1,13 +1,13 @@
 package com.timetogo;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-
 import com.google.inject.AbstractModule;
 import com.timetogo.activity.LocationActivity;
 import com.timetogo.facade.ILocationController;
 import com.timetogo.facade.LocationController;
 import com.timetogo.view.ILocationView;
+
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 public class MyModule extends AbstractModule {
 

@@ -6,10 +6,10 @@ angular.module('timeToGo.controllers.mock'). controller('SimulatorCtrl',  functi
 
  var mockData = localStorageService.get("timeToGo.mock") || {
     travelTime: 51,
-    roadName: "road 7",
+    roadName: "road 77",
     currentLocation: {
-      lat: 31.959261,
-      lng: 34.815673
+      lat: 32.6467854,
+      lng: 34.9891009
     }
   };
 

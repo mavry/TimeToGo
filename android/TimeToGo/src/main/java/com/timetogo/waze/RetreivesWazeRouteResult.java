@@ -1,10 +1,8 @@
 package com.timetogo.waze;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import com.google.inject.Inject;
+import com.timetogo.model.LocationResult;
+import com.timetogo.model.RouteResult;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -14,9 +12,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.inject.Inject;
-import com.timetogo.model.LocationResult;
-import com.timetogo.model.RouteResult;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 public class RetreivesWazeRouteResult {
 

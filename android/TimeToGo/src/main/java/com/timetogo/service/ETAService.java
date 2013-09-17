@@ -1,12 +1,5 @@
 package com.timetogo.service;
 
-import java.util.Date;
-
-import roboguice.RoboGuice;
-import roboguice.event.EventManager;
-import roboguice.inject.ContextScope;
-import roboguice.service.RoboIntentService;
-import roboguice.service.event.OnCreateEvent;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -28,7 +21,14 @@ import com.timetogo.model.RouteResult;
 import com.timetogo.waze.RetreivesWazeRouteResult;
 import com.timetogo.waze.RetrievesWazeGeoLocation;
 
+import java.util.Date;
+
 import de.akquinet.android.androlog.Log;
+import roboguice.RoboGuice;
+import roboguice.event.EventManager;
+import roboguice.inject.ContextScope;
+import roboguice.service.RoboIntentService;
+import roboguice.service.event.OnCreateEvent;
 
 public class ETAService extends RoboIntentService implements IETAService {
   private static final int NOTIFICATION_ID = 0;

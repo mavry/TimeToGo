@@ -16,12 +16,10 @@
     <dependency>
       <groupId>com.google.android</groupId>
       <artifactId>android</artifactId>
-
     </dependency>
     <dependency>
       <groupId>de.akquinet.android.androlog</groupId>
       <artifactId>androlog</artifactId>
-
     </dependency>
      <dependency>
        <groupId>commons-logging</groupId>
@@ -32,8 +30,6 @@
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
       <version>4.1.2</version>
-
-
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
@@ -55,7 +51,14 @@
       <artifactId>roboguice</artifactId>
       <version>2.0</version>
     </dependency>
- 
+     <dependency>
+          <groupId>com.google</groupId>
+          <artifactId>google-play-service</artifactId>
+         <version>2.0</version>
+         <scope>system</scope>
+          <systemPath>${basedir}/lib/google-play-services.jar</systemPath>
+      </dependency>
+
   </dependencies>
 
   <build>

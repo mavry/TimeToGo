@@ -1,6 +1,8 @@
 package com.timetogo;
 
-import java.io.IOException;
+import com.timetogo.model.LocationResult;
+import com.timetogo.model.RouteResult;
+import com.timetogo.waze.RetreivesWazeRouteResult;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -13,9 +15,7 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
-import com.timetogo.model.LocationResult;
-import com.timetogo.model.RouteResult;
-import com.timetogo.waze.RetreivesWazeRouteResult;
+import java.io.IOException;
 
 public class RetreivesWazeRouteResultTest {
 

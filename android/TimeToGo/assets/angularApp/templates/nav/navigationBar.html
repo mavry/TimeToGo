@@ -1,50 +1,50 @@
-  <div class="navbar navbar-default" ng-controller="NavigationBarCtrl">
-    <div class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-        <li><a ng-click="doBack()" ng-show="showBack()">back</a></li>
+<div class="navbar navbar-default" ng-controller="NavigationBarCtrl">
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+      <li><a ng-click="doBack()" ng-show="showBack()">back</a></li>
 
-        <li><a href="#/home">Home</a></li>
-        <li class="dropdown" ng-controller="SimulatorCtrl">
-          <a class="dropdown-toggle" data-toggle="dropdown" >Simulator<b class="caret"></b></a>
-          <ul class="dropdown-menu">
-            <form>
-              <li>
-                <div class="input-group input-group-sm">
-                  <span class="input-group-addon">Travel Time</span>
-                  <input type="text" class="form-control" placeholder="Travel Time" ng-model="mockData.travelTime">
-                </div>
-              </li>
-              <li>
-                <div class="input-group input-group-sm">
-                  <span class="input-group-addon">Road Name</span>
-                  <input type="text" class="form-control" placeholder="Road Name" ng-model="mockData.roadName">
-                </div>
-              </li>
-              <li>
-                <div class="input-group input-group-sm">
-                  <span class="input-group-addon">Location</span>
-                  <input type="text" class="form-control" placeholder="Lat" ng-model="mockData.currentLocation.lat">
-                  <input type="text" class="form-control" placeholder="Lng" ng-model="mockData.currentLocation.lng">
-                </div>
-              </li>
-            </form>
-            <li><a ng-click='onCreate()'>OnCreate</a></li>
-            <li><a ng-click='onStart()'>onStart</a></li>
-            <li><a ng-click='onResume()'>onResume</a></li>
-            <li><a ng-click='onPause()'>onPause</a></li>
-            <li><a ng-click='updateUI()'>updateUI</a></li>
-            <li><a ng-click='onTimeToGo()'>onTimeToGo</a></li>
-            <li><a ng-click='onDrivingTime()'>onDrivingTime</a></li>
-            <li><a ng-click='onCurrentLocation(8,9)'>onCurrentLocation</a></li>
-          </ul>
-        </li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li>
-          <a href="#/config">
-            <span class="glyphicon glyphicon-th-list"></span>
-          </a>
-        </li>
-      </ul>
-    </div><!--/.nav-collapse -->
-  </div>
+      <li><a href="#/home">Home</a></li>
+      <li class="dropdown" ng-controller="SimulatorCtrl">
+        <a class="dropdown-toggle" data-toggle="dropdown" >Simulator<b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <form>
+            <li>
+              <div class="input-group input-group-sm">
+                <span class="input-group-addon">Travel Time</span>
+                <input type="text" class="form-control" placeholder="Travel Time" ng-model="mockData.travelTime">
+              </div>
+            </li>
+            <li>
+              <div class="input-group input-group-sm">
+                <span class="input-group-addon">Road Name</span>
+                <input type="text" class="form-control" placeholder="Road Name" ng-model="mockData.roadName">
+              </div>
+            </li>
+            <li>
+              <div class="input-group input-group-sm">
+                <span class="input-group-addon">Location</span>
+                <input type="text" class="form-control" placeholder="Lat" ng-model="mockData.currentLocation.lat">
+                <input type="text" class="form-control" placeholder="Lng" ng-model="mockData.currentLocation.lng">
+              </div>
+            </li>
+          </form>
+          <li><a ng-click='onCreate()'>OnCreate</a></li>
+          <li><a ng-click='onStart()'>onStart</a></li>
+          <li><a ng-click='onResume()'>onResume</a></li>
+          <li><a ng-click='onPause()'>onPause</a></li>
+          <li><a ng-click='updateUI()'>updateUI</a></li>
+          <li><a ng-click='onTimeToGo()'>onTimeToGo</a></li>
+          <li><a ng-click='onDrivingTime()'>onDrivingTime</a></li>
+          <li><a ng-click='onCurrentLocation(8,9)'>onCurrentLocation</a></li>
+        </ul>
+      </li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li>
+        <a href="#/config">
+          <span class="glyphicon glyphicon-th-list"></span>
+        </a>
+      </li>
+    </ul>
+  </div><!--/.nav-collapse -->
+</div>

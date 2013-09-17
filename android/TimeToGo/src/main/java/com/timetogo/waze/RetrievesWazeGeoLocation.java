@@ -1,8 +1,9 @@
 package com.timetogo.waze;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
+import com.google.inject.Inject;
+import com.timetogo.LocationNotFoundException;
+import com.timetogo.facade.IRetrievesGeoLocation;
+import com.timetogo.model.LocationResult;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -13,10 +14,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.inject.Inject;
-import com.timetogo.LocationNotFoundException;
-import com.timetogo.facade.IRetrievesGeoLocation;
-import com.timetogo.model.LocationResult;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
 
 public class RetrievesWazeGeoLocation implements IRetrievesGeoLocation {
 

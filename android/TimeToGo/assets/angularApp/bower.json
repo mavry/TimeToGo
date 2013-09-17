@@ -12,7 +12,8 @@
     "jquery": "1.10.2",
     "bootstrap": "v3.0.0",
     "sprintf": "git://github.com/alexei/sprintf.js.git",
-    "momentjs": "2.2.1"
+    "momentjs": "2.2.1",
+    "angular-local-storage": ""
   },
   "devDependencies": {
   }
