@@ -13,3 +13,6 @@ lint.xml
 TimeToGo.iml
 build.log
 build-log.xml
+out/
+android/TimeToGo/gen-external-apklibs/
+android/TimeToGo/assets/angularApp/node_modules/
