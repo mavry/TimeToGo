@@ -34,7 +34,7 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 	    },
 	    currentLocation: {
 	      location: null,
-	      hasLocation: false,
+	      requested: false,
 	      lastUpdated: null,
 	      accuracy: -1,
 	    }
