@@ -10,7 +10,8 @@ angular.module('timeToGo.services.mock.Backend', []).service('Backend', function
     },
 
     getLocation: function() {
-       return JSON.stringify($rootScope.mockData.currentLocation);
+       //return JSON.stringify($rootScope.mockData.currentLocation);
+       window.Application.onCurrentLocation($rootScope.mockData.currentLocation);
     },
 
 

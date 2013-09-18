@@ -76,6 +76,8 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 
 	$scope.useCurrentLocation = function() {
 	  console.log("in useCurrentLocation");
+	  data.currentLocation.hasLocation = false;
+	  $scope.data.currentLocation.address = "";
 	  $scope.pollForLocation();
 	}
 
