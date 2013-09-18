@@ -1,0 +1,54 @@
+<html  id='timeToGo' ng-app='timeToGo'>
+  <head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<!-- style -->    
+<!--     libs -->    
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.css" >
+<!--     app -->        
+    <link rel="stylesheet" href="style/timeToGo.css?ver=81">
+<!-- libs  - js -->    
+    <script src="bower_components/jquery/jquery.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>    
+    <script src="bower_components/sprintf/src/sprintf.js"></script>
+    <script src="bower_components/momentjs/moment.js"></script>
+    <script src="bower_components/angular-local-storage/angular-local-storage.js"></script>
+<!-- the TTG app -->
+    <script src="timeToGo.js?ver=81"></script>
+<!-- services -->    
+    <script src="services/backendServices.js?ver=81"></script>
+    <script src="services/geoLocationForAddressService.js?ver=81"></script>
+    <script src="services/addressForGeoLocationService.js?ver=81"></script>
+    <script src="services/wazeTravelTimeService.js?ver=81"></script>    
+    <script src="services/historyService.js?ver=81"></script>    
+<!-- controllers -->    
+    <script src="controllers/home/homeController.js?ver=81"></script>
+    <script src="controllers/nav/navigationBarController.js?ver=81"></script>
+    <script src="controllers/notify/notifyController.js?ver=81"></script>
+    <script src="controllers/config/configController.js?ver=81"></script>
+    <script src="controllers/go/goController.js?ver=81"></script>
+<!-- simulator -->
+    <script src="controllers/simulator/SimulatorController.js?ver=81"></script>
+    <script src="services/simulatorServices.js?ver=81"></script>  
+    <script src="services/mock/mockedBackendServices.js?ver=81"></script>
+    <script src="services/mock/mockedGeoLocationForAddressService.js?ver=81"></script>
+    <script src="services/mock/mockedAddressForGeoLocationService.js?ver=81"></script>
+
+
+
+<!-- directives -->
+    <script src="directives/googleplace.js?ver=81"></script>
+    <script src="directives/historyListDirective.js?ver=81"></script>
+
+<!-- Requires network -->
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script> 
+
+  </head>
+  <body>
+    <div data-ng-view ng-animate="{enter: 'view-enter'}">
+    </div>
+  </body> 
+</html>

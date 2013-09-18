@@ -1,0 +1,15 @@
+{
+  "name": "TimeToGo",
+  "version": "0.0.1",
+  "description": "TimeToGo app",
+  "repository": {
+    "type": "svn",
+    "url": ""
+  },
+  "main": "TimeToGo.thtml",
+  "devDependencies": {
+    "grunt-contrib-jshint": "~0.6.2",
+    "grunt": "~0.4.1",
+    "grunt-text-replace": "~0.3.6"
+  }
+}

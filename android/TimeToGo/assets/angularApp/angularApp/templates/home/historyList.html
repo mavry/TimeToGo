@@ -1,0 +1,11 @@
+<div>
+	<strong ng-show="history.list.length > 0 ">History: {{history.list.length}} items</strong>
+	<strong ng-hide="history.list.length > 0 ">No History</strong>
+	<br/>               
+	<ul>
+	  <ui ng-repeat="location in history.list">
+	    <a ng-click="update('{{location.name}}')" > {{location.name}}    </a>
+	    <br/>
+	  </ui>
+	</ul>
+</div>

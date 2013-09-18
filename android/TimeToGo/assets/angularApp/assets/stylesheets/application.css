@@ -1,0 +1,39 @@
+body {
+  background: url('../images/highway.jpg') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.loadinggif {
+    background:url('../images/ajax-loader.gif') no-repeat right center;
+}
+
+.content{
+  padding-top: 20px;
+}
+
+.well {
+  margin: 2px;
+  padding: 10px;
+}
+.well.time-to-destination {
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid #333;
+}
+.time-to-destination h3, .time-to-destination div {
+    color: #ddd;
+    text-shadow: 1px 1px 0 black;
+    text-align: center;
+}
+
+
+#maxDrivingTime{
+  width: 40px;
+  margin: 0;
+}
+
+#notify{
+  margin-top: 1em;
+}
