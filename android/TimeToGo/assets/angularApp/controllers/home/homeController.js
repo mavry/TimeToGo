@@ -45,11 +45,11 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 
 
 
-	 $scope.$watch("currentLocation", function(newVal, oldVal){
-   	  if (JSON.stringify(newVal)==JSON.stringify(oldVal)) return;
-       console.log("@@ location changed " + JSON.stringify(oldVal)+" --> "+JSON.stringify(newVal));
-       $scope.onCurrentLocation(newVal);
-     }, true);
+	 // $scope.$watch("currentLocation", function(newVal, oldVal){
+  //  	  if (JSON.stringify(newVal)==JSON.stringify(oldVal)) return;
+  //      console.log("@@ location changed " + JSON.stringify(oldVal)+" --> "+JSON.stringify(newVal));
+  //      $scope.onCurrentLocation(newVal);
+  //    }, true);
 
 	(function() { $scope.init(); })();
 
@@ -83,6 +83,7 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 
 	$scope.onCurrentLocation = function(geoLocation) {
 	  console.log("@@ in onCurrentLocation()");
+	  $rootScope.currentLocation = geoLocation; 
 	  $scope.data.currentLocation.lastUpdated = moment();
       $scope.data.currentLocation.location=geoLocation;
       $scope.data.currentLocation.hasLocation = true;
@@ -92,25 +93,30 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 	};
 	
 
+	$scope.onDrivingTime = function(drivingTime, routeName) {
+	  console.log(sprintf("@@ in homeController onDrivingTime drivingTime=%s drivingTime=%s", drivingTime, routeName));
+	  $rootScope.data.route = {
+	    drivingTime: drivingTime,
+	  	roadName: routeName,
+	  	lastUpdated: moment()
+	  }
+	  $rootScope.safeApply(function(){ 
+	  	$location.path("/notify/");        
+      });
+	};
+
 	$scope.submit = function ()
 	{
 		console.log("on submit");
+		HistoryService.add(data.locations.startLocation.address);
+		HistoryService.add(data.locations.destinationLocation.address);
 		GeoLocationForAddressService.getGeoLocationForAddress(data.locations.startLocation.address, function (geoLocation) {
 			data.locations.startLocation.geoLocation = geoLocation;
-			console.log(JSON.stringify(geoLocation));
+			console.log("got statLocation "+JSON.stringify(geoLocation));
 			GeoLocationForAddressService.getGeoLocationForAddress(data.locations.destinationLocation.address, function (geoLocation) {
+				console.log("got destinationLocation "+JSON.stringify(geoLocation));
 				data.locations.destinationLocation.geoLocation = geoLocation;
-				HistoryService.add(data.locations.startLocation.address);
-				HistoryService.add(data.locations.destinationLocation.address);
-
-				  Backend.onGo(data.locations, function(time, name, lastUpdated) {
-				  	$rootScope.data.route = {
-				  		drivingTime: time,
-				  		roadName: name,
-				  		lastUpdated: lastUpdated
-				  	}
-					$location.path("/notify/");
-				  });
+				Backend.onGo(data.locations);
 			});			
 		});
 	};

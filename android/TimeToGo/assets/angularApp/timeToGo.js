@@ -22,7 +22,7 @@ timeToGoApp.value('prefix', 'timeToGo');
 timeToGoApp.constant('cookie', { expiry:30, path: '/'});
 timeToGoApp.constant('notify', { setItem: true, removeItem: false} );
 
-timeToGoApp.config(function($routeProvider ) {	
+timeToGoApp.config(function($routeProvider ) {  
     $routeProvider.
       when('/home', {templateUrl: 'templates/home/home.html', controller: 'HomeCtrl'}).
       when('/config', {templateUrl: 'templates/config/config.html', controller: 'ConfigCtrl'}).
@@ -60,7 +60,7 @@ window.Application = {
     else
     {
       console.log("we are in SIMULATOR");
-      self.androidInterface = mockedAndroidInterface;
+      self.androidInterface = self;
     }    
   },
 
@@ -77,23 +77,23 @@ window.Application = {
     onPause: function() {
       console.log("on Pause");
     },
-    updateUI: function(maxDrivingTime, routeName, lastUpdated) {
-      console.log(sprintf("on updateUI with maxDrivingTime=%(maxDrivingTime)s routeName=%(routeName)s", 
-        maxDrivingTime, routeName));
+    updateUI: function(drivingTime, routeName, lastUpdated) {
+      console.log(sprintf("on updateUI with maxDrivingTime=%(maxDrivingTime)s routeName=%(routeName)s",
+      {drivingTime: drivingTime, routeName:routeName}));
     },
-    onTimeToGo: function(maxDrivingTime, routeName, lastUpdated) {
-      console.log(sprintf("on onTimeToGo with maxDrivingTime=%(maxDrivingTime)s routeName=%(routeName)s", 
-        maxDrivingTime, routeName));
+    onTimeToGo: function(drivingTime, routeName, lastUpdated) {
+      console.log(sprintf("on onTimeToGo with drivingTime=%(drivingTime)s routeName=%(routeName)s", 
+        {drivingTime: drivingTime, routeName:routeName}));
     },
-    onDrivingTime: function(maxDrivingTime) {
-      console.log(sprintf("on onDrivingTime with maxDrivingTime = %(maxDrivingTime)s", maxDrivingTime));
+    onDrivingTime: function(drivingTime, routeName) {
+      console.log(sprintf("@@ on onDrivingTime with drivingTime = %(drivingTime)s on %(routeName)s",
+        {drivingTime: drivingTime, routeName:routeName}));
+      angular.element($(".container")[0]).scope().onDrivingTime(drivingTime,routeName);
     },
     onCurrentLocation: function(geoLocation) {
       console.log("@@ onCurrentLocation = "+geoLocation);
       console.log("@@ onCurrentLocation "+geoLocation.lat+" / "+geoLocation.lng);
-      ROOT.safeApply(function(){ 
-        ROOT.currentLocation = geoLocation; 
-      });
+      angular.element($(".container")[0]).scope().onCurrentLocation(currentLocation);
     }
   };
 window.Application.inititialize();

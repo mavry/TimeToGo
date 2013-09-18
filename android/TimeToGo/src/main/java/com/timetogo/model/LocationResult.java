@@ -3,20 +3,20 @@ package com.timetogo.model;
 public class LocationResult {
 
   private final String name;
-    private final String lat;
-  private final String lon;
+  private final String lat;
+  private final String lng;
 
-  public LocationResult(final String name, final String lat, final String lon) {
+  public LocationResult(final String name, final String lat, final String lng) {
     this.name = name;
     this.lat = lat;
-    this.lon = lon;
+    this.lng = lng;
   }
 
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((lon == null) ? 0 : lon.hashCode());
+    result = prime * result + ((lng == null) ? 0 : lng.hashCode());
     result = prime * result + ((lat == null) ? 0 : lat.hashCode());
     result = prime * result + ((name == null) ? 0 : name.hashCode());
     return result;
@@ -41,11 +41,11 @@ public class LocationResult {
     } else if (!lat.equals(other.lat)) {
       return false;
     }
-    if (lon == null) {
-      if (other.lon != null) {
+    if (lng == null) {
+      if (other.lng != null) {
         return false;
       }
-    } else if (!lon.equals(other.lon)) {
+    } else if (!lng.equals(other.lng)) {
       return false;
     }
     if (name == null) {
@@ -63,11 +63,11 @@ public class LocationResult {
   }
 
   public String getX() {
-    return lat;
+    return lng;
   }
 
   public String getY() {
-    return lon;
+    return lat;
   }
 
 }

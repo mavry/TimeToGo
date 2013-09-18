@@ -4,10 +4,13 @@ angular.module('timeToGo.services.Backend', []).
 service('Backend', function() {
   console.log("in backEnd Service. need to activate androiad");
 	return {
-      onGo: function (locations, callback){
+      onGo: function (locations){
 		console.log("Backend.onGo");
-		androidInterface.onGo(locations.startLocation.geoLocation.lat,locations.startLocation.geoLocation.lng,
-		locations.destinationLocation.geoLocation.lat, locations.destinationLocation.geoLocation.lng, callback);
+		androidInterface.onGo(
+			locations.startLocation.geoLocation.lat,
+			locations.startLocation.geoLocation.lng,
+			locations.destinationLocation.geoLocation.lat, 
+			locations.destinationLocation.geoLocation.lng);
 	},
       onNotify: function(maxTravelTime) {
 		console.log("Backend.onNotify");

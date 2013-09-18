@@ -4,21 +4,22 @@
 
 angular.module('timeToGo.controllers.mock'). controller('SimulatorCtrl',  function ($rootScope, $scope, localStorageService, simulatorService) {	
 
- var mockData = localStorageService.get("timeToGo.mock") || {
-    travelTime: 51,
-    roadName: "road 77",
+ var mockData = localStorageService.get("mock") || {
+    drivingTime: 51,
+    routeName: "road 77",
     currentLocation: {
       lat: 32.6467854,
       lng: 34.9891009
     }
   };
 
-  localStorageService.add("timeToGo.mock", mockData);
+  localStorageService.add("mock", mockData);
+
   $rootScope.mockData = mockData; 
 
   $rootScope.$watch('mockData', function(newVal, oldVal) {
     $rootScope.mockData = newVal;
-    $rootScope.mockData.travelTime=parseInt($rootScope.mockData.travelTime);
+    $rootScope.mockData.drivingTime=parseInt($rootScope.mockData.drivingTime);
   }, true);
 
 

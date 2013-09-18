@@ -91,6 +91,7 @@ public class SuppliesLocation {
   public void stopLooper() {
     locationManager.removeUpdates(locationListener);
     bestLocation = null;
+    q = LocationQuality.BAD;
     counter = 0;
   }
 
@@ -177,6 +178,10 @@ public class SuppliesLocation {
 
   public int getCounter() {
     return counter;
+  }
+
+  public boolean canUseLocation() {
+    return (bestLocation != null && q ==  SuppliesLocation.LocationQuality.GOOD && counter >= 3);
   }
 
   public enum LocationQuality {

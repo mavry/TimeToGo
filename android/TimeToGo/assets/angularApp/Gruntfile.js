@@ -18,8 +18,7 @@ module.exports = function (grunt) {
        
         version: {
           src: [ 'timeToGo.html'],
-          dest: 'timeToGo.withVer.html',
-          overwrite: false,
+          overwrite: true,
           replacements: [
             {
               from: /\?ver=\d+\">/g,
