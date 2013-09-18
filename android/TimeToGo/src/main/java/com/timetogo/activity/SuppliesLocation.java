@@ -90,13 +90,10 @@ public class SuppliesLocation {
 
   public void stopLooper() {
     locationManager.removeUpdates(locationListener);
+    bestLocation = null;
+    counter = 0;
   }
 
-  //  @Override
-  public void interrupt() {
-    stopLooper();
-//    super.interrupt();
-  }
 
   private String locationToString( Location location) {
     StringBuilder sb = new StringBuilder();
