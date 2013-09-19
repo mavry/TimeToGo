@@ -79,24 +79,8 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 	private IETAService service;
 
   private LocationControl locationControlTask;
-  private boolean hasLocation = false;
-  LocationHelper locHelper;
-  Location currentLocation;
-  SuppliesLocation sl;
+  SuppliesLocation suppliesLocation;
 
-
-  public LocationHelper.NLocationResult locationResult = new LocationHelper.NLocationResult() {
-    public void gotLocation(final Location location)
-    {
-      if (location==null){
-        Log.i(Contants.TIME_TO_GO, "@@ NULL, location had obtained. skipp it");
-        return;
-      }
-      currentLocation = new Location(location);
-      Log.i(Contants.TIME_TO_GO, "["+Thread.currentThread().getName()+"] @@ location had obtained "+getLocationAsJson(location));
-      hasLocation = true;
-    }
-  };
 
 
 	private final ServiceConnection mConnection = new ServiceConnection() {
@@ -173,19 +157,12 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
       h.postDelayed(new Runnable() {
         public void run() {
 
-          sl.runTask();
-
-//          locHelper = new LocationHelper(locationManager);
-//          locHelper.getLocation(locationResult);
+          suppliesLocation.getLocation();
           locationControlTask = new LocationControl();
           locationControlTask.execute(act);
 
         }
       }, 100);
-
-
-//          Log.i(Contants.TIME_TO_GO, "**\n** location is "+getLocationAsJson(loc));
-//          return getLocationAsJson(loc);
           return "";
         }
 	}
@@ -204,8 +181,7 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
   		locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
 		setContentView(R.layout.main);
-    sl = new SuppliesLocation(locationManager, this);
-		// mywebview.loadUrl("http://mavry.github.io/");
+    suppliesLocation = new SuppliesLocation(locationManager);
 		mywebview.loadUrl("file:///android_asset/angularApp/timeToGo.html?_="+System.currentTimeMillis());
 //        mywebview.loadUrl("http://mavry.github.io/angularApp/timeToGo.html?_="+System.currentTimeMillis());
 
@@ -427,12 +403,10 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
   protected void onStop () {
     super.onStop();
     Log.i(Contants.TIME_TO_GO, "on Stop");
-//    locHelper.stopLocationUpdates();
-//    locationControlTask.cancel(true);
-    sl.stopLooper();
+    suppliesLocation.stop();
   }
     public String getLocationAsJson(Location location){
-        return String.format("{\"lat\": \"%s\", \"lng\":\"%s\", \"accuracy\":\"%s\" }", location.getLatitude() , location.getLongitude(), location.getAccuracy());
+        return String.format("{\"lat\": \"%s\", \"lng\":\"%s\", \"accuracy\":\"%s\", \"provider\":\"%s\" }", location.getLatitude() , location.getLongitude(), location.getAccuracy(), location.getProvider());
     }
 
     public void onStatusChanged(java.lang.String provider, int status, android.os.Bundle extras){
@@ -461,7 +435,7 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
       Log.i(Contants.TIME_TO_GO, "@@ **** background checking... ");
 
       Long t0 = Calendar.getInstance().getTimeInMillis();
-      while (!sl.canUseLocation() && stillInChecking(t0)) {
+      while (!suppliesLocation.canUseLocation() && stillHaveTimeToWaitUntilGettingAGoodLocation(t0)) {
         try {
           Log.i(Contants.TIME_TO_GO, "@@ **** no good enough location");
 
@@ -473,28 +447,26 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
       return null;
     }
 
-    private boolean stillInChecking(Long t) {
+    private boolean stillHaveTimeToWaitUntilGettingAGoodLocation(Long t) {
       return Calendar.getInstance().getTimeInMillis() - t < 200000;
     }
 
     protected void onPostExecute(final Void unused)
     {
-      Location loc = sl.getBestLocation();
-      SuppliesLocation.LocationQuality q = sl.getQuality();
-      int counter = sl.getCounter();
-      Log.i(Contants.TIME_TO_GO, "@@ **** got location with q = "+q+" counter = "+counter+" *** "+getLocationAsJson(loc));
-      if (loc != null && q != SuppliesLocation.LocationQuality.BAD) //&& counter >= 3)
+      Location loc = suppliesLocation.getBestLocation();
+      SuppliesLocation.LocationQuality q = suppliesLocation.getQuality();
+      int counter = suppliesLocation.getCounter();
+      Log.i(Contants.TIME_TO_GO, "@@ **** got location with q = " + q + " counter = " + counter + " *** " + getLocationAsJson(loc));
+      if (suppliesLocation.canUseLocation())
       {
         Log.i(Contants.TIME_TO_GO, "@@ It is a great location");
-        currentLocation = loc;
       }
       else
       {
         Log.w(Contants.TIME_TO_GO, "@@ **** NOT good enough location *** ");
-        currentLocation = null;
       }
-      sl.stopLooper();
-      updateLocation(currentLocation);
+      suppliesLocation.stop();
+      updateLocation(loc);
     }
   }
 

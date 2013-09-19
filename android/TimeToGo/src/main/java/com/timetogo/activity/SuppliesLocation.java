@@ -4,7 +4,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Looper;
 
 import com.timetogo.Contants;
 
@@ -16,15 +15,12 @@ public class SuppliesLocation {
 
 
   private LocationManager locationManager;
-  private LocationActivity activity;
   private Location bestLocation;
-  private Looper looper;
   private LocationQuality q;
 
   final int desiredAccuracy = 200;
   final int maxAge = 120;
-  final int acceptedAccuracy = 200;
-  final int maxPollingTime = 1;
+  final int acceptedAccuracy = 400;
   int counter = 0;
 
   public Location getBestLocation() {
@@ -34,15 +30,13 @@ public class SuppliesLocation {
   public LocationQuality getQuality() {
     return q;
   }
+
   LocationListener locationListener = new LocationListener() {
 
     public void onLocationChanged(Location location) {
       counter++;
       Log.i(Contants.TIME_TO_GO, "@@ got new location("+counter+")"+locationToString(location));
-
       updateBestLocation(location);
-//      if (desiredAccuracy != 0 && getLocationQuality(desiredAccuracy, acceptedAccuracy, maxAge, bestLocation) == LocationQuality.GOOD)
-//        stopLooper();
     }
 
     public void onProviderEnabled(String provider) {
@@ -56,9 +50,8 @@ public class SuppliesLocation {
     }
   };
 
-  public SuppliesLocation(LocationManager locationManager, LocationActivity activity) {
+  public SuppliesLocation(LocationManager locationManager) {
     this.locationManager = locationManager;
-    this.activity = activity;
   }
 
   public void init() {
@@ -66,7 +59,7 @@ public class SuppliesLocation {
     boolean gpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
   }
 
-   void runTask() {
+   void getLocation() {
 
      Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
      Log.i(Contants.TIME_TO_GO, "@@ last knownLocation is "+locationToString(lastKnownLocation));
@@ -88,7 +81,7 @@ public class SuppliesLocation {
 //    }
   }
 
-  public void stopLooper() {
+  public void stop() {
     locationManager.removeUpdates(locationListener);
     bestLocation = null;
     q = LocationQuality.BAD;
@@ -181,7 +174,7 @@ public class SuppliesLocation {
   }
 
   public boolean canUseLocation() {
-    return (bestLocation != null && q !=  SuppliesLocation.LocationQuality.BAD); // && counter >= 3);
+    return (bestLocation != null && q !=  SuppliesLocation.LocationQuality.BAD && counter > 0 );
   }
 
   public enum LocationQuality {

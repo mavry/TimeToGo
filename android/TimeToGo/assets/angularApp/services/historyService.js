@@ -8,6 +8,7 @@ service('HistoryService', function($rootScope, localStorageService){
       localStorageService.add('history', $rootScope.history);
     },
     add: function (address) {
+      if (address==null) return;
       for (var item in $rootScope.history.list)
       {
         if ($rootScope.history.list[item].name===address){

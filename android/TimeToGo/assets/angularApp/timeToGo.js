@@ -88,12 +88,12 @@ window.Application = {
     onDrivingTime: function(drivingTime, routeName) {
       console.log(sprintf("@@ on onDrivingTime with drivingTime = %(drivingTime)s on %(routeName)s",
         {drivingTime: drivingTime, routeName:routeName}));
-      angular.element($(".container")[0]).scope().onDrivingTime(drivingTime,routeName);
+      angular.element($("#HomeCtrl")[0]).scope().onDrivingTime(drivingTime,routeName);
     },
     onCurrentLocation: function(geoLocation) {
       console.log("@@ onCurrentLocation = "+geoLocation);
       console.log("@@ onCurrentLocation "+geoLocation.lat+" / "+geoLocation.lng);
-      angular.element($(".container")[0]).scope().onCurrentLocation(geoLocation);
+      angular.element($("#HomeCtrl")[0]).scope().onCurrentLocation(geoLocation);
     }
   };
 window.Application.inititialize();
