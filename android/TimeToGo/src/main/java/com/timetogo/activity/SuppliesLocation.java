@@ -181,7 +181,7 @@ public class SuppliesLocation {
   }
 
   public boolean canUseLocation() {
-    return (bestLocation != null && q ==  SuppliesLocation.LocationQuality.GOOD && counter >= 3);
+    return (bestLocation != null && q !=  SuppliesLocation.LocationQuality.BAD); // && counter >= 3);
   }
 
   public enum LocationQuality {

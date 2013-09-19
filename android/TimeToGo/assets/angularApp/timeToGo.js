@@ -93,7 +93,7 @@ window.Application = {
     onCurrentLocation: function(geoLocation) {
       console.log("@@ onCurrentLocation = "+geoLocation);
       console.log("@@ onCurrentLocation "+geoLocation.lat+" / "+geoLocation.lng);
-      angular.element($(".container")[0]).scope().onCurrentLocation(currentLocation);
+      angular.element($(".container")[0]).scope().onCurrentLocation(geoLocation);
     }
   };
 window.Application.inititialize();

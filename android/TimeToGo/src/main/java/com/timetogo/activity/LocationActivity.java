@@ -264,9 +264,13 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 	}
 
 	private void printLocation(Location location) {
-		String lat = String.valueOf((location.getLatitude()));
-		String lng = String.valueOf(location.getLongitude());
-		Log.i(Contants.TIME_TO_GO, "got Location: " + lat + "," + lng);
+    if (location==null) {
+      Log.w(Contants.TIME_TO_GO, "got Location: null");
+    } else {
+		  String lat = String.valueOf((location.getLatitude()));
+		  String lng = String.valueOf(location.getLongitude());
+		  Log.i(Contants.TIME_TO_GO, "got Location: " + lat + "," + lng);
+    }
 	}
 
 	void doBindService() {
@@ -290,8 +294,8 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 
 	public void onGeoLocations(
 			final RouteResultForLocations routeResultForLocations) {
-		final RouteResult routeResult = routeResultForLocations
-				.getRouteResult();
+    Log.i(Contants.TIME_TO_GO, "@@ in LocationActivity.onGeoLocations() routeResultForLocations="+ routeResultForLocations);
+    final RouteResult routeResult = routeResultForLocations.getRouteResult();
 		Log.i(Contants.TIME_TO_GO, "@@ in LocationActivity.onGeoLocations() routeResult="+ routeResult);
 		Log.i(Contants.TIME_TO_GO, String.format(Locale.getDefault(), "%d min via %s", routeResult.getDrivingTimeInMinutes(), routeResult.getRouteName()));
 		updateRequestField(routeResultForLocations, routeResult);
@@ -470,7 +474,7 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
     }
 
     private boolean stillInChecking(Long t) {
-      return Calendar.getInstance().getTimeInMillis() - t < 20000;
+      return Calendar.getInstance().getTimeInMillis() - t < 200000;
     }
 
     protected void onPostExecute(final Void unused)
@@ -479,7 +483,7 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
       SuppliesLocation.LocationQuality q = sl.getQuality();
       int counter = sl.getCounter();
       Log.i(Contants.TIME_TO_GO, "@@ **** got location with q = "+q+" counter = "+counter+" *** "+getLocationAsJson(loc));
-      if (loc != null && q != SuppliesLocation.LocationQuality.BAD && counter >= 3)
+      if (loc != null && q != SuppliesLocation.LocationQuality.BAD) //&& counter >= 3)
       {
         Log.i(Contants.TIME_TO_GO, "@@ It is a great location");
         currentLocation = loc;

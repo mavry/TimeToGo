@@ -5,7 +5,7 @@ service('Backend', function() {
   console.log("in backEnd Service. need to activate androiad");
 	return {
       onGo: function (locations){
-		console.log("Backend.onGo");
+		console.log("Backend.onGo for locations "+JSON.stringify(locations));
 		androidInterface.onGo(
 			locations.startLocation.geoLocation.lat,
 			locations.startLocation.geoLocation.lng,

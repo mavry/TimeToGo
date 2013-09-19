@@ -1,10 +1,15 @@
 .submitButton {
 	width:100%
 }
-
-.loadinggif {
-    background:url('../images/ajax-loader.gif') no-repeat right center;
+.current-location-label {
+  position: absolute;
+  top: 7px;
+  left: 20;
 }
+
+/*.loadinggif {
+    background:url('../images/ajax-loader.gif') no-repeat right center;
+}*/
 
 .noCurrentLocation {
     text-decoration: line-through;
