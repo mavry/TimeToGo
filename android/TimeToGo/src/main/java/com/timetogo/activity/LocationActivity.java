@@ -189,8 +189,10 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 		mywebview.addJavascriptInterface(new MyJavascriptInterface(this), "androidInterface");
     mywebview.getSettings().setAllowUniversalAccessFromFileURLs(true);
     mywebview.getSettings().setDomStorageEnabled(true);
+    mywebview.getSettings().setDatabasePath("/data/data/com.timetogo/databases/");
 
-		mywebview.setWebChromeClient(new MyWebChromeClient());
+
+    mywebview.setWebChromeClient(new MyWebChromeClient());
 
         h.postDelayed(new Runnable() {
             public void run() {
