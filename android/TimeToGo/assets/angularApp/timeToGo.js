@@ -13,7 +13,7 @@ var moreServices = (typeof androidInterface !== 'undefined' ) ? ['timeToGo.servi
 var angularCoreServices = ['ngRoute'];
 var Application = {};
 var timeToGoApp = angular.module('timeToGo', 
-  ['ngTouch', 'LocalStorageModule', 'timeToGo.controllers', 'timeToGo.directives', 'timeToGo.controllers.mock',
+  ['ngTouch', 'ajoslin.mobile-navigate', 'LocalStorageModule', 'timeToGo.controllers', 'timeToGo.directives', 'timeToGo.controllers.mock',
     'timeToGo.services.SimulatorService',
   'timeToGo.services.HistoryService',
   ].concat(moreServices).concat(angularCoreServices) );
@@ -30,7 +30,7 @@ timeToGoApp.config(function($routeProvider ) {
       when('/timeToGo',  {templateUrl: 'templates/go/go.html', controller: 'GoCtrl'}).
       otherwise({redirectTo: '/home'});
   }
-).run(function ($rootScope, HistoryService, $location) {
+).run(function ($rootScope, HistoryService, $location, $navigate) {
 
   HistoryService.init();
   

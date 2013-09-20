@@ -7,7 +7,9 @@
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.css" >
 <!--     app -->        
-    <link rel="stylesheet" href="style/timeToGo.css?ver=42">
+    <link rel="stylesheet" href="style/timeToGo.css?ver=66">
+<!-- mobile nav -->
+    <link rel="stylesheet" href="bower_components/angular-mobile-nav/mobile-nav.css">    
 <!-- libs  - js -->    
     <script src="bower_components/jquery/jquery.js"></script>
     <script src="bower_components/angular/angular.js"></script>
@@ -17,32 +19,33 @@
     <script src="bower_components/sprintf/src/sprintf.js"></script>
     <script src="bower_components/momentjs/moment.js"></script>
     <script src="bower_components/angular-local-storage/angular-local-storage.js"></script>
+    <script src="bower_components/angular-mobile-nav/mobile-nav.js"></script>
 <!-- the TTG app -->
-    <script src="timeToGo.js?ver=42"></script>
+    <script src="timeToGo.js?ver=66"></script>
 <!-- services -->    
-    <script src="services/backendServices.js?ver=42"></script>
-    <script src="services/geoLocationForAddressService.js?ver=42"></script>
-    <script src="services/addressForGeoLocationService.js?ver=42"></script>
-    <script src="services/wazeTravelTimeService.js?ver=42"></script>    
-    <script src="services/historyService.js?ver=42"></script>    
+    <script src="services/backendServices.js?ver=66"></script>
+    <script src="services/geoLocationForAddressService.js?ver=66"></script>
+    <script src="services/addressForGeoLocationService.js?ver=66"></script>
+    <script src="services/wazeTravelTimeService.js?ver=66"></script>    
+    <script src="services/historyService.js?ver=66"></script>    
 <!-- controllers -->    
-    <script src="controllers/home/homeController.js?ver=42"></script>
-    <script src="controllers/nav/navigationBarController.js?ver=42"></script>
-    <script src="controllers/notify/notifyController.js?ver=42"></script>
-    <script src="controllers/config/configController.js?ver=42"></script>
-    <script src="controllers/go/goController.js?ver=42"></script>
+    <script src="controllers/home/homeController.js?ver=66"></script>
+    <script src="controllers/nav/navigationBarController.js?ver=66"></script>
+    <script src="controllers/notify/notifyController.js?ver=66"></script>
+    <script src="controllers/config/configController.js?ver=66"></script>
+    <script src="controllers/go/goController.js?ver=66"></script>
 <!-- simulator -->
-    <script src="controllers/simulator/SimulatorController.js?ver=42"></script>
-    <script src="services/simulatorServices.js?ver=42"></script>  
-    <script src="services/mock/mockedBackendServices.js?ver=42"></script>
-    <script src="services/mock/mockedGeoLocationForAddressService.js?ver=42"></script>
-    <script src="services/mock/mockedAddressForGeoLocationService.js?ver=42"></script>
+    <script src="controllers/simulator/SimulatorController.js?ver=66"></script>
+    <script src="services/simulatorServices.js?ver=66"></script>  
+    <script src="services/mock/mockedBackendServices.js?ver=66"></script>
+    <script src="services/mock/mockedGeoLocationForAddressService.js?ver=66"></script>
+    <script src="services/mock/mockedAddressForGeoLocationService.js?ver=66"></script>
 
 
 
 <!-- directives -->
-    <script src="directives/googleplace.js?ver=42"></script>
-    <script src="directives/historyListDirective.js?ver=42"></script>
+    <script src="directives/googleplace.js?ver=66"></script>
+    <script src="directives/historyListDirective.js?ver=66"></script>
 
 <!-- Requires network -->
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script> 
@@ -53,7 +56,6 @@
 
   </head>
   <body>
-    <div data-ng-view ng-animate="{enter: 'view-enter'}">
-    </div>
+    <mobile-view></mobile-view>
   </body> 
 </html>

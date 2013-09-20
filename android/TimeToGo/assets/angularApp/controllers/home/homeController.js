@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope, $rootScope, $location, Backend, HistoryService, GeoLocationForAddressService, AddressForGeoLocationService, $timeout) {	
+angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope, $rootScope, $navigate, $location, Backend, HistoryService, GeoLocationForAddressService, AddressForGeoLocationService, $timeout) {	
 
 	var data;
 
@@ -15,7 +15,8 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 
 	$scope.init = function() {
 	  $scope.gPlace="";
-	  data = {
+	  data = $rootScope.data || 
+	  {
 	    locations: {
 		  startLocation: {
 	        address: null
@@ -115,7 +116,8 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 	  	lastUpdated: moment()
 	  }
 	  $rootScope.safeApply(function(){ 
-	  	$location.path("/notify/");        
+	//  	$location.path("/notify/");        
+		$navigate.go('/notify/')
       });
 	};
 

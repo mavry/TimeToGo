@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-angular.module('timeToGo.controllers'). controller('NotifyCtrl',  function ($scope, $rootScope, $location, Backend) {	
+angular.module('timeToGo.controllers'). controller('NotifyCtrl',  function ($scope, $rootScope, $navigate, Backend) {	
   
   $scope.init = function() {
     $rootScope.data.notification = {
@@ -20,8 +20,12 @@ angular.module('timeToGo.controllers'). controller('NotifyCtrl',  function ($sco
   };
 
   $rootScope.doBack = function() { 
-    $location.path("/home");
-  }
+    $navigate.back()
+  };
+
+  // $rootScope.doBack = function() { 
+  //   $location.path("/home");
+  // }
 
   $scope.up = function() {
     $rootScope.data.notification.request.maxDrivingTime += 1;
