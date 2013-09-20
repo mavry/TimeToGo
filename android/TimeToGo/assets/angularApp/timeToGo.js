@@ -30,9 +30,15 @@ timeToGoApp.config(function($routeProvider ) {
       when('/timeToGo',  {templateUrl: 'templates/go/go.html', controller: 'GoCtrl'}).
       otherwise({redirectTo: '/home'});
   }
-).run(function ($rootScope, HistoryService, $location, $navigate) {
+).run(function ($rootScope, HistoryService, $http, $templateCache, $navigate, $route) {
 
   HistoryService.init();
+
+  angular.forEach($route.routes, function(r) {
+    if (r.templateUrl) { 
+      $http.get(r.templateUrl, {cache: $templateCache});
+    }
+  });
   
   $rootScope.safeApply = function(fn) {
     var phase = this.$root.$$phase;
