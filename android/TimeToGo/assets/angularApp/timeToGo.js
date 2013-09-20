@@ -13,7 +13,7 @@ var moreServices = (typeof androidInterface !== 'undefined' ) ? ['timeToGo.servi
 var angularCoreServices = ['ngRoute'];
 var Application = {};
 var timeToGoApp = angular.module('timeToGo', 
-  ['LocalStorageModule', 'timeToGo.controllers', 'timeToGo.directives', 'timeToGo.controllers.mock',
+  ['ngTouch', 'LocalStorageModule', 'timeToGo.controllers', 'timeToGo.directives', 'timeToGo.controllers.mock',
     'timeToGo.services.SimulatorService',
   'timeToGo.services.HistoryService',
   ].concat(moreServices).concat(angularCoreServices) );
@@ -61,7 +61,7 @@ window.Application = {
     {
       console.log("we are in SIMULATOR");
       self.androidInterface = self;
-    }    
+    }
   },
 
 
@@ -82,7 +82,7 @@ window.Application = {
       {drivingTime: drivingTime, routeName:routeName}));
     },
     onTimeToGo: function(drivingTime, routeName, lastUpdated) {
-      console.log(sprintf("on onTimeToGo with drivingTime=%(drivingTime)s routeName=%(routeName)s", 
+      console.log(sprintf("@@ on onTimeToGo with drivingTime=%(drivingTime)s routeName=%(routeName)s", 
         {drivingTime: drivingTime, routeName:routeName}));
     },
     onDrivingTime: function(drivingTime, routeName) {

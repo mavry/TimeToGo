@@ -12,9 +12,9 @@ service('Backend', function() {
 			locations.destinationLocation.geoLocation.lat, 
 			locations.destinationLocation.geoLocation.lng);
 	},
-      onNotify: function(maxTravelTime) {
-		console.log("Backend.onNotify");
-		androidInterface.onNotify(maxTravelTime);
+      onNotify: function(startLocation, destinationLocation, maxDrivingTime) {
+		console.log("Backend.onNotify startLocation: "+JSON.stringify(startLocation)+", destinationLocation: "+JSON.stringify(destinationLocation)+", maxDrivingTime: "+maxDrivingTime);
+		androidInterface.onNotify(JSON.stringify(startLocation), JSON.stringify(destinationLocation), maxDrivingTime);
 	},
       getLocation: function() {
 		console.log("Backend.getLocation");

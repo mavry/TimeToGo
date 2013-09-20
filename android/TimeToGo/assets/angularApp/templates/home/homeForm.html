@@ -1,14 +1,14 @@
 <div role="form" class="form-horizontal" id="form">
   <div class="form-group">
     <div class="col-lg-4">
-      <div class="input-group input-group-sm col-md-6">
-        <input type="text" class="form-control" placeholder="Enter Starting Location" ng-model="data.locations.startLocation.address" ng-focus="startLocationFocus()" ng-blur="startLocationBlur()" googleplace  xy="left">
+      <div class="input-group input-group-sm">
+        <input type="text" class="form-control" placeholder="Enter Starting Location" ng-model="data.locations.startLocation.address" ng-focus="startLocationFocus()" googleplace  xy="left">
         <span ng-show="data.currentLocation.requested" class="label label-info current-location-label">
           Current Location</span>
       </div>
     </div>
   </div>
-  <div ng-show="!data.currentLocation.requested" ng-click="onCurrentLocationRequest()" >
+  <div ng-show="!data.currentLocation.requested && inStartLocationField" ng-click="onCurrentLocationRequest()" >
        Obtaining current Location
     <img src="images/locationIndicator.png">
   </div>
@@ -16,8 +16,8 @@
 
   <div class="form-group">  
     <div class="col-lg-4">
-      <div class="input-group input-group-sm col-md-6">
-        <input type="text" class="form-control" placeholder="Destination" ng-model="data.locations.destinationLocation.address" googleplace ng-focus="destinationLocationFocus()" ng-blur="destinationLocationBlur()">
+      <div class="input-group input-group-sm">
+        <input type="text" class="form-control" placeholder="Destination" ng-model="data.locations.destinationLocation.address" googleplace ng-focus="destinationLocationFocus()" >
       </div>
     </div>
   </div>
@@ -25,7 +25,7 @@
 
   <div class="row">
     <div class="col-lg-4">
-      <button type="button" class="btn btn-success"  ng-click="submit()" class="submitButton">Find My Route!</button>
+      <button type="button" class="btn btn-success"  ng-disabled="isSubmitDisabled()" ng-click="submit()" class="submitButton">Find My Route!</button>
     </div>
   </div>
 </div>

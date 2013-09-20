@@ -16,7 +16,7 @@ angular.module('timeToGo.controllers'). controller('NotifyCtrl',  function ($sco
 
 
   $scope.notifyMe = function() {
-	  Backend.onNotify($rootScope.data.route.drivingTime);
+	  Backend.onNotify($rootScope.data.locations.startLocation.geoLocation, $rootScope.data.locations.destinationLocation.geoLocation, $rootScope.data.route.drivingTime);
   };
 
   $rootScope.doBack = function() { 

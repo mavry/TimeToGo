@@ -4,12 +4,13 @@ import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -39,6 +40,7 @@ import com.timetogo.view.ILocationView;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -103,8 +105,9 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 	private long initialDrivingTime;
 
 	private String provider;
+  private TimeToGoServiceReceiver eventReceiver = new TimeToGoServiceReceiver();
 
-    public LocationActivity() {
+  public LocationActivity() {
 	}
 
 	final class MyWebChromeClient extends WebChromeClient {
@@ -143,12 +146,19 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 
 		@SuppressWarnings("unused")
         @JavascriptInterface
-		public void onNotify(final long mdt) {
+		public void onNotify(String startLocation, String destinationLocation, final long mdt) {
 			Log.i(Contants.TIME_TO_GO,
-					"@@ NotifyME button was clicked  with maxDrivingTimeInMin="
-							+ mdt);
+					"@@ NotifyME button was clicked  with maxDrivingTimeInMin="	+ mdt+" startLocation = "+startLocation);
 			maxDrivingTime = mdt;
-			service.setParameters(fromLocation, toLocation, maxDrivingTime);
+      try {
+        JSONObject stratLocationAsJosn = new JSONObject(startLocation);
+        JSONObject destinationLocationAsJson = new JSONObject(destinationLocation);
+
+        service.setParameters(new LocationResult("", stratLocationAsJosn.getString("lat"), stratLocationAsJosn.getString("lng")),
+              new LocationResult("", destinationLocationAsJson.getString("lat"), destinationLocationAsJson.getString("lng")), maxDrivingTime);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
 		}
     @JavascriptInterface
         public String getLocation() {
@@ -204,24 +214,10 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 		pintent = PendingIntent.getService(this, 0, intent, 0);
 
 		locationController.setView(this);
-//		alarmManager.cancel(pintent);
-//		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-//				System.currentTimeMillis() + 1000, 60 * 1000, pintent);
+		alarmManager.cancel(pintent);
+		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000, 60 * 1000, pintent);
+
 		doBindService();
-        obtainProvider();
-		
-		h.postDelayed(new Runnable() {
-			public void run() {
-				if (service != null && maxDrivingTime > 0) {
-					updateUI(service.getDrivingTime(), service.getRouteName(),
-							service.getLastExecutionDate());
-				}
-				h.postDelayed(this, 20 * 1000);
-			}
-
-		}, 60 * 1000);
-
-
 	}
 
 	// private void updateDrivingTimeFeilds(final long drivingTime, final String
@@ -230,16 +226,6 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 	// this.routeName = routeName;
 	// lastUpdated = lastExecutionDate;
 	// }
-
-	private void obtainProvider() {
-        Criteria criteria = new Criteria();
-//        criteria.setAccuracy(Criteria.ACCURACY_FINE | Criteria.ACCURACY_COARSE );
-        criteria.setAccuracy(Criteria.NO_REQUIREMENT);
-        criteria.setPowerRequirement(Criteria.NO_REQUIREMENT);
-
-		provider = locationManager.getBestProvider(criteria, true);
-		Log.i(Contants.TIME_TO_GO, "provider = " + provider);
-	}
 
 	private void printLocation(Location location) {
     if (location==null) {
@@ -291,21 +277,27 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 
 	@Override
 	protected void onNewIntent(final Intent intent) {
-		Log.i(Contants.TIME_TO_GO, "onNewIntent");
+		Log.i(Contants.TIME_TO_GO, "@@ Notification was clicked");
 		if (intent.getExtras() == null) {
-			Log.i(Contants.TIME_TO_GO, "no extras");
+			Log.w(Contants.TIME_TO_GO, "no extras");
 		} else {
-			final boolean timeToGo = intent.getExtras().getBoolean("timeToGo");
-			Log.i(Contants.TIME_TO_GO, "timeToGo = " + timeToGo);
-			invokeJS("onTimeToGo", String.valueOf(service.getDrivingTime())
-					+ " min", service.getRouteName(),
-					formatUpdateTime(service.getLastExecutionDate()));
+      updateUI(intent);
 		}
 		super.onNewIntent(intent);
 
 	}
 
-	private void updateRequestField(
+  private void updateUI(Intent intent) {
+    final boolean timeToGo = intent.getExtras().getBoolean("timeToGo");
+    final long drivingTime = intent.getExtras().getLong("drivingTime");
+    final long routeName = intent.getExtras().getLong("routeName");
+
+    Log.i(Contants.TIME_TO_GO, "@@ drivingTime = "+drivingTime+"min via:"+routeName+" timeToGo = " + timeToGo);
+    invokeJS("onTimeToGo", "'"+drivingTime+"'", "'"+routeName+"'", "'"+formatUpdateTime(new Date())+"'");
+
+  }
+
+  private void updateRequestField(
 			final RouteResultForLocations routeResultForLocations,
 			final RouteResult routeResult) {
 		initialDrivingTime = routeResult.getDrivingTimeInMinutes();
@@ -313,11 +305,6 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 		toLocation = routeResultForLocations.getTo();
 	}
 
-	private void updateUI(final long drivingTime, final String routeName,
-			final Date lastUpdated) {
-		final String text = formatUpdateTime(lastUpdated);
-		invokeJS("onUpdate", String.valueOf(drivingTime), routeName, text);
-	}
 
 	private void invokeJS(final String methodName, final String... args) {
 		final StringBuilder sb = new StringBuilder("javascript:");
@@ -334,7 +321,7 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
 			firstTime = false;
 		}
 		sb.append(");");
-        if (methodName.equals("onCurrentLocation") || methodName.equals("onDrivingTime") ){
+        if (methodName.equals("onCurrentLocation") || methodName.equals("onDrivingTime") || methodName.equals("onTimeToGo")){
             Log.i(Contants.TIME_TO_GO, "@@ "+methodName+ " "+sb.toString());
             mywebview.loadUrl(sb.toString());
         }
@@ -357,16 +344,19 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
     /* Request updates at startup */
     @Override
     protected void onResume() {
-        super.onResume();
-        Log.i(Contants.TIME_TO_GO, "@@ onResume");
-        invokeJS("onResume");
+      registerReceiver(eventReceiver, new IntentFilter(ETAService.TRAFFIC_UPDATE_EVENT));
+      super.onResume();
+      Log.i(Contants.TIME_TO_GO, "@@ onResume");
+      invokeJS("onResume");
     }
 
     /* Remove the locationlistener updates when Activity is paused */
     @Override
     protected void onPause() {
         super.onPause();
-        Log.i(Contants.TIME_TO_GO, "@@ onPause");
+      if (eventReceiver != null) unregisterReceiver(eventReceiver);
+
+      Log.i(Contants.TIME_TO_GO, "@@ onPause");
         locationManager.removeUpdates(this);
         invokeJS("onPause");
     }
@@ -473,4 +463,14 @@ public class LocationActivity extends RoboActivity implements ILocationView, Loc
   }
 
 
+
+  public class TimeToGoServiceReceiver extends BroadcastReceiver
+  {
+    @Override
+    public void onReceive(Context context, Intent intent)
+    {
+      Log.i(Contants.TIME_TO_GO, "@@ got update from service... it is probably time to go. action is "+intent.getAction());
+      updateUI(intent);
+    }
+  }
 }

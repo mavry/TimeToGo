@@ -51,30 +51,19 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 	  $rootScope.doBack = function() {  $scope.inStartLocationField = false }
 	}
 
-	$scope.startLocationBlur = function(){
-      // $scope.inStartLocationField = false;
-      // $rootScope.doBack = null;
-	}
-
 	$scope.destinationLocationFocus = function(){
 	  $scope.inDestinationLocationField = true;
 	  $scope.inStartLocationField = false;
 	  $rootScope.doBack = function() {  $scope.inDestinationLocationField = false; }
 	}
 
-	$scope.destinationLocationBlur = function(){
-      // $scope.inDestinationLocationField = false;
-      // $rootScope.doBack = null;
-	}
-
 	$scope.onCurrentLocationRequest = function() {
-		data.currentLocation.requested=true;
+	  $scope.data.currentLocation.requested=true;
+	  $scope.data.locations.startLocation.address = null;
+	  // $scope.inDestinationLocationField = true;
+	  $scope.inStartLocationField = false;
 	};
 
-	$scope.useCurrentLocation = function() {
-	  $scope.data.currentLocation.address = "";
-	  $scope.pollForLocation();
-	}
 
 	$scope.onCurrentLocation = function(geoLocation) {
 	  console.log("@@ in onCurrentLocation()");
@@ -96,7 +85,28 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
         });
 	};
 	
+	$scope.isSubmitDisabled = function() { 
+		var enabled = 
+		(
+			($scope.data.locations.destinationLocation.address != null 
+					&& 
+				$scope.data.locations.destinationLocation.address.length > 3
+			) 
+			  &&
+			(
+				(   $scope.data.locations.startLocation.address != null 
+					&& 
+					$scope.data.locations.startLocation.address.length > 3
+				)
+					  || 
+					$scope.data.currentLocation.requested == true 
+				)
+		);
+		console.log("$scope.data.locations.destinationLocation.address "+$scope.data.locations.destinationLocation.address);
+		console.log("enabled = "+enabled);
 
+		return !enabled;
+	}
 	$scope.onDrivingTime = function(drivingTime, routeName) {
 	  console.log(sprintf("@@ in homeController onDrivingTime drivingTime=%s drivingTime=%s", drivingTime, routeName));
 	  $rootScope.data.route = {

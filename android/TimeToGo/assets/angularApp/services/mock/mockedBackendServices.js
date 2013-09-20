@@ -15,9 +15,11 @@ angular.module('timeToGo.services.mock.Backend', []).service('Backend', function
     },
 
 
-    onNotify: function (maxDrivingTime) {
+      onNotify: function(startLocation, destinationLocation, maxDrivingTime) {
       // $timeout(function() {
-        $rootScope.fromAndroiad.onTimeToGo($rootScope.mockData.drivingTime, $rootScope.mockData.routeName, "2 min ago");
+      console.log("mock.Backend.onNotify startLocation: "+JSON.stringify(startLocation)+", destinationLocation: "+JSON.stringify(destinationLocation)+", maxDrivingTime: "+maxDrivingTime);
+
+        window.Application.onTimeToGo($rootScope.mockData.drivingTime, $rootScope.mockData.routeName, "2 min ago");
       // }, 3000);
 
     },

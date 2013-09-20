@@ -32,6 +32,7 @@ import roboguice.service.event.OnCreateEvent;
 
 public class ETAService extends RoboIntentService implements IETAService {
   private static final int NOTIFICATION_ID = 0;
+  public static final String TRAFFIC_UPDATE_EVENT = "com.timetogo.ETAService.TRAFFIC_UPDATE_EVENT" ;
   LocationResult fromLocation;
   LocationResult toLocation;
   long drivingTime;
@@ -89,7 +90,9 @@ public class ETAService extends RoboIntentService implements IETAService {
       final RouteResult[] routeResultForLocations = retreivesRouteResult.retreive(fromLocation, toLocation);
       routeName = routeResultForLocations[0].getRouteName();
       drivingTime = routeResultForLocations[0].getDrivingTimeInMinutes();
-      Log.i(Contants.TIME_TO_GO, "service got info from waze " + drivingTime + " min via " + routeName);
+      //
+      drivingTime = 12;
+      Log.i(Contants.TIME_TO_GO, "service got info from waze. drivingTime:" + drivingTime + " min via " + routeName);
       if (isItTimeToGo(drivingTime)) {
         notify(drivingTime);
         waitingForTrafficToGoDown = false;
@@ -106,18 +109,40 @@ public class ETAService extends RoboIntentService implements IETAService {
   }
 
   @SuppressWarnings("deprecation")
-  private void notify(final long eta) {
+  private void notify(final long drivingTime) {
+
+    notifyActivity(drivingTime);
     final Intent intent = new Intent(this, LocationActivity.class);
-    intent.putExtra("timeToGo", true);
+    updateIntentWithData(drivingTime, intent);
+
+    Log.i(Contants.TIME_TO_GO, "@@ it is time to go, broadcast event to the activity");
+
+    sendBroadcast(intent);
+
     final PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     @SuppressWarnings("deprecation")
     final Notification notification = new Notification(R.drawable.ic_launcher, "Time To Go", System.currentTimeMillis());
 
-    notification.setLatestEventInfo(this, "TimeToGo", "eta is " + eta + " minutes", contentIntent);
+    notification.setLatestEventInfo(this, "TimeToGo", "drivingTime is " + drivingTime + " minutes", contentIntent);
     notification.flags = Notification.DEFAULT_LIGHTS | Notification.FLAG_AUTO_CANCEL;
 
+    Log.i(Contants.TIME_TO_GO, "@@ it is time to go, fire notification");
     notificationManager.notify(NOTIFICATION_ID, notification);
     mplayer.start();
+  }
+
+  private void notifyActivity(long drivingTime) {
+    final Intent intent = new Intent(TRAFFIC_UPDATE_EVENT);
+    updateIntentWithData(drivingTime, intent);
+
+    Log.i(Contants.TIME_TO_GO, "@@ it is time to go, broadcast event to the activity");
+
+    sendBroadcast(intent);
+  }
+
+  private void updateIntentWithData(long drivingTime, Intent intent) {
+    intent.putExtra("timeToGo", true);
+    intent.putExtra("drivingTime", drivingTime);
   }
 
   private boolean isItTimeToGo(final long eta) {
