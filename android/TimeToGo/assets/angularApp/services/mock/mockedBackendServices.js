@@ -24,6 +24,10 @@ angular.module('timeToGo.services.mock.Backend', []).service('Backend', function
 
     },
     onReset: function () {
+    }, 
+    openWaze: function(url) {
+      console.log("mock.Backend.openWaze url: "+url);
     }
+
   };  
 });

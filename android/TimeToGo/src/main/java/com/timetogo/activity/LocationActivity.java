@@ -4,26 +4,23 @@ import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.Toast;
 
 import com.google.inject.Inject;
 import com.timetogo.Contants;
@@ -33,7 +30,6 @@ import com.timetogo.model.LocationResult;
 import com.timetogo.model.RouteResult;
 import com.timetogo.model.RouteResultForLocations;
 import com.timetogo.service.ETAService;
-import com.timetogo.service.IETAService;
 import com.timetogo.view.ILocationView;
 
 import org.json.JSONException;
@@ -65,28 +61,28 @@ public class LocationActivity extends RoboActivity implements ILocationView {
   PendingIntent pintent;
 
   Handler h = new Handler();
-	private IETAService service;
+//	private IETAService service;
 
   private LocationControl locationControlTask;
   SuppliesLocation suppliesLocation;
 
-
-
-	private final ServiceConnection mConnection = new ServiceConnection() {
-
-		@Override
-    public void onServiceConnected(final ComponentName className,
-				final IBinder binder) {
-			service = ((ETAService.MyBinder) binder).getService();
-			Toast.makeText(LocationActivity.this, "Connected",
-					Toast.LENGTH_SHORT).show();
-			Log.i(Contants.TIME_TO_GO, "@@ Service is bounded. managed to bind");
-		}
-
-		@Override
-    public void onServiceDisconnected(final ComponentName className) {
-		}
-	};
+//
+//
+//	private final ServiceConnection mConnection = new ServiceConnection() {
+//
+//		@Override
+//    public void onServiceConnected(final ComponentName className,
+//				final IBinder binder) {
+//			service = ((ETAService.MyBinder) binder).getService();
+//			Toast.makeText(LocationActivity.this, "Connected",
+//					Toast.LENGTH_SHORT).show();
+//			Log.i(Contants.TIME_TO_GO, "@@ Service is bounded. managed to bind");
+//		}
+//
+//		@Override
+//    public void onServiceDisconnected(final ComponentName className) {
+//		}
+//	};
 
 	long maxDrivingTime;
 
@@ -114,6 +110,18 @@ public class LocationActivity extends RoboActivity implements ILocationView {
                     + sourceID);
         }
 
+
+//      public boolean shouldOverrideUrlLoading(WebView view, String url) {
+//      if (url.startsWith("tel:")) {
+//        Intent intent = new Intent(Intent.ACTION_DIAL,
+//                Uri.parse(url));
+//        startActivity(intent);
+//      }else if(url.startsWith("http:") || url.startsWith("https:")) {
+//        view.loadUrl(url);
+//      }
+//      return true;
+//    }
+
 	}
 
 	private class MyJavascriptInterface {
@@ -136,16 +144,18 @@ public class LocationActivity extends RoboActivity implements ILocationView {
 
 		@SuppressWarnings("unused")
         @JavascriptInterface
-		public void onNotify(String startLocation, String destinationLocation, final long mdt) {
+		public void onNotify(String startLocationAsString, String destinationLocationAsString, final long maxDrivingTime) {
 			Log.i(Contants.TIME_TO_GO,
-					"@@ NotifyME button was clicked  with maxDrivingTimeInMin="	+ mdt+" startLocation = "+startLocation);
-			maxDrivingTime = mdt;
+					"@@ NotifyME button was clicked  with maxDrivingTimeInMin="	+ maxDrivingTime+" startLocation = "+startLocationAsString);
       try {
-        JSONObject stratLocationAsJosn = new JSONObject(startLocation);
-        JSONObject destinationLocationAsJson = new JSONObject(destinationLocation);
+        JSONObject stratLocationAsJosn = new JSONObject(startLocationAsString);
+        JSONObject destinationLocationAsJson = new JSONObject(destinationLocationAsString);
 
-        service.setParameters(new LocationResult("", stratLocationAsJosn.getString("lat"), stratLocationAsJosn.getString("lng")),
-              new LocationResult("", destinationLocationAsJson.getString("lat"), destinationLocationAsJson.getString("lng")), maxDrivingTime);
+        final LocationResult startLocation = new LocationResult("", stratLocationAsJosn.getString("lat"), stratLocationAsJosn.getString("lng"));
+
+        LocationResult destinationLocation = new LocationResult("", destinationLocationAsJson.getString("lat"), destinationLocationAsJson.getString("lng"));
+
+        launchETAService(startLocation, destinationLocation, maxDrivingTime);
       } catch (JSONException e) {
         e.printStackTrace();
       }
@@ -166,9 +176,32 @@ public class LocationActivity extends RoboActivity implements ILocationView {
       }, 100);
           return "";
         }
+
+    @JavascriptInterface
+    public void openUrl(String url) {
+      Log.i(Contants.TIME_TO_GO, "@@ about to run url ["+url+"]");
+      Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( url ) );
+      startActivity( intent );
+      Log.i(Contants.TIME_TO_GO, "@@ done");
+    }
 	}
 
-    @Override
+  private void launchETAService(LocationResult startLocation, LocationResult destinationLocation, long maxDrivingTime) {
+    if (pintent!=null) {
+      alarmManager.cancel(pintent);
+    }
+    Intent intent = new Intent(this, ETAService.class);
+    intent.putExtra("startLocation", startLocation);
+    intent.putExtra("destinationLocation", destinationLocation);
+    intent.putExtra("maxDrivingTime", maxDrivingTime);
+
+    pintent = PendingIntent.getService(this, 0, intent, 0);
+
+//		alarmManager.cancel(pintent);
+    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000, 5 * 1000, pintent);
+  }
+
+  @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         Log.i(Contants.TIME_TO_GO, "@@ HERE AT ON CONFIGURATION CHANGED "+newConfig.orientation);
@@ -204,14 +237,14 @@ public class LocationActivity extends RoboActivity implements ILocationView {
             }
         }, 1000);
 
-    Intent intent = new Intent(this, ETAService.class);
+//    Intent intent = new Intent(this, ETAService.class);
+//
+//    pintent = PendingIntent.getService(this, 0, intent, 0);
+//
+////		alarmManager.cancel(pintent);
+//		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000, 5 * 1000, pintent);
 
-    pintent = PendingIntent.getService(this, 0, intent, 0);
-
-//		alarmManager.cancel(pintent);
-		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000, 5 * 1000, pintent);
-
-		doBindService();
+//		doBindService();
 	}
 
 	private void printLocation(Location location) {
@@ -222,13 +255,14 @@ public class LocationActivity extends RoboActivity implements ILocationView {
 		  String lng = String.valueOf(location.getLongitude());
 		  Log.i(Contants.TIME_TO_GO, "got Location: " + lat + "," + lng);
     }
-	}
-
-	void doBindService() {
-		final boolean bind = bindService(new Intent(this, ETAService.class),
-                mConnection, Context.BIND_AUTO_CREATE);
-		Log.i(Contants.TIME_TO_GO, "bind success = " + bind);
-	}
+  }
+//	}
+//
+//	void doBindService() {
+//		final boolean bind = bindService(new Intent(this, ETAService.class),
+//                mConnection, Context.BIND_AUTO_CREATE);
+//		Log.i(Contants.TIME_TO_GO, "bind success = " + bind);
+//	}
 
 	public void onGoBtnClicked(LocationResult fromLocation, LocationResult toLocation)
 			throws IOException, JSONException,
@@ -313,7 +347,6 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     protected void onResume() {
       registerReceiver(eventReceiver, new IntentFilter(ETAService.TRAFFIC_UPDATE_EVENT));
       super.onResume();
-      alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000, 5 * 1000, pintent);
 
       Log.i(Contants.TIME_TO_GO, "@@ onResume");
       invokeJS("onResume");
@@ -323,8 +356,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     @Override
     protected void onPause() {
         super.onPause();
-      if (eventReceiver != null) unregisterReceiver(eventReceiver);
-      alarmManager.cancel(pintent);
+      if (eventReceiver != null) unregisterReceiver(eventReceiver);;
       Log.i(Contants.TIME_TO_GO, "@@ onPause");
       invokeJS("onPause");
     }
@@ -356,8 +388,19 @@ public class LocationActivity extends RoboActivity implements ILocationView {
   @Override
   protected void onStop () {
     super.onStop();
-    Log.i(Contants.TIME_TO_GO, "on Stop");
+    Log.i(Contants.TIME_TO_GO, "@@ on Stop");
     suppliesLocation.stop();
+  }
+
+  @Override
+  protected void onDestroy() {
+    Log.i(Contants.TIME_TO_GO, "@@ on onDestroy");
+
+    if (pintent != null) {
+      alarmManager.cancel(pintent);
+    }
+
+    super.onDestroy();
   }
     public String getLocationAsJson(Location location){
       if (location==null) return "null";
@@ -423,6 +466,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     @Override
     public void onReceive(Context context, Intent intent)
     {
+      alarmManager.cancel(pintent);
       Log.i(Contants.TIME_TO_GO, "@@ got update from service... it is probably time to go. action is "+intent.getAction());
       updateUI(intent);
     }

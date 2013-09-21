@@ -11,14 +11,18 @@ service('Backend', function() {
 			locations.startLocation.geoLocation.lng,
 			locations.destinationLocation.geoLocation.lat, 
 			locations.destinationLocation.geoLocation.lng);
-	},
+	  },
       onNotify: function(startLocation, destinationLocation, maxDrivingTime) {
 		console.log("Backend.onNotify startLocation: "+JSON.stringify(startLocation)+", destinationLocation: "+JSON.stringify(destinationLocation)+", maxDrivingTime: "+maxDrivingTime);
 		androidInterface.onNotify(JSON.stringify(startLocation), JSON.stringify(destinationLocation), maxDrivingTime);
-	},
+	  },
       getLocation: function() {
 		console.log("Backend.getLocation");
 		androidInterface.getLocation();
+      },
+      openWaze: function(url) {
+      	console.log("Backend.openWaze url: "+url);
+      	androidInterface.openUrl(url);	
       }
 	};
 });

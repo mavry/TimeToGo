@@ -51,6 +51,16 @@ timeToGoApp.config(function($routeProvider ) {
     }
   };
 
+  $rootScope.onTimeToGo = function (drivingTime,routeName) {
+    console.log("@@ in $rootScope.onTimeToGo ");
+    $rootScope.data.go = {
+      drivingTime: drivingTime,
+      routeName: routeName   
+    };
+
+     $rootScope.safeApply(function() {$navigate.go("/timeToGo/")});
+  };
+
  ROOT = $rootScope;
 });
 
@@ -90,6 +100,7 @@ window.Application = {
     onTimeToGo: function(drivingTime, routeName, lastUpdated) {
       console.log(sprintf("@@ on onTimeToGo with drivingTime=%(drivingTime)s routeName=%(routeName)s", 
         {drivingTime: drivingTime, routeName:routeName}));
+     angular.element($("#timeToGo")[0]).scope().onTimeToGo(drivingTime,routeName); 
     },
     onDrivingTime: function(drivingTime, routeName) {
       console.log(sprintf("@@ on onDrivingTime with drivingTime = %(drivingTime)s on %(routeName)s",

@@ -2,6 +2,12 @@
 	<div class='section'  ng-include="'templates/nav/navigationBar.html'">
 	</div>
 	<div class='section'>
-		Go now! - you will get to destination at {{go.arivalTime}} in {{go.travelTime}} min
+		Go now! via {{data.go.routeName}}- you will get to destination at {{data.go.eta}} in {{data.go.drivingTime}} min
+	</div>
+	<div class='section'>
+		Start Driving <img ng-click='openWaze()' src='images/waze-logo.jpg'>
+	</div>
+	<div class='section'>
+		<a href='#' ng-clik="restart()">Start All Over</a>
 	</div>
 </div> <!-- /container -->

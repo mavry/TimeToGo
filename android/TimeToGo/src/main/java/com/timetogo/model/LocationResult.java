@@ -1,6 +1,8 @@
 package com.timetogo.model;
 
-public class LocationResult {
+import java.io.Serializable;
+
+public class LocationResult implements Serializable{
 
   private final String name;
   private final String lat;
