@@ -62,6 +62,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
 
 	LocationManager locationManager;
 
+  PendingIntent pintent;
 
   Handler h = new Handler();
 	private IETAService service;
@@ -79,7 +80,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
 			service = ((ETAService.MyBinder) binder).getService();
 			Toast.makeText(LocationActivity.this, "Connected",
 					Toast.LENGTH_SHORT).show();
-			Log.i(Contants.TIME_TO_GO, "@@ got reference to service");
+			Log.i(Contants.TIME_TO_GO, "@@ Service is bounded. managed to bind");
 		}
 
 		@Override
@@ -178,7 +179,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
 	protected void onCreate(final Bundle savedInstanceState) {
 		Log.i(Contants.TIME_TO_GO, "@@ onCreate");
 		super.onCreate(savedInstanceState);
-  		locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+  	locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
 		setContentView(R.layout.main);
     suppliesLocation = new SuppliesLocation(locationManager);
@@ -196,7 +197,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
 
     webView.setWebChromeClient(new MyWebChromeClient());
 
-        h.postDelayed(new Runnable() {
+    h.postDelayed(new Runnable() {
             @Override
             public void run() {
                 invokeJS("onCreate");
@@ -204,10 +205,11 @@ public class LocationActivity extends RoboActivity implements ILocationView {
         }, 1000);
 
     Intent intent = new Intent(this, ETAService.class);
-    PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
 
-		alarmManager.cancel(pintent);
-		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000, 60 * 1000, pintent);
+    pintent = PendingIntent.getService(this, 0, intent, 0);
+
+//		alarmManager.cancel(pintent);
+		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000, 5 * 1000, pintent);
 
 		doBindService();
 	}
@@ -311,6 +313,8 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     protected void onResume() {
       registerReceiver(eventReceiver, new IntentFilter(ETAService.TRAFFIC_UPDATE_EVENT));
       super.onResume();
+      alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000, 5 * 1000, pintent);
+
       Log.i(Contants.TIME_TO_GO, "@@ onResume");
       invokeJS("onResume");
     }
@@ -320,7 +324,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     protected void onPause() {
         super.onPause();
       if (eventReceiver != null) unregisterReceiver(eventReceiver);
-
+      alarmManager.cancel(pintent);
       Log.i(Contants.TIME_TO_GO, "@@ onPause");
       invokeJS("onPause");
     }

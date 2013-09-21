@@ -64,12 +64,14 @@ public class ETAService extends RoboIntentService implements IETAService {
   private MediaPlayer mplayer;
 
   public ETAService() {
-    super("hello");
+    super("ETAService");
+    Log.i(Contants.TIME_TO_GO, "@@ ["+Thread.currentThread().getName()+"] in ETAService() constrcutor");
+
   }
 
   @Override
   public IBinder onBind(final Intent intent) {
-    Log.i(Contants.TIME_TO_GO, "ETAService was binded");
+    Log.i(Contants.TIME_TO_GO, "@@ ["+Thread.currentThread().getName()+"] ETAService was binded");
     return mBinder;
   }
 
@@ -92,7 +94,7 @@ public class ETAService extends RoboIntentService implements IETAService {
       drivingTime = routeResultForLocations[0].getDrivingTimeInMinutes();
       //
       drivingTime = 12;
-      Log.i(Contants.TIME_TO_GO, "service got info from waze. drivingTime:" + drivingTime + " min via " + routeName);
+      Log.i(Contants.TIME_TO_GO, "@@ ["+Thread.currentThread().getName()+"] ETAService got info from waze. drivingTime:" + drivingTime + " min via " + routeName);
       if (isItTimeToGo(drivingTime)) {
         notify(drivingTime);
         waitingForTrafficToGoDown = false;
@@ -102,7 +104,7 @@ public class ETAService extends RoboIntentService implements IETAService {
       lastExecution = new Date();
 
     } catch (final Exception ex) {
-      Log.e(Contants.TIME_TO_GO, "got exception while retreving ETA ", ex);
+      Log.e(Contants.TIME_TO_GO, "@@ got exception while retreving ETA ", ex);
     } finally {
       releaseWakeLock();
     }
@@ -167,7 +169,7 @@ public class ETAService extends RoboIntentService implements IETAService {
     injector.injectMembers(this);
     wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, Contants.TIME_TO_GO);
     super.onCreate();
-    Log.i(Contants.TIME_TO_GO, "MyUpdateService.onCreate");
+    Log.i(Contants.TIME_TO_GO, "@@ ["+Thread.currentThread().getName()+"] ETAService.onCreate()");
 
     eventManager.fire(new OnCreateEvent());
     mplayer = MediaPlayer.create(this, R.raw.its_time_to_go);
@@ -191,7 +193,7 @@ public class ETAService extends RoboIntentService implements IETAService {
 
   @Override
   protected void onHandleIntent(final Intent intent) {
-    Log.i(Contants.TIME_TO_GO, "@@ onHandleIntent - thread" + Thread.currentThread().getName());
+    Log.i(Contants.TIME_TO_GO, "@@ ["+Thread.currentThread().getName()+"] in ETAService.onHandleIntent()");
     if (shouldIDoSomething()) {
       handleCommand(intent);
     } else {
