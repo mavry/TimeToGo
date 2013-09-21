@@ -2,7 +2,6 @@ package com.timetogo.facade;
 
 import com.google.inject.Inject;
 import com.timetogo.Contants;
-import com.timetogo.activity.LocationActivity;
 import com.timetogo.model.LocationResult;
 import com.timetogo.model.RouteResultForLocations;
 import com.timetogo.view.ILocationView;
@@ -14,26 +13,21 @@ public class LocationController implements ILocationController {
 
   @Inject
   private RetreivesWazeRouteResult retreivesRouteResult;
-  @Inject
-  private ILocationView locationView;
+
 
   public LocationController() {
   }
 
-  public void retrievesGeoLocations(LocationResult fromLocation, LocationResult toLocation) {
-    Log.i(Contants.TIME_TO_GO, "query waze");
+  public void retrievesDrivingTime(LocationResult fromLocation, LocationResult toLocation, final ILocationView locationView) {
+    Log.i(Contants.TIME_TO_GO, "query Waze");
     new RetrievesGeoLocationTask(retreivesRouteResult, new IRouteResultForLocationsHandler() {
 
       public void onRoutesResultForLocations(final RouteResultForLocations routeResultForLocations) {
-        Log.i(Contants.TIME_TO_GO, "got response from waze");
-        locationView.onGeoLocations(routeResultForLocations);
+        Log.i(Contants.TIME_TO_GO, "got response from Waze");
+        locationView.onRetrievesDrivingTime(routeResultForLocations);
       }
     }).execute(fromLocation, toLocation);
   }
 
-
-  public void setView(final LocationActivity locationActivity) {
-    locationView = locationActivity;
-  }
 
 }

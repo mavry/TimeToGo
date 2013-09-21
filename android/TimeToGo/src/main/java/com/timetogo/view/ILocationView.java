@@ -4,8 +4,6 @@ import com.timetogo.model.RouteResultForLocations;
 
 public interface ILocationView {
 
-  void onGeoLocations(RouteResultForLocations routeResultForLocations);
-
-  void onTimeToGo();
+  void onRetrievesDrivingTime(RouteResultForLocations routeResultForLocations);
 
 }
