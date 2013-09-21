@@ -90,6 +90,7 @@ public class SuppliesLocation {
 
 
   private String locationToString( Location location) {
+    if (location==null) return "null";
     StringBuilder sb = new StringBuilder();
     sb.append(String.format("qual=%s time=%d prov=%s acc=%.1f lat=%f long=%f",
       getLocationQuality( location), location.getTime() / 1000, location.getProvider(), location.getAccuracy(), location

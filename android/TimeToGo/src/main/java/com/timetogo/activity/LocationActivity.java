@@ -52,7 +52,7 @@ import roboguice.inject.InjectView;
 public class LocationActivity extends RoboActivity implements ILocationView {
 
 	@InjectView(R.id.webview)
-	WebView mywebview;
+  private WebView webView;
 
 	@Inject
 	ILocationController locationController;
@@ -182,19 +182,19 @@ public class LocationActivity extends RoboActivity implements ILocationView {
 
 		setContentView(R.layout.main);
     suppliesLocation = new SuppliesLocation(locationManager);
-		mywebview.loadUrl("file:///android_asset/angularApp/timeToGo.html?_="+System.currentTimeMillis());
+    webView.loadUrl("file:///android_asset/angularApp/timeToGo.html?_=" + System.currentTimeMillis());
 //        mywebview.loadUrl("http://mavry.github.io/angularApp/timeToGo.html?_="+System.currentTimeMillis());
 
-		mywebview.addJavascriptInterface(new MyJavascriptInterface(this), "androidInterface");
+    webView.addJavascriptInterface(new MyJavascriptInterface(this), "androidInterface");
 
-    WebSettings settings = mywebview.getSettings();
+    WebSettings settings = webView.getSettings();
     settings.setJavaScriptEnabled(true);
     settings.setAllowUniversalAccessFromFileURLs(true);
     settings.setDomStorageEnabled(true);
-    settings.setDatabasePath( getFilesDir().getPath()+"/databases/");
+    settings.setDatabasePath(getFilesDir().getPath() + "/databases/");
 
 
-    mywebview.setWebChromeClient(new MyWebChromeClient());
+    webView.setWebChromeClient(new MyWebChromeClient());
 
         h.postDelayed(new Runnable() {
             @Override
@@ -302,7 +302,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
 		sb.append(");");
         if (methodName.equals("onCurrentLocation") || methodName.equals("onDrivingTime") || methodName.equals("onTimeToGo")){
             Log.i(Contants.TIME_TO_GO, "@@ "+methodName+ " "+sb.toString());
-            mywebview.loadUrl(sb.toString());
+          webView.loadUrl(sb.toString());
         }
 	}
 
@@ -356,6 +356,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     suppliesLocation.stop();
   }
     public String getLocationAsJson(Location location){
+      if (location==null) return "null";
         return String.format("{\"lat\": \"%s\", \"lng\":\"%s\", \"accuracy\":\"%s\", \"provider\":\"%s\" }", location.getLatitude() , location.getLongitude(), location.getAccuracy(), location.getProvider());
     }
 
@@ -372,7 +373,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     protected Void doInBackground(Context... params)
     {
       //Wait 10 seconds to see if we can get a location from either network or GPS, otherwise stop
-      Log.i(Contants.TIME_TO_GO, "@@ **** background checking... ");
+      Log.i(Contants.TIME_TO_GO, "@@ ****["+Thread.currentThread().getName()+"] background checking... ");
 
       Long t0 = Calendar.getInstance().getTimeInMillis();
       while (!suppliesLocation.canUseLocation() && stillHaveTimeToWaitUntilGettingAGoodLocation(t0)) {
