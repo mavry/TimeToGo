@@ -20,8 +20,8 @@ service('Backend', function() {
 		console.log("Backend.getLocation");
 		androidInterface.getLocation();
       },
-      openWaze: function(url) {
-      	console.log("Backend.openWaze url: "+url);
+      openUrl: function(url) {
+      	console.log("Backend.openUrl url: "+url);
       	androidInterface.openUrl(url);	
       }
 	};

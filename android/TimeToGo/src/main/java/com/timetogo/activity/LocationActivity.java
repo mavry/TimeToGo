@@ -109,19 +109,6 @@ public class LocationActivity extends RoboActivity implements ILocationView {
                     + lineNumber + " of "
                     + sourceID);
         }
-
-
-//      public boolean shouldOverrideUrlLoading(WebView view, String url) {
-//      if (url.startsWith("tel:")) {
-//        Intent intent = new Intent(Intent.ACTION_DIAL,
-//                Uri.parse(url));
-//        startActivity(intent);
-//      }else if(url.startsWith("http:") || url.startsWith("https:")) {
-//        view.loadUrl(url);
-//      }
-//      return true;
-//    }
-
 	}
 
 	private class MyJavascriptInterface {

@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-angular.module('timeToGo.controllers'). controller('GoCtrl',  function ($scope, $rootScope, Backend) {	
+angular.module('timeToGo.controllers'). controller('GoCtrl',  function ($scope, $rootScope,$navigate, Backend) {	
 	
 	$scope.init = function() {
 		$scope.data = $rootScope.data;
@@ -11,17 +11,19 @@ angular.module('timeToGo.controllers'). controller('GoCtrl',  function ($scope, 
 	};
 
 	$scope.openWaze = function() {
-		Backend.openWaze($scope.wazeURL());
+		Backend.openUrl($scope.wazeURL());
 	};
-
 
 	$scope.wazeURL = function() {
 		var urlTemplate = "waze://?ll=%s,%s&navigate=yes&z=6";
-		var url = sprintf(urlTemplate, 
+		return sprintf(urlTemplate, 
 				$scope.data.locations.destinationLocation.geoLocation.lat,
 				$scope.data.locations.destinationLocation.geoLocation.lng);
-		console.log("Waze URL "+url);
-		return url;
+	};
+
+	$scope.restart = function() {
+		$rootScope.data=null;
+		$navigate.go("/home/");
 	};
 
 	(function() { $scope.init(); })();
