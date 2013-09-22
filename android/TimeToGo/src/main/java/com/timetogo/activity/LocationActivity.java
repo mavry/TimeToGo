@@ -436,13 +436,13 @@ public class LocationActivity extends RoboActivity implements ILocationView {
       if (suppliesLocation.canUseLocation())
       {
         Log.i(Contants.TIME_TO_GO, "@@ It is a great location");
+        updateLocation(loc);
       }
       else
       {
         Log.w(Contants.TIME_TO_GO, "@@ **** NOT good enough location *** ");
       }
       suppliesLocation.stop();
-      updateLocation(loc);
     }
   }
 
