@@ -28,9 +28,9 @@
 	  	</div>	
 	  	<div class="row" ng-show="data.liveInfo.show">
 	    	<div class='section'>
-	      		LiveInfo: we have started at {{getRequestTime()}} ({{getSinceRequestTime}}) ago - driving time was {{data.route.drivingTime}} min
+	      		LiveInfo: we have started {{getSinceRequestTime()}} ago ({{getRequestTime()}}) - driving time was {{data.route.drivingTime}} min
 	      		<br/>
-	      		Now, DrivinTime is {{data.LiveInfo.drivingTime}}. updated at {{data.LiveInfo.updatedAt}}.
+	      		Now, DrivinTime is {{data.liveInfo.drivingTime}}. updated at {{getSinceLiveInfoUpdated()}}.
 		    </div>
 	  	</div>	
 	  	

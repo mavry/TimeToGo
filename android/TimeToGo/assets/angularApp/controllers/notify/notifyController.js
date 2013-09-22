@@ -40,11 +40,15 @@ angular.module('timeToGo.controllers'). controller('NotifyCtrl',  function ($sco
   };
 
   $scope.getRequestTime = function() {
-    moment($scope.data.notification.request.updatedAt).format("hh:mm");
+    return moment($scope.data.notification.request.updatedAt).format("H:mm");
   };
 
   $scope.getSinceRequestTime = function() {
-    moment().diff($scope.data.notification.request.updatedAt).format("minutes");
+    return moment().from($scope.data.notification.request.updatedAt, true);
   };
+
+  $scope.getSinceLiveInfoUpdated = function() {
+      return moment().from($scope.data.liveInfo.updatedAt, true);
+  }
 
 });
