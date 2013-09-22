@@ -19,13 +19,21 @@
 			minutes
 		</div>
   	    <div class="row">
-			via {{data.route.roadName}}
+			via {{data.route.routeName}}
 		</div>
 		<div class="row">
 	    	<div class="col-lg-4">
 	      		<button type="button" class="btn btn-success"  ng-click="notifyMe()" class="submitButton">Notify Me</button>
 		    </div>
 	  	</div>	
+	  	<div class="row" ng-show="data.liveInfo.show">
+	    	<div class='section'>
+	      		LiveInfo: we have started at {{getRequestTime()}} ({{getSinceRequestTime}}) ago - driving time was {{data.route.drivingTime}} min
+	      		<br/>
+	      		Now, DrivinTime is {{data.LiveInfo.drivingTime}}. updated at {{data.LiveInfo.updatedAt}}.
+		    </div>
+	  	</div>	
+	  	
   </div>	
 </div> <!-- /container -->
 

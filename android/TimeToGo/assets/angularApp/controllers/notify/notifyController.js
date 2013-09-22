@@ -4,28 +4,32 @@
 
 angular.module('timeToGo.controllers'). controller('NotifyCtrl',  function ($scope, $rootScope, $navigate, Backend) {	
   
-  $scope.init = function() {
-    $rootScope.data.notification = {
+  (function() {
+    $scope.data.notification = {
       request: {
-        maxDrivingTime: $rootScope.data.route.drivingTime
+        maxDrivingTime: $rootScope.data.route.drivingTime,
+        updatedAt: moment()
       }
     };
-  };
-
-  (function() { $scope.init(); })();
+    $scope.data.liveInfo = {
+      drivingTime: $rootScope.data.route.drivingTime,
+      updatedAt: moment(),
+      show: false
+    }
+  })();
 
 
   $scope.notifyMe = function() {
-	  Backend.onNotify($rootScope.data.locations.startLocation.geoLocation, $rootScope.data.locations.destinationLocation.geoLocation, $rootScope.data.route.drivingTime);
+	  // Backend.onNotify($rootScope.data.locations.startLocation.geoLocation, 
+   //    $rootScope.data.locations.destinationLocation.geoLocation, 
+   //    $scope.data.notification.request.maxDrivingTime);
+    $scope.data.liveInfo.show = true;
+    $scope.data.liveInfo.updatedAt = moment();
   };
 
   $rootScope.doBack = function() { 
     $navigate.back()
   };
-
-  // $rootScope.doBack = function() { 
-  //   $location.path("/home");
-  // }
 
   $scope.up = function() {
     $rootScope.data.notification.request.maxDrivingTime += 1;
@@ -34,4 +38,13 @@ angular.module('timeToGo.controllers'). controller('NotifyCtrl',  function ($sco
   $scope.down = function() {
     $rootScope.data.notification.request.maxDrivingTime -= 1;
   };
+
+  $scope.getRequestTime = function() {
+    moment($scope.data.notification.request.updatedAt).format("hh:mm");
+  };
+
+  $scope.getSinceRequestTime = function() {
+    moment().diff($scope.data.notification.request.updatedAt).format("minutes");
+  };
+
 });

@@ -112,8 +112,8 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 	  console.log(sprintf("@@ in homeController onDrivingTime drivingTime=%s drivingTime=%s", drivingTime, routeName));
 	  $rootScope.data.route = {
 	    drivingTime: drivingTime,
-	  	roadName: routeName,
-	  	lastUpdated: moment()
+	  	routeName: routeName,
+	  	updatedAt: moment()
 	  }
 	  $rootScope.safeApply(function(){ 
 	//  	$location.path("/notify/");        
