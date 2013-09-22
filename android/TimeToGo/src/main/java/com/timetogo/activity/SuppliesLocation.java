@@ -18,9 +18,9 @@ public class SuppliesLocation {
   private Location bestLocation;
   private LocationQuality q;
 
-  final int desiredAccuracy = 200;
-  final int maxAge = 120;
-  final int acceptedAccuracy = 400;
+  final static int desiredAccuracy = 200;
+  final static int maxAge = 120;
+  final static int acceptedAccuracy = 400;
   int counter = 0;
 
   public Location getBestLocation() {
@@ -59,7 +59,7 @@ public class SuppliesLocation {
     boolean gpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
   }
 
-   void getLocation() {
+   void getCurrentLocation() {
 
      Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
      Log.i(Contants.TIME_TO_GO, "@@ last knownLocation is "+locationToString(lastKnownLocation));
@@ -89,10 +89,10 @@ public class SuppliesLocation {
   }
 
 
-  private String locationToString( Location location) {
+  static String locationToString( Location location) {
     if (location==null) return "null";
     StringBuilder sb = new StringBuilder();
-    sb.append(String.format("qual=%s time=%d min ago prov=%s acc=%.1f lat=%f long=%f",
+    sb.append(String.format("quality=%s time=%d min ago prov=%s acc=%.1f geo=%f,%f",
       getLocationQuality( location), ((System.currentTimeMillis()  - location.getTime()) / 1000) / 60 , location.getProvider(), location.getAccuracy(), location
             .getLatitude(), location.getLongitude()));
     if (location.hasBearing())
@@ -100,7 +100,7 @@ public class SuppliesLocation {
     return sb.toString();
   }
 
-  private LocationQuality getLocationQuality( Location location) {
+  private static LocationQuality getLocationQuality( Location location) {
     if (location == null) return LocationQuality.BAD;
     if (!location.hasAccuracy()) return LocationQuality.BAD;
     long currentTime = System.currentTimeMillis();

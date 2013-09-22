@@ -77,7 +77,7 @@ public class ETAService extends RoboIntentService { //implements IETAService {
       final RouteResult[] routeResultForLocations = retreivesRouteResult.retreive(startLocation, destinationLocation);
       String routeName = routeResultForLocations[0].getRouteName();
       long drivingTime = routeResultForLocations[0].getDrivingTimeInMinutes();
-      //
+
       Log.i(Contants.TIME_TO_GO, "@@ ["+Thread.currentThread().getName()+"] ETAService got info from waze. drivingTime:" + drivingTime + " min via " + routeName);
       if (isItTimeToGo(drivingTime, maxDrivingTime)) {
         notify(drivingTime);
@@ -135,6 +135,7 @@ public class ETAService extends RoboIntentService { //implements IETAService {
   private void updateIntentWithData(long drivingTime, Intent intent) {
     intent.putExtra("timeToGo", true);
     intent.putExtra("drivingTime", drivingTime);
+    intent.putExtra("updatedAt", new Date());
   }
 
   private boolean isItTimeToGo(final long eta, long maxDrivingTimeInMinutes) {

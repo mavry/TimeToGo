@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-angular.module('timeToGo.controllers'). controller('NotifyCtrl',  function ($scope, $rootScope, $navigate, Backend) {	
+angular.module('timeToGo.controllers'). controller('NotifyCtrl',  function ($scope, $rootScope, $navigate, Backend, $timeout) {	
   
   (function() {
     $scope.data.notification = {
@@ -11,6 +11,7 @@ angular.module('timeToGo.controllers'). controller('NotifyCtrl',  function ($sco
         updatedAt: moment()
       }
     };
+    $rootScope.data.notification = $scope.data.notification;
     $scope.data.liveInfo = {
       drivingTime: $rootScope.data.route.drivingTime,
       updatedAt: moment(),
@@ -20,12 +21,12 @@ angular.module('timeToGo.controllers'). controller('NotifyCtrl',  function ($sco
 
 
   $scope.notifyMe = function() {
-	  // Backend.onNotify($rootScope.data.locations.startLocation.geoLocation, 
-   //    $rootScope.data.locations.destinationLocation.geoLocation, 
-   //    $scope.data.notification.request.maxDrivingTime);
-    $scope.data.liveInfo.show = true;
-    $scope.data.liveInfo.updatedAt = moment();
+	  Backend.onNotify($rootScope.data.locations.startLocation.geoLocation, 
+     $rootScope.data.locations.destinationLocation.geoLocation, 
+     $scope.data.notification.request.maxDrivingTime);
+    $scope.intervalFunction();
   };
+
 
   $rootScope.doBack = function() { 
     $navigate.back()
@@ -49,6 +50,20 @@ angular.module('timeToGo.controllers'). controller('NotifyCtrl',  function ($sco
 
   $scope.getSinceLiveInfoUpdated = function() {
       return moment().from($scope.data.liveInfo.updatedAt, true);
-  }
+  };
+
+
+  $scope.intervalFunction = function(){
+    $timeout(function() {
+     
+      $scope.data.liveInfo = Backend.getLiveInfo();
+      $scope.data.liveInfo.show = true;
+      if (!$scope.data.liveInfo.timeToGo)
+      $scope.intervalFunction();
+    }, 1000)
+  };
+
+
+
 
 });

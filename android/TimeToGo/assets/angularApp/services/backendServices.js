@@ -16,13 +16,19 @@ service('Backend', function() {
 		console.log("Backend.onNotify startLocation: "+JSON.stringify(startLocation)+", destinationLocation: "+JSON.stringify(destinationLocation)+", maxDrivingTime: "+maxDrivingTime);
 		androidInterface.onNotify(JSON.stringify(startLocation), JSON.stringify(destinationLocation), maxDrivingTime);
 	  },
-      getLocation: function() {
-		console.log("Backend.getLocation");
-		androidInterface.getLocation();
+      getCurrentLocation: function() {
+		console.log("Backend.getCurrentLocation");
+		androidInterface.getCurrentLocation();
       },
       openUrl: function(url) {
       	console.log("Backend.openUrl url: "+url);
       	androidInterface.openUrl(url);	
+      },
+      getLiveInfo: function() {
+      	console.log("@@ Backend.getLive Info");
+      	liveInfo = JSON.parse(androidInterface.getLiveInfo());	
+      	console.log("@@ liveInfo = "+liveInfo);
+      	return liveInfo;
       }
 	};
 });
