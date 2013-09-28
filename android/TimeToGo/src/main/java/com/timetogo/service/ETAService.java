@@ -20,6 +20,9 @@ import com.timetogo.model.RouteResult;
 import com.timetogo.waze.RetreivesWazeRouteResult;
 import com.timetogo.waze.RetrievesWazeGeoLocation;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -35,17 +38,6 @@ import roboguice.service.event.OnCreateEvent;
 public class ETAService extends RoboIntentService { //implements IETAService {
   private static final int NOTIFICATION_ID = 0;
   public static final String TRAFFIC_UPDATE_EVENT = "com.timetogo.ETAService.TRAFFIC_UPDATE_EVENT" ;
-//  private final DefaultHttpClient client;
-//  LocationResult fromLocation;
-//  LocationResult toLocation;
-//  long drivingTime;
-//  String routeName;
-//
-//  public class MyBinder extends Binder {
-//    public ETAService getService() {
-//      return ETAService.this;
-//    }
-//  }
 
   private Date lastExecution = new Date();
 
@@ -71,37 +63,30 @@ public class ETAService extends RoboIntentService { //implements IETAService {
   }
   private void handleCommand(LocationResult startLocation, LocationResult destinationLocation, long maxDrivingTime) throws JSONException, IOException {
 
-
-      final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
+     final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
 
       final RouteResult[] routeResultForLocations = retreivesRouteResult.retreive(startLocation, destinationLocation);
       String routeName = routeResultForLocations[0].getRouteName();
       long drivingTime = routeResultForLocations[0].getDrivingTimeInMinutes();
 
       Log.i(Contants.TIME_TO_GO, "@@ ["+Thread.currentThread().getName()+"] ETAService got info from waze. drivingTime:" + drivingTime + " min via " + routeName);
-      if (isItTimeToGo(drivingTime, maxDrivingTime)) {
-        notify(drivingTime);
+      boolean timeToGo = isItTimeToGo(drivingTime, maxDrivingTime);
+      if (timeToGo) {
+        Log.i(Contants.TIME_TO_GO, "@@ it is timeToGo");
+          createSystemNotificationAndSound(drivingTime, routeName);
       }
+      notifyActivity(drivingTime, routeName, timeToGo);
+
       tg.startTone(ToneGenerator.TONE_PROP_BEEP);
       lastExecution = new Date();
 
   }
 
-  @SuppressWarnings("deprecation")
-  private void notify(final long drivingTime) {
 
-    notifyActivity(drivingTime);
-    final Intent intent = new Intent(this, LocationActivity.class);
-    updateIntentWithData(drivingTime, intent);
 
-    Log.i(Contants.TIME_TO_GO, "@@ it is time to go, broadcast event to the activity");
+  private void createSystemNotificationAndSound(long drivingTime, String routeName) {
+    Log.i(Contants.TIME_TO_GO, "@@ it is time to go, fire system notification");
 
-    sendBroadcast(intent);
-
-    createSystemNotificationAndSound(drivingTime, intent);
-  }
-
-  private void createSystemNotificationAndSound(long drivingTime, Intent intent) {
     MediaPlayer player = MediaPlayer.create(this, R.raw.its_time_to_go);
 
     final AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -110,6 +95,8 @@ public class ETAService extends RoboIntentService { //implements IETAService {
 
     player.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
+    final Intent intent = new Intent(this, LocationActivity.class);
+    updateIntentWithData(drivingTime, routeName, true,  intent);
 
     final PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     @SuppressWarnings("deprecation")
@@ -118,28 +105,28 @@ public class ETAService extends RoboIntentService { //implements IETAService {
     notification.setLatestEventInfo(this, "TimeToGo", "drivingTime is " + drivingTime + " minutes", contentIntent);
     notification.flags = Notification.DEFAULT_LIGHTS | Notification.FLAG_AUTO_CANCEL;
 
-    Log.i(Contants.TIME_TO_GO, "@@ it is time to go, fire notification");
     notificationManager.notify(NOTIFICATION_ID, notification);
     player.start();
   }
 
-  private void notifyActivity(long drivingTime) {
+  private void notifyActivity(long drivingTime, String routeName, boolean timeToGo) {
     final Intent intent = new Intent(TRAFFIC_UPDATE_EVENT);
-    updateIntentWithData(drivingTime, intent);
+    updateIntentWithData(drivingTime, routeName, timeToGo,  intent);
 
-    Log.i(Contants.TIME_TO_GO, "@@ it is time to go, broadcast event to the activity");
+    Log.i(Contants.TIME_TO_GO, "@@ broadcast event to the activity");
 
     sendBroadcast(intent);
   }
 
-  private void updateIntentWithData(long drivingTime, Intent intent) {
-    intent.putExtra("timeToGo", true);
+  private void updateIntentWithData(long drivingTime, String routeName, boolean timeToGo, Intent intent) {
+    intent.putExtra("timeToGo", timeToGo);
     intent.putExtra("drivingTime", drivingTime);
+    intent.putExtra("routeName", routeName);
     intent.putExtra("updatedAt", new Date());
   }
 
   private boolean isItTimeToGo(final long eta, long maxDrivingTimeInMinutes) {
-    Log.i(Contants.TIME_TO_GO, "comparing eta " + eta + " vs " + maxDrivingTimeInMinutes);
+    Log.i(Contants.TIME_TO_GO, "@@ comparing eta " + eta + " vs " + maxDrivingTimeInMinutes);
     return eta <= maxDrivingTimeInMinutes;
   }
 

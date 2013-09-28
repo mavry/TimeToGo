@@ -70,6 +70,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
   private TimeToGoServiceReceiver eventReceiver = new TimeToGoServiceReceiver();
   private Long drivingTime;
   private String routeName;
+  private boolean timeToGo;
   private Date updatedAt;
 
   public LocationActivity() {
@@ -156,10 +157,17 @@ public class LocationActivity extends RoboActivity implements ILocationView {
 
     @JavascriptInterface
     public String getLiveInfo() {
-      Log.i(Contants.TIME_TO_GO, "@@ getLiveInfo");
-      return "{'"+drivingTime+"': "+drivingTime+", 'routeName': "+routeName+ ", 'updatedAt': "+updatedAt+"}";
+      return "{\"drivingTime\": "+drivingTime+", \"routeName\": \""+routeName+ "\", \"updatedAt\": \""+updatedAt+"\", \"timeToGo\": "+timeToGo+"}";
     }
-	}
+
+    @JavascriptInterface
+    public void reset() {
+      Log.i(Contants.TIME_TO_GO, "@@ reset");
+      if (pintent!= null) {
+        alarmManager.cancel(pintent);
+      }
+    }
+  }
 
   private void launchETAService(LocationResult startLocation, LocationResult destinationLocation, long maxDrivingTime) {
     if (pintent!=null) {
@@ -184,7 +192,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
 	@SuppressLint("SetJavaScriptEnabled")
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		Log.i(Contants.TIME_TO_GO, "@@ onCreate");
+		Log.i(Contants.TIME_TO_GO, "@@ [SYS] onCreate");
 		super.onCreate(savedInstanceState);
   	locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -261,14 +269,13 @@ public class LocationActivity extends RoboActivity implements ILocationView {
 		if (intent.getExtras() == null) {
 			Log.w(Contants.TIME_TO_GO, "no extras");
 		} else {
-      updateUI(intent);
+      handleEvent(intent);
 		}
 		super.onNewIntent(intent);
 
 	}
 
-  private void updateUI(Intent intent) {
-    boolean timeToGo  = false;
+  private void handleEvent(Intent intent) {
     if (intent.getExtras().getBoolean("timeToGo")) timeToGo = true;
     drivingTime = intent.getExtras().getLong("drivingTime");
     routeName = intent.getExtras().getString("routeName");
@@ -277,6 +284,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     Log.i(Contants.TIME_TO_GO, "@@ drivingTime = "+ drivingTime +"min via:"+ routeName +" timeToGo = " + timeToGo);
     if (timeToGo){
       invokeJS("onTimeToGo", "'"+ drivingTime +"'", "'"+ routeName +"'");
+      alarmManager.cancel(pintent);
     }
   }
 
@@ -308,7 +316,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
       registerReceiver(eventReceiver, new IntentFilter(ETAService.TRAFFIC_UPDATE_EVENT));
       super.onResume();
 
-      Log.i(Contants.TIME_TO_GO, "@@ onResume");
+      Log.i(Contants.TIME_TO_GO, "@@ [SYS] onResume");
       invokeJS("onResume");
     }
 
@@ -317,7 +325,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     protected void onPause() {
         super.onPause();
       if (eventReceiver != null) unregisterReceiver(eventReceiver);
-      Log.i(Contants.TIME_TO_GO, "@@ onPause");
+      Log.i(Contants.TIME_TO_GO, "@@ [SYS] onPause");
       invokeJS("onPause");
     }
 
@@ -340,7 +348,7 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     @Override
     protected void onStart () {
         super.onStart();
-        Log.i(Contants.TIME_TO_GO, "on Start");
+        Log.i(Contants.TIME_TO_GO, "@@ [SYS] onStart");
         invokeJS("onStart");
 
     }
@@ -348,17 +356,17 @@ public class LocationActivity extends RoboActivity implements ILocationView {
   @Override
   protected void onStop () {
     super.onStop();
-    Log.i(Contants.TIME_TO_GO, "@@ on Stop");
+    Log.i(Contants.TIME_TO_GO, "@@ [SYS] onStop");
     suppliesLocation.stop();
   }
 
   @Override
   protected void onDestroy() {
-    Log.i(Contants.TIME_TO_GO, "@@ on onDestroy");
+    Log.i(Contants.TIME_TO_GO, "@@ [SYS] onDestroy");
 
-    if (pintent != null) {
-      alarmManager.cancel(pintent);
-    }
+//    if (pintent != null) {
+//      alarmManager.cancel(pintent);
+//    }
 
     super.onDestroy();
   }
@@ -426,9 +434,9 @@ public class LocationActivity extends RoboActivity implements ILocationView {
     @Override
     public void onReceive(Context context, Intent intent)
     {
-      alarmManager.cancel(pintent);
+//    alarmManager.cancel(pintent);
       Log.i(Contants.TIME_TO_GO, "@@ got update from service...  "+intent.getAction());
-      updateUI(intent);
+      handleEvent(intent);
     }
   }
 }

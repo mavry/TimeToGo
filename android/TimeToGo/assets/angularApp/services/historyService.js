@@ -7,17 +7,19 @@ service('HistoryService', function($rootScope, localStorageService){
       $rootScope.history = localStorageService.get('history') ||  {list:[]};
       localStorageService.add('history', $rootScope.history);
     },
-    add: function (address) {
-      if (address==null) return;
-      for (var item in $rootScope.history.list)
-      {
-        if ($rootScope.history.list[item].name===address){
-          return this;
-        }
-      }
-      $rootScope.history.list.push({name:address});
-      localStorageService.add('history', $rootScope.history);
-      return this;
-    }
-  };
+add: function (address) {
+  if (address === null) {
+    return;
+  }
+  for (var item in $rootScope.history.list)
+{
+  if ($rootScope.history.list[item].name===address){
+    return this;
+  }
+}
+$rootScope.history.list.push({name:address});
+localStorageService.add('history', $rootScope.history);
+return this;
+}
+};
 });

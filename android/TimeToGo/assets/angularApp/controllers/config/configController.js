@@ -1,7 +1,3 @@
-'use strict';
-
-/* Controllers */
-angular.module('timeToGo.controllers').controller('ConfigCtrl',  function ($scope) {	
+/*global angular*/
+angular.module('timeToGo.controllers').controller('ConfigCtrl',  function () {
  });
-
- 

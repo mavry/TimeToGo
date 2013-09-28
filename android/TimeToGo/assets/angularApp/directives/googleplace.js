@@ -1,3 +1,4 @@
+/*global angular, google*/
 angular.module('timeToGo.directives').directive('googleplace', function () {
     return {
         require: 'ngModel',
@@ -10,7 +11,7 @@ angular.module('timeToGo.directives').directive('googleplace', function () {
 
             google.maps.event.addListener(scope.gPlace, 'place_changed', function() {
                 scope.$apply(function() {
-                    model.$setViewValue(element.val());                
+                    model.$setViewValue(element.val());
                 });
             });
         }

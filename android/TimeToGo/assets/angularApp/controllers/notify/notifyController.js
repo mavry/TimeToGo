@@ -1,14 +1,12 @@
-'use strict';
+/*global angular, moment*/
 
-/* Controllers */
+angular.module('timeToGo.controllers'). controller('NotifyCtrl',  function ($scope, $rootScope, $navigate, $location, $timeout, Backend) {
 
-angular.module('timeToGo.controllers'). controller('NotifyCtrl',  function ($scope, $rootScope, $navigate, Backend, $timeout) {	
-  
   (function() {
     $scope.data.notification = {
       request: {
         maxDrivingTime: $rootScope.data.route.drivingTime,
-        updatedAt: moment()
+    updatedAt: moment()
       }
     };
     $rootScope.data.notification = $scope.data.notification;
@@ -16,20 +14,20 @@ angular.module('timeToGo.controllers'). controller('NotifyCtrl',  function ($sco
       drivingTime: $rootScope.data.route.drivingTime,
       updatedAt: moment(),
       show: false
-    }
+    };
   })();
 
 
   $scope.notifyMe = function() {
-	  Backend.onNotify($rootScope.data.locations.startLocation.geoLocation, 
-     $rootScope.data.locations.destinationLocation.geoLocation, 
-     $scope.data.notification.request.maxDrivingTime);
+    Backend.onNotify($rootScope.data.locations.startLocation.geoLocation,
+    $rootScope.data.locations.destinationLocation.geoLocation,
+    $scope.data.notification.request.maxDrivingTime);
     $scope.intervalFunction();
   };
 
 
-  $rootScope.doBack = function() { 
-    $navigate.back()
+  $rootScope.doBack = function() {
+    $navigate.back();
   };
 
   $scope.up = function() {
@@ -49,21 +47,18 @@ angular.module('timeToGo.controllers'). controller('NotifyCtrl',  function ($sco
   };
 
   $scope.getSinceLiveInfoUpdated = function() {
-      return moment().from($scope.data.liveInfo.updatedAt, true);
+    return moment().from($scope.data.liveInfo.updatedAt, true);
   };
 
 
   $scope.intervalFunction = function(){
     $timeout(function() {
-     
       $scope.data.liveInfo = Backend.getLiveInfo();
       $scope.data.liveInfo.show = true;
-      if (!$scope.data.liveInfo.timeToGo)
-      $scope.intervalFunction();
-    }, 1000)
+      if ($location.$$url.indexOf("/notify") >= 0 && !$scope.data.liveInfo.timeToGo) {
+        $scope.intervalFunction();
+      }
+    }, 1000);
   };
-
-
-
 
 });

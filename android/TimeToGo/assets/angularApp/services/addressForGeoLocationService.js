@@ -7,6 +7,7 @@ service('AddressForGeoLocationService', function($http){
       var url = sprintf(urlPattern, geoLocation);
       $http.get(url).success( function(data) {
         // data.results.isEmpty ?
+        /* jshint camelcase: false */
         var address = data.results[0].formatted_address;
         callback(address);
       });

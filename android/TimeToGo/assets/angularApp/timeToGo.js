@@ -30,7 +30,7 @@ timeToGoApp.config(function($routeProvider ) {
       when('/timeToGo',  {templateUrl: 'templates/go/go.html', controller: 'GoCtrl'}).
       otherwise({redirectTo: '/home'});
   }
-).run(function ($rootScope, HistoryService, $http, $templateCache, $navigate, $route) {
+).run(function ($rootScope, HistoryService, $http, $templateCache, $navigate, $route, Backend) {
 
   HistoryService.init();
 
@@ -49,6 +49,12 @@ timeToGoApp.config(function($routeProvider ) {
     } else {
       this.$apply(fn);
     }
+  };
+
+  $rootScope.reset = function() {
+    $rootScope.data=null;
+    Backend.reset();
+    $navigate.go("/");
   };
 
   $rootScope.onTimeToGo = function (drivingTime,routeName) {

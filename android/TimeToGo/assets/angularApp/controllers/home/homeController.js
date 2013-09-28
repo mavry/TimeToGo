@@ -1,8 +1,6 @@
-'use strict';
+/*global angular, moment, sprintf*/
 
-/* Controllers */
-
-angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope, $rootScope, $navigate, $location, Backend, HistoryService, GeoLocationForAddressService, AddressForGeoLocationService, $timeout) {  
+angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope, $rootScope, $navigate, $location, Backend, HistoryService, GeoLocationForAddressService, AddressForGeoLocationService) {
 
   var data;
 
@@ -15,7 +13,7 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
 
   $scope.init = function() {
     $scope.gPlace="";
-    data = $rootScope.data || 
+    data = $rootScope.data ||
 {
   locations: {
     startLocation: {
@@ -32,7 +30,7 @@ angular.module('timeToGo.controllers'). controller('HomeCtrl',  function ($scope
       accuracy: -1,
     }
 };
-$rootScope.data = data; 
+$rootScope.data = data;
 };
 
 
@@ -49,14 +47,15 @@ $rootScope.data = data;
 $scope.startLocationFocus = function(){
   $scope.inStartLocationField = true;
   $scope.inDestinationLocationField = false;
-  $rootScope.doBack = function() {  $scope.inStartLocationField = false }
-}
+  $rootScope.doBack = function() {  $scope.inStartLocationField = false; };
+};
 
 $scope.destinationLocationFocus = function(){
   $scope.inDestinationLocationField = true;
   $scope.inStartLocationField = false;
-  $rootScope.doBack = function() {  $scope.inDestinationLocationField = false; }
-}
+  $rootScope.doBack = function() {  $scope.inDestinationLocationField = false; };
+};
+
 
 $scope.onCurrentLocationRequest = function() {
   $scope.data.currentLocation.requested=true;
@@ -68,7 +67,7 @@ $scope.onCurrentLocationRequest = function() {
 
 $scope.onCurrentLocation = function(geoLocation) {
   console.log("@@ in onCurrentLocation()");
-  $rootScope.currentLocation = geoLocation; 
+  $rootScope.currentLocation = geoLocation;
   $scope.data.currentLocation.lastUpdated = moment();
   $scope.data.currentLocation.location=geoLocation;
   $scope.data.locations.startLocation.geoLocation=geoLocation;
@@ -82,42 +81,31 @@ $scope.onCurrentLocation = function(geoLocation) {
       console.log("got destinationLocation "+JSON.stringify(geoLocation));
       data.locations.destinationLocation.geoLocation = geoLocation;
       Backend.onGo(data.locations);
-    });     
+    });
   });
 };
 
-$scope.isSubmitDisabled = function() { 
-  var enabled = 
+$scope.isSubmitDisabled = function() {
+  var enabled =
     (
-      ($scope.data.locations.destinationLocation.address != null 
-      && 
-      $scope.data.locations.destinationLocation.address.length > 3
-      ) 
-      &&
-      (
-      (   $scope.data.locations.startLocation.address != null 
-      && 
-      $scope.data.locations.startLocation.address.length > 3
-      )
-      || 
-      $scope.data.currentLocation.requested == true 
-      )
+      ($scope.data.locations.destinationLocation.address !== null &&  $scope.data.locations.destinationLocation.address.length > 3 ) && ( (   $scope.data.locations.startLocation.address !== null && $scope.data.locations.startLocation.address.length > 3 ) || $scope.data.currentLocation.requested === true )
     );
   console.log("$scope.data.locations.destinationLocation.address "+$scope.data.locations.destinationLocation.address);
   console.log("enabled = "+enabled);
 
   return !enabled;
-}
+};
+
 $scope.onDrivingTime = function(drivingTime, routeName) {
   console.log(sprintf("@@ in homeController onDrivingTime drivingTime=%s drivingTime=%s", drivingTime, routeName));
   $rootScope.data.route = {
     drivingTime: drivingTime,
     routeName: routeName,
     updatedAt: moment()
-  }
-  $rootScope.safeApply(function(){ 
-    //    $location.path("/notify/");        
-    $navigate.go('/notify/')
+  };
+
+  $rootScope.safeApply(function(){
+    $navigate.go('/notify/');
   });
 };
 
@@ -136,7 +124,7 @@ $scope.submit = function ()
         console.log("got destinationLocation "+JSON.stringify(geoLocation));
         data.locations.destinationLocation.geoLocation = geoLocation;
         Backend.onGo(data.locations);
-      });     
+      });
     });
   }
 };

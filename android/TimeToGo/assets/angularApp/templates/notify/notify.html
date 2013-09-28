@@ -1,40 +1,43 @@
 <div class="container" id='NotifyCtrl'>
-	<div class='section'  ng-include="'templates/nav/navigationBar.html'">
-	</div>
-	<div class='section'>
-  		<div class="row"> from: {{data.locations.startLocation.address}} to {{data.locations.destinationLocation.address}}
-		<div class="row"> 
-			Alert me when travel time is less than
-		</div> 
-  		<div class="row">
-			<button class="spinner btn btn-inverse btn-small" ng-click="up()">
-	        	<i class="glyphicon glyphicon-chevron-up" />
-    		</button>		
-			<input id="maxDrivingTime" type="number" ng-model="data.notification.request.maxDrivingTime" >
-			<button class="spinner btn btn-inverse btn-small" ng-click="down()">
-		        <i class="glyphicon glyphicon-chevron-down" />
-			</button>
- 		</div>
-	    <div class="row">
-			minutes
-		</div>
-  	    <div class="row">
-			via {{data.route.routeName}}
-		</div>
-		<div class="row">
-	    	<div class="col-lg-4">
-	      		<button type="button" class="btn btn-success"  ng-click="notifyMe()" class="submitButton">Notify Me</button>
-		    </div>
-	  	</div>	
-	  	<div class="row" ng-show="data.liveInfo.show">
-	    	<div class='section'>
-	      		LiveInfo: we have started {{getSinceRequestTime()}} ago ({{getRequestTime()}}) - driving time was {{data.route.drivingTime}} min
-	      		<br/>
-	      		Now, DrivinTime is {{data.liveInfo.drivingTime}}. updated at {{getSinceLiveInfoUpdated()}}.
-		    </div>
-	  	</div>	
-	  	
-  </div>	
-</div> <!-- /container -->
+  <div class='section'  ng-include="'templates/nav/navigationBar.html'">
+  </div>
+  <div class='section'>
+    <div class="row"> from: {{data.locations.startLocation.address}} to {{data.locations.destinationLocation.address}}
+      <div class="row"> 
+        Alert me when travel time is less than
+      </div> 
+      <div class="row">
+        <button class="spinner btn btn-inverse btn-small" ng-click="up()">
+          <i class="glyphicon glyphicon-chevron-up" />
+          </button>   
+          <input id="maxDrivingTime" type="number" ng-model="data.notification.request.maxDrivingTime" >
+          <button class="spinner btn btn-inverse btn-small" ng-click="down()">
+            <i class="glyphicon glyphicon-chevron-down" />
+            </button>
+          </div>
+          <div class="row">
+            minutes
+          </div>
+          <div class="row">
+            via {{data.route.routeName}}
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <button type="button" class="btn btn-success"  ng-click="notifyMe()" class="submitButton">Notify Me</button>
+            </div>
+          </div>  
+          <div class="row" ng-show="data.liveInfo.show">
+            <div class='section'>
+              LiveInfo: we have started {{getSinceRequestTime()}} ago ({{getRequestTime()}}) - driving time was {{data.route.drivingTime}} min
+              <br/>
+              Now, DrivinTime is {{data.liveInfo.drivingTime}}. updated at {{getSinceLiveInfoUpdated()}}.
+            </div>
+          </div>  
+          <div class='section'>
+    		<a href='' ng-click="reset()">reset</a>
+  		  </div>
+
+        </div>  
+      </div> <!-- /container -->
 
 

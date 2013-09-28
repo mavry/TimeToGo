@@ -9,21 +9,21 @@ module.exports = function (grunt) {
     gruntConfig = {
       pkg: grunt.file.readJSON('package.json'),
 
-     
 
 
 
-     
+
+
       replace: {
-       
+
         version: {
           src: [ 'timeToGo.html'],
           overwrite: true,
           replacements: [
-            {
-              from: /\?ver=\d+\">/g,
-              to: '?ver='+ ver+'">'
-            }
+          {
+            from: /\?ver=\d+\">/g,
+            to: '?ver='+ ver+'">'
+          }
           ]
         }
 
@@ -33,32 +33,32 @@ module.exports = function (grunt) {
       jshint: {
         // define the files to lint
         files: ['Gruntfile.js',
-          'app.js',
-          'services/**/*.js',
-          'directives/**/*.js',
-          'controllers/**/*.js',
-          '../test/unit/**/*.js'],
-        options: {
-          jshintrc: 'jshintrc.json'
-        }
-      },
+        'app.js',
+        'services/**/*.js',
+                      'directives/**/*.js',
+                                      'controllers/**/*.js',
+                                                       '../test/unit/**/*.js'],
+                                                                         options: {
+                                                                         jshintrc: 'jshintrc.json',
+        ignores: ['services/localStorageModule.js']
+                                                                         }
+                                                                         },
+                                                                         };
+                                                                         grunt.initConfig(gruntConfig);
+                                                                         };
 
-    };
-    grunt.initConfig(gruntConfig);
-  };
+                                                                         updateGruntConfig();
 
-  updateGruntConfig();
-
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-text-replace');
-
-
-  grunt.registerTask('test', ['jshint']);
-  grunt.registerTask('deploy', ['replace:version']);
+                                                                         grunt.loadNpmTasks('grunt-contrib-jshint');
+                                                                         grunt.loadNpmTasks('grunt-text-replace');
 
 
-  grunt.registerTask('default', ['test']);
+                                                                         grunt.registerTask('test', ['jshint']);
+                                                                         grunt.registerTask('deploy', ['replace:version']);
 
 
-}
-;
+                                                                         grunt.registerTask('default', ['test']);
+
+
+                                                                         }
+                                                                         ;

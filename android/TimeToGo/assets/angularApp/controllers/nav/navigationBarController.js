@@ -1,18 +1,14 @@
-'use strict';
+/*global angular, $*/
+angular.module('timeToGo.controllers'). controller('NavigationBarCtrl',  function ($scope, $rootScope, simulatorService) {
+  $scope.simulator = simulatorService;
 
-/* Controllers */
+  $('.dropdown').find('form').click(function (e) {
+    e.stopPropagation();
+  });
 
-angular.module('timeToGo.controllers'). controller('NavigationBarCtrl',  function ($scope, $rootScope, simulatorService, Backend) {	
-	$scope.simulator = simulatorService;
-
-   	$('.dropdown').find('form').click(function (e) {
-    	e.stopPropagation();
-  	});
-
-  	$scope.showBack = function(){
-  		return typeof($rootScope.doBack) == "function";
-  	}
+  $scope.showBack = function(){
+    return typeof($rootScope.doBack) === "function";
+  };
 
 });
 
- 
