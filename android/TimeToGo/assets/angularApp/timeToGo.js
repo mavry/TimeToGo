@@ -22,7 +22,7 @@ timeToGoApp.value('prefix', 'timeToGo');
 timeToGoApp.constant('cookie', { expiry:30, path: '/'});
 timeToGoApp.constant('notify', { setItem: true, removeItem: false} );
 
-timeToGoApp.config(function($routeProvider ) {  
+timeToGoApp.config(function($routeProvider ) {
     $routeProvider.
       when('/home', {templateUrl: 'templates/home/home.html', controller: 'HomeCtrl'}).
       when('/config', {templateUrl: 'templates/config/config.html', controller: 'ConfigCtrl'}).
